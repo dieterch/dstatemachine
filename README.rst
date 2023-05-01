@@ -10,19 +10,15 @@ Installation
 **Windows:**
 
 Create and activate a virtual environment:
-
-'''
-    python -m venv venv
-    ./venv/Scripts/activate.bat
-    pip install git+https://github.com/dieterch/dstatemachine.git
-'''
+::
+  python -m venv venv
+  ./venv/scripts/activate.bat
+  pip install git+https://github.com/dieterch/dstatemachine.git
+::
 
 Start
 ------
-
-::
-  jupyter lab
-::
+>  jupyter lab
      
 first run ./Tools/login.ipynb and every following 31 days, you are prompted for your myplant
 login and credentials:
