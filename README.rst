@@ -22,7 +22,7 @@ Start
 ------
 >  jupyter lab
      
-first run ./Tools/login.ipynb and every following 31 days, you are prompted for your myplant
+first run ./Tools/login.ipynb and every following 31 days, you are prompted for your myplant.
 login and credentials:
 ::
   Please enter your myPlant login:
@@ -31,6 +31,7 @@ login and credentials:
   TOTP Secret: xxxxxxxxx
 ::
 
+go to the settings tab and update the installed fleet data
 
 Release History
 ---------------
