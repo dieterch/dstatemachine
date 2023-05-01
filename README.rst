@@ -12,6 +12,7 @@ Installation
 Create and activate a virtual environment:
 :: 
   git clone https://github.com/dieterch/dstatemachine.git
+  cd dstatemachine
   python -m venv venv
   ./venv/scripts/activate.bat
 ::
