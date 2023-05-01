@@ -15,6 +15,7 @@ Create and activate a virtual environment:
   cd dstatemachine
   python -m venv venv
   ./venv/scripts/activate.bat
+  pip install -r requirements.txt
 ::
 
 Start
