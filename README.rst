@@ -12,9 +12,9 @@ Installation
 Create and activate a virtual environment:
 
 '''
-  python -m venv venv
-  ./venv/Scripts/activate.bat
-  pip install git+https://github.com/dieterch/dstatemachine.git
+    python -m venv venv
+    ./venv/Scripts/activate.bat
+    pip install git+https://github.com/dieterch/dstatemachine.git
 '''
 
 Start
