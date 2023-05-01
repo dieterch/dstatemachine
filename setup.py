@@ -54,7 +54,8 @@ SETUP_ARGS = dict(
         'tables>=3.8.0',
         'tabulate>=0.9.0',
         'tqdm>=4.65.0',
-        'voila>=0.4.0'
+        'voila>=0.4.0',
+        'wheel>=0.40.0'
     ],
 )
 
