@@ -1,9 +1,7 @@
 dStatemachine
 ========
 
-Python INNIO Myplant Statemchine based Field.
-
-Analyse INNIO Field Engines. Download data on each engine Start and extract
+Python INNIO Myplant Statemchine based Field debugger software. Download data on each engine Start and extract
 Data based on Engine states. Find Anomalies and analyse them in depth.
 
 Installation
@@ -15,13 +13,7 @@ Create and activate a virtual environment:
 
 ::
   python -m venv venv
-::
-
-::
   ./venv/Scripts/activate.bat
-::
-
-::
   pip install git+https://github.com/dieterch/dstatemachine.git
 ::
 
