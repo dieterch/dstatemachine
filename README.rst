@@ -10,10 +10,10 @@ Installation
 **Windows:**
 
 Create and activate a virtual environment:
-::
+:: 
+  git clone https://github.com/dieterch/dstatemachine.git
   python -m venv venv
   ./venv/scripts/activate.bat
-  pip install git+https://github.com/dieterch/dstatemachine.git
 ::
 
 Start
