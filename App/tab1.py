@@ -4,6 +4,7 @@ import pickle
 import pandas as pd; pd.options.mode.chained_assignment = None
 from pprint import pformat as pf
 import ipywidgets as widgets
+import solara
 from IPython.display import display
 from ipyfilechooser import FileChooser
 from dmyplant2 import cred, MyPlant, FSMOperator, save_json, load_json

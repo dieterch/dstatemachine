@@ -51,6 +51,7 @@ SETUP_ARGS = dict(
         'PyYAML>=6.0',
         'requests>=2.28.2',
         'scipy>=1.10.1',
+        'solara>=1.12.0',
         'tables>=3.8.0',
         'tabulate>=0.9.0',
         'tqdm>=4.65.0',
