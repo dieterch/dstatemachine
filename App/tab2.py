@@ -169,11 +169,13 @@ class Tab():
                         tabs_out.clear_output()
                         print('tab2')
                     else:
-                        self.tab2_selected_engine.value = ''
-                        self.t1.value = None
-                        V.fsm = None
+                        #self.tab2_selected_engine.value = ''
+                        #self.t1.value = None
+                        #V.fsm = None
+                        pass
                 else:
-                    self.tab2_selected_engine.value = ''
+                    #self.tab2_selected_engine.value = ''
+                    pass
             else: # engine was loaded from file
                 self.tab2_selected_engine.value = V.selected
                 self.b_loadmessages.description = 'append new messages'

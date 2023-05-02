@@ -159,26 +159,26 @@ class Tab():
                     except Exception as err:
                         print('\n','no figure to display, Error: ', str(err))
                         
-                    vec = V.fsm.results['run2_content']['startstop']
-                    print()
-                    display(_=self.rde[vec].hist(bins=30,figsize=(20,20)))
-                    print()
-                    display(self.rde[vec].describe()
-                                .style
-                                .set_table_styles([
-                                    {'selector':'table,td,th', 'props': 'font-size: 0.7rem; '}
-                                ])
-                                .format(
-                            precision=0,
-                            na_rep='-',
-                            formatter={
-                                'starter': "{:.1f}",
-                                'idle': "{:.1f}",
-                                'PressBoost_max': "{:.2f}",
-                                'ramprate':"{:.2f}",
-                                'runout': lambda x: f"{x:0.1f}"
-                            }
-                        ))
+                    # vec = V.fsm.results['run2_content']['startstop']
+                    # print()
+                    # display(_=self.rde[vec].hist(bins=30,figsize=(20,20)))
+                    # print()
+                    # display(self.rde[vec].describe()
+                    #             .style
+                    #             .set_table_styles([
+                    #                 {'selector':'table,td,th', 'props': 'font-size: 0.7rem; '}
+                    #             ])
+                    #             .format(
+                    #         precision=0,
+                    #         na_rep='-',
+                    #         formatter={
+                    #             'starter': "{:.1f}",
+                    #             'idle': "{:.1f}",
+                    #             'PressBoost_max': "{:.2f}",
+                    #             'ramprate':"{:.2f}",
+                    #             'runout': lambda x: f"{x:0.1f}"
+                    #         }
+                    #     ))
                     print()
                     if self.show_startlist.value:
                         display(self.rde[['starttime'] + V.fsm.results['run2_content']['startstop']][::-1]

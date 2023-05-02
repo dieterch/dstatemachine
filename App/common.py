@@ -154,7 +154,10 @@ def get_query_list():
 def save_query_list(query_list):
     query_list = [q for q in query_list if not q in ['312','316','320','412','416','420','424','612','616','620','624','920']]
     save_json(query_list_fn,query_list)    
-    
+
+
+global V
+
 @dataclass
 class V:
     hh = '350px' # window height
