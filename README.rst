@@ -17,7 +17,6 @@ Create and activate a virtual environment:
   .\venv\Scripts\activate.bat (windows)
   source ./venv/bin/activate (OSX, Linux)
   pip install -r requirements.txt
-  pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r requirements.txt (alternativ)
 ::
 
 Start
@@ -59,4 +58,8 @@ Contributing
 3. Commit your changes (``git commit -am 'Add some fooBar'``)
 4. Push to the branch (``git push origin feature/fooBar``)
 5. Create a new Pull Request
+
+hint, if pip fails
+------------------
+>   pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r requirements.txt (alternativ)
 
