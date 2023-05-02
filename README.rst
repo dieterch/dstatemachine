@@ -17,6 +17,7 @@ Create and activate a virtual environment:
   .\venv\Scripts\activate.bat (windows)
   source ./venv/bin/activate (OSX, Linux)
   pip install -r requirements.txt
+  pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r requirements.txt (alternativ)
 ::
 
 Start
