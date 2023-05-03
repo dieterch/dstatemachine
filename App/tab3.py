@@ -111,6 +111,9 @@ class Tab():
             tabs_out.clear_output()
             print('tab3')
 
+    def cleartab(self):
+        self.tab3_out.clear_output() 
+
     def filter_msg(self, df, mnum):
         return any([m['msg']['name'] == str(mnum) for m in df['alarms']] + [m['msg']['name'] == str(mnum) for m in df['warnings']])
 

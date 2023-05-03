@@ -184,7 +184,10 @@ class Tab():
         with self.tab2_out:        
             self.tab2_out.clear_output()
             self.check_buttons()
-                    
+
+    def cleartab(self):
+        self.tab2_out.clear_output() 
+
     def fsm_loadmessages(self,b):
         with tabs_out:
             tabs_out.clear_output()
