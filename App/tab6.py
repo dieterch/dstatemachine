@@ -16,7 +16,7 @@ from App.common import loading_bar, V, tabs_out
 class Tab():
     def __init__(self):
 
-        self.title = '6. Run2 Results'
+        self.title = '6. Run2/4 Results'
         self.dfigsize = V.dfigsize
         self.tab6_out = widgets.Output()
 
@@ -393,12 +393,14 @@ class Tab():
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
                     dr2set2 = [
                     {'col':['maxload','targetload'],'ylim': [4200, 5000], 'color':['FireBrick','red'], 'unit':'kW'},
+                    {'col':['coolrun'],'ylim':[0,100], 'color': 'black', 'unit':'sec' },
+                    {'col':['runout'],'ylim':[0,100], 'color': 'orange', 'unit':'sec' },
                     {'col':['Stop_Overspeed'],'ylim': [0, 2000], 'color':'blue', 'unit':'rpm'},
                     {'col':['Stop_Throttle'],'ylim': [0, 10], 'color':'gray', 'unit':'%'},
                     {'col':['Stop_PVKDifPress'],'ylim': [0, 100], 'color':'purple', 'unit':'mbar'},
                     {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
                     ]
-                    
+                
                     #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
                     dr2set2_c = [r for r in dr2set2 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
  
@@ -415,6 +417,8 @@ class Tab():
                     dr2set2 = [
                             #{'col':['targetload'],'ylim': [4100, 4700], 'color':'red', 'unit':'kW'},
                             {'col':['bmep2','bmep'],'ylim': [20, 30], 'color':['FireBrick','red'], 'unit':'bar'},
+                            {'col':['coolrun'],'ylim':[0,100], 'color': 'black', 'unit':'sec' },
+                            {'col':['runout'],'ylim':[0,100], 'color': 'orange', 'unit':'sec' },
                             {'col':['Stop_Overspeed'],'ylim': [0, 2000], 'color':'blue', 'unit':'rpm'},
                             {'col':['Stop_Throttle'],'ylim': [0, 10], 'color':'gray', 'unit':'%'},
                             {'col':['Stop_PVKDifPress'],'ylim': [0, 100], 'color':'purple', 'unit':'mbar'},
@@ -424,18 +428,20 @@ class Tab():
                         dr2set2 = equal_adjust(dr2set2, rde, do_not_adjust=['no'], minfactor=1.0, maxfactor=1.1)
                     except Exception as err:
                         print(f'Error: {str(err)}')
-                    ntitle = ftitle + ' | BMEP at Start vs TJ Gas Temperature in °C '
+                    ntitle = ftitle + ' | BMEP at Start & Stop Data vs TJ Gas Temperature in °C '
                     fig3 = dbokeh_chart(rde, dr2set2, x='TJ_GasTemp1_at_Min', style='circle', figsize=self.dfigsize ,title=ntitle);
                     fig3.add_layout(Span(location=V.fsm._e.BMEP,
                             dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
-                    fig3.add_layout(Span(location=20.0,
-                            dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
+                    #fig3.add_layout(Span(location=20.0,
+                    #        dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
 
                     bokeh_show(fig3)
                     
                     dr2set2 = [
                             {'col':['targetload'],'ylim': [4100, 4700], 'color':'red', 'unit':'kW'},
                             {'col':['bmep2','bmep'],'ylim': [20, 30], 'color':['FireBrick','red'], 'unit':'bar'},
+                            {'col':['coolrun'],'ylim':[0,100], 'color': 'black', 'unit':'sec' },
+                            {'col':['runout'],'ylim':[0,100], 'color': 'orange', 'unit':'sec' },
                             {'col':['Stop_Overspeed'],'ylim': [0, 2000], 'color':'blue', 'unit':'rpm'},
                             {'col':['Stop_Throttle'],'ylim': [0, 10], 'color':'gray', 'unit':'%'},
                             {'col':['Stop_PVKDifPress'],'ylim': [0, 100], 'color':'purple', 'unit':'mbar'},
@@ -448,7 +454,7 @@ class Tab():
                     except Exception as err:
                         print(f'Error: {str(err)}')
                         
-                    ntitle = ftitle + ' | BMEP at Start vs TJ TJ_GasDiffPressMin in mbar '
+                    ntitle = ftitle + ' | BMEP at Start & Stop Data vs TJ TJ_GasDiffPressMin in mbar '
                     fig3 = dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle);
                     fig3.add_layout(Span(location=V.fsm._e.BMEP,
                             dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))

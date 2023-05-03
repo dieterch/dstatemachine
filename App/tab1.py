@@ -199,6 +199,7 @@ class Tab():
         tabs_html.value = ''
         V.selected = ''
         V.selected_number = ''
+        V.fsm = None
         status('tab1')
 
         #V.query_list = init_query_list()
