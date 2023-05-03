@@ -95,6 +95,9 @@ class Tab():
             tabs_out.clear_output()
             print('tab5')
 
+    def cleartab(self):
+        self.tab5_out.clear_output() 
+
     #@tab5_out.capture(clear_output=True)
     def do_refresh(self,but):
         with tabs_out:

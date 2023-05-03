@@ -118,6 +118,9 @@ class Tab():
 
     def selected(self):
         status('tab1')
+
+    def cleartab(self):
+        self.tab1_out.clear_output()        
             
     def do_lookup(self,lookup):
         def sfun(x):
@@ -180,11 +183,14 @@ class Tab():
             with tabs_out:
                 status('tab1')
                 display(pd.DataFrame.from_dict(V.fsm.results['info'], orient='index').T.style.hide())
+                V.app.clear_all()
         else:
             status('tab1','please select a *.dfsm File.')
 
     def clear(self,but):
-        self.tab1_out.clear_output()
+        tabs_out.clear_output()
+        #self.tab1_out.clear_output()
+        V.app.clear_all()
         self.query_drop_down.value = ''
         self.engine_selections.options = list()
         #engine_selections.value = ''
@@ -193,7 +199,9 @@ class Tab():
         tabs_html.value = ''
         V.selected = ''
         V.selected_number = ''
+        V.fsm = None
         status('tab1')
+
         #V.query_list = init_query_list()
         #save_query_list(V.query_list)
 

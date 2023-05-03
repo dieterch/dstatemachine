@@ -1,6 +1,7 @@
 import os
 import sys
 import pickle
+from pprint import pprint as pp
 from turtle import width
 import pandas as pd; pd.options.mode.chained_assignment = None
 from datetime import datetime, date, timedelta
@@ -184,15 +185,27 @@ class Tab():
         with self.tab2_out:        
             self.tab2_out.clear_output()
             self.check_buttons()
-                    
+
+    def cleartab(self):
+        self.tab2_out.clear_output() 
+
     def fsm_loadmessages(self,b):
         with tabs_out:
             tabs_out.clear_output()
-            print('tab2 - ⌛ loading messages.')
             #display(loading_bar)
             try:
-                V.fsm = FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
-                tabs_out.clear_output()
+                if V.fsm is None:
+                    print('tab2 - ⌛ loading messages.')
+                    V.fsm = FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
+                    tabs_out.clear_output()
+                else:
+                    print('tab2 - ⌛ appending messages not implemented yet.')
+                    display(pd.DataFrame.from_dict(V.fsm.results['info'], orient='index').style.hide())
+                    pp(V.fsm.results['info'])
+                    self.t1.value = pd.to_datetime(V.fsm.results['info']['p_to'])
+                    V.fsm = FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
+                    V.app.clear_all()
+
                 self.check_buttons()
             except Exception as err:
                 tabs_out.clear_output()

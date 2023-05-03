@@ -5,6 +5,7 @@ import numpy as np
 import traceback
 from datetime import datetime, date
 import ipywidgets as widgets
+import bokeh
 from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 from IPython.display import display, HTML
 from dmyplant2 import (
@@ -171,6 +172,9 @@ class Tab():
             with tabs_out:
                 tabs_out.clear_output()
                 print('tab4')
+
+    def cleartab(self):
+        self.tab4_out.clear_output() 
 
     def calc_time_range(self,sv):
         tns = pd.to_datetime((sv['starttime'].timestamp() + self.time_range.value[0]/100.0 * (sv['endtime']-sv['starttime']).seconds), unit='s')
