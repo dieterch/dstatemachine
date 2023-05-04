@@ -589,6 +589,7 @@ class FSMOperator:
                 p_from = self._p_from,
                 p_to = self._p_to,
                 run2 = all(self.starts['run2']),
+                runs_completed = self.runs_completed,
                 starts = len(self.starts)
             )
             self.results['info'].update(self._e.description)
@@ -607,6 +608,7 @@ class FSMOperator:
                 e = Engine.from_sn(mp, results['info']['serialNumber'])
                 lfsm = cls(e, p_from=results['info']['p_from'], p_to=results['info']['p_to'])
                 lfsm.results = results
+                lfsm.runs_completed = results['info'].get('runs_completed',[])
                 return lfsm
         else:
             raise FileNotFoundError(filename)
@@ -614,17 +616,21 @@ class FSMOperator:
     def merge_results(self, mfsm):
         #check is it is the same engine
         if (mfsm.results['sn'] == self.results['sn']):
+            print(f"\n***********************************")
             print(f"** Merging SN {self.results['sn']}")
+            print(f"***********************************")
             # fields to merge:
             # sn -> ok
             # save_date -> n/a
             gap = mfsm.results['first_message']-self.results['last_message']
-            print(f"** Gap:{gap}")
+            print(f"\n** Gap:{gap}")
+            print("no limitation to merge files that overlap or have big gaps, so be careful")
+            print("until i have a proper check in place.")
             # first_message -> stays the same
             # last_message
-            print(f"** Merging lastmessag from {self.results['last_message']}")
+            print(f"\n** Merging lastmessage from {self.results['last_message']}")
             self.results['last_message'] = mfsm.results['last_message']
-            print(f"** Merging lastmessag to {self.results['last_message']}")
+            print(f"** Merging lastmessage to {self.results['last_message']}")
             # starts
             lastno = self.results['starts'][-1]['no']
             nextno = lastno + 1
@@ -632,6 +638,7 @@ class FSMOperator:
                 start['no'] = nextno
                 self.results['starts'].append(start)
                 nextno +=1
+            print(f"\n** Merging: {lastno + 1} Starts in base file")
             print(f"** Merging Added: {nextno - lastno -1} Starts")
             # starts_counter
             self.results['starts_counter'] = self.results['starts'][-1]['no'] + 1
@@ -643,6 +650,7 @@ class FSMOperator:
                 stop['no'] = nextno
                 self.results['stops'].append(stop)
                 nextno +=1
+            print(f"\n** Merging: {lastno + 1} Stops in base file")
             print(f"** Merging Added: {nextno - lastno -1} Stops")
             # stops_counter
             self.results['stops_counter'] = self.results['stops'][-1]['no'] + 1
@@ -652,13 +660,21 @@ class FSMOperator:
             self.results['run4_content'] = mfsm.results['run4_content']
             # serviceselectortiming -> not yet i,plemented
             self.results['serviceselectortiming'] += mfsm.results['serviceselectortiming']
-            # oilpumptiming -> add
+            # oilpumptiming -> combine
             self.results['oilpumptiming'] += mfsm.results['oilpumptiming']
-            # run2_failed -> add
-            self.results['run2_failed'] += mfsm.results['run2_failed']
-            # runlog
+            # run2_failed -> combine
+            self.results['run2_failed'] = self.results.get('run2_failed',[]) + mfsm.results['run2_failed']
+            # run4_failed -> combine
+            self.results['run4_failed'] = self.results.get('run4_failed',[]) + mfsm.results['run4_failed']
+            print(f"\n** Merging dict elements :run2_content run4_content serviceselectortiming oilpumptiming run2_failed run4_failed")
+            # runlog used/not stored
             # runlogdetail
-            # run4_failed
+            last_startno = self.results['runlogdetail'][-1]['startno']
+            print(f"** Mergine runlogdetail (*Bug startnumbers start at - 1 currently), last start {last_startno}")
+            for msg in mfsm.results['runlogdetail']:
+                msg['startno'] += last_startno + 2 # should be +1, for bug mitigation reasons +2 
+                self.results['runlogdetail'].append(msg)
+            print(f"** Mergine runlogdetails done")
         else:
             raise ValueError(f"** Merging different Engines {self.results['sn']} != {mfsm.results['sn']}")    
 

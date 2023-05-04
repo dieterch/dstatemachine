@@ -83,7 +83,7 @@ class Tab():
 
         self.b_resultsfsm = widgets.Button(
             description='Results',
-            disabled=True, 
+            disabled=False, 
             button_style='primary')
         self.b_resultsfsm.on_click(self.fsm_results)
 
@@ -121,6 +121,12 @@ class Tab():
             button_style='primary')
         self.b_savefsm.on_click(self.fsm_save) 
 
+        self.b_mergefsm = widgets.Button(
+            description='Merge FSM\'s',
+            disabled=False, 
+            button_style='primary')
+        self.b_mergefsm.on_click(self.fsm_merge) 
+
     @property
     def tab(self):
         return VBox([
@@ -146,6 +152,7 @@ class Tab():
                     self.b_runfsm2,
                     self.b_runfsm4,
                     self.b_savefsm,
+                    self.b_mergefsm
                 ])
             ])
         ],layout=widgets.Layout(min_height=V.hh))
@@ -199,10 +206,12 @@ class Tab():
                     V.fsm = FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
                     tabs_out.clear_output()
                 else:
-                    print('tab2 - ⌛ appending messages not implemented yet.')
-                    display(pd.DataFrame.from_dict(V.fsm.results['info'], orient='index').style.hide())
+                    print('tab2 - ⌛ appending messages.')
+                    #display(pd.DataFrame.from_dict(V.fsm.results['info'], orient='index').style.hide())
+                    print()
                     pp(V.fsm.results['info'])
                     self.t1.value = pd.to_datetime(V.fsm.results['info']['p_to'])
+                    V.fsmorg = V.fsm
                     V.fsm = FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
                     V.app.clear_all()
 
@@ -312,7 +321,7 @@ class Tab():
 
     def fsm_save(self,b):
         if V.fsm is not None:
-            filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm'
+            filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}_{V.fsm.last_message.strftime("%Y%m%d")}.dfsm'
             with tabs_out:
                 print(filename)
                 V.fsm.save_results(filename)
@@ -320,8 +329,16 @@ class Tab():
         #     if V.fsm is not None:
         #         V.fsm.store()
 
+    def fsm_merge(self,b):
+        if V.fsm is not None:
+            with self.tab2_out:
+                V.fsmnew = V.fsm
+                V.fsmorg.merge_results(V.fsmnew)
+                V.fsm = V.fsmorg
+
     def check_buttons(self):
-        for b in [ self.b_loadmessages, self.b_runfsm, self.b_resultsfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
+        #for b in [ self.b_loadmessages, self.b_runfsm, self.b_resultsfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
+        for b in [ self.b_loadmessages, self.b_runfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
             b.disabled=True
         if ((V.e is not None) and (self.t1.value is not None) and (self.t2.value is not None)):
             self.b_loadmessages.disabled=False
@@ -336,13 +353,13 @@ class Tab():
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1])):
             self.b_runfsm1.disabled = True
             self.b_runfsm2.disabled = False            
-            self.b_resultsfsm.disabled = False            
+            #self.b_resultsfsm.disabled = False            
             self.b_savefsm.disabled = False
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1,2])):
             self.b_runfsm1.disabled = True
             self.b_runfsm2.disabled = True            
             self.b_runfsm4.disabled = False            
-            self.b_resultsfsm.disabled = False            
+            #self.b_resultsfsm.disabled = False            
             self.b_savefsm.disabled = False
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1,2])):
             self.b_runfsm2.disabled = True            
