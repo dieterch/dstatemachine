@@ -611,6 +611,33 @@ class FSMOperator:
         else:
             raise FileNotFoundError(filename)
 
+    def merge_results(self, mfsm):
+        #check is it is the same engine
+        if (mfsm.results['sn'] == self.results['sn']):
+            print(f"** Merging SN {self.results['sn']}")
+            # fields to merge:
+            # sn -> ok
+            # save_date -> n/a
+            # first_message -> stays the same
+            # last_message
+            print(f"** Merging lastmessag from {self.results['lastmessage']}")
+            self.results['lastmessage'] = mfsm.results['lastmessage']
+            print(f"** Merging lastmessag to {self.results['lastmessage']}")
+            # starts
+            # starts_counter
+            # stops
+            # run2_content
+            # run4_content
+            # serviceselectortiming
+            # oilpumptiming
+            # stops_counter
+            # run2_failed
+            # runlog
+            # runlogdetail
+            # run4_failed
+        else:
+            raise ValueError(f"** Merging different Engines {self.results['sn']} != {mfsm.results['sn']}")    
+
     @property        
     def exists(self):
         return os.path.exists(self.pfn) 
