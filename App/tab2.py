@@ -208,6 +208,7 @@ class Tab():
                 else:
                     print('tab2 - ⌛ appending messages.')
                     #display(pd.DataFrame.from_dict(V.fsm.results['info'], orient='index').style.hide())
+                    print()
                     pp(V.fsm.results['info'])
                     self.t1.value = pd.to_datetime(V.fsm.results['info']['p_to'])
                     V.fsmorg = V.fsm
@@ -320,7 +321,7 @@ class Tab():
 
     def fsm_save(self,b):
         if V.fsm is not None:
-            filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm'
+            filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}_{V.fsm.last_message.strftime("%Y%m%d")}.dfsm'
             with tabs_out:
                 print(filename)
                 V.fsm.save_results(filename)
