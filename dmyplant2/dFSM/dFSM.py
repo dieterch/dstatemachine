@@ -618,20 +618,44 @@ class FSMOperator:
             # fields to merge:
             # sn -> ok
             # save_date -> n/a
+            gap = mfsm.results['first_message']-self.results['last_message']
+            print(f"** Gap:{gap}")
             # first_message -> stays the same
             # last_message
-            print(f"** Merging lastmessag from {self.results['lastmessage']}")
-            self.results['lastmessage'] = mfsm.results['lastmessage']
-            print(f"** Merging lastmessag to {self.results['lastmessage']}")
+            print(f"** Merging lastmessag from {self.results['last_message']}")
+            self.results['last_message'] = mfsm.results['last_message']
+            print(f"** Merging lastmessag to {self.results['last_message']}")
             # starts
+            lastno = self.results['starts'][-1]['no']
+            nextno = lastno + 1
+            for start in mfsm.results['starts']:
+                start['no'] = nextno
+                self.results['starts'].append(start)
+                nextno +=1
+            print(f"** Merging Added: {nextno - lastno -1} Starts")
             # starts_counter
+            self.results['starts_counter'] = self.results['starts'][-1]['no'] + 1
+            print(f"** Merging starts_counter: {self.results['starts_counter']}")
             # stops
-            # run2_content
-            # run4_content
-            # serviceselectortiming
-            # oilpumptiming
+            lastno = self.results['stops'][-1]['no']
+            nextno = lastno + 1
+            for stop in mfsm.results['stops']:
+                stop['no'] = nextno
+                self.results['stops'].append(stop)
+                nextno +=1
+            print(f"** Merging Added: {nextno - lastno -1} Stops")
             # stops_counter
-            # run2_failed
+            self.results['stops_counter'] = self.results['stops'][-1]['no'] + 1
+            print(f"** Merging stops_counter: {self.results['stops_counter']}")
+            # run2_content, run4_content -> use merged content (will be detected if not present in older dats)
+            self.results['run2_content'] = mfsm.results['run2_content']
+            self.results['run4_content'] = mfsm.results['run4_content']
+            # serviceselectortiming -> not yet i,plemented
+            self.results['serviceselectortiming'] += mfsm.results['serviceselectortiming']
+            # oilpumptiming -> add
+            self.results['oilpumptiming'] += mfsm.results['oilpumptiming']
+            # run2_failed -> add
+            self.results['run2_failed'] += mfsm.results['run2_failed']
             # runlog
             # runlogdetail
             # run4_failed
