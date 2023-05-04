@@ -589,6 +589,7 @@ class FSMOperator:
                 p_from = self._p_from,
                 p_to = self._p_to,
                 run2 = all(self.starts['run2']),
+                runs_completed = self.runs_completed,
                 starts = len(self.starts)
             )
             self.results['info'].update(self._e.description)
@@ -607,6 +608,7 @@ class FSMOperator:
                 e = Engine.from_sn(mp, results['info']['serialNumber'])
                 lfsm = cls(e, p_from=results['info']['p_from'], p_to=results['info']['p_to'])
                 lfsm.results = results
+                lfsm.runs_completed = results['info'].get('runs_completed',[])
                 return lfsm
         else:
             raise FileNotFoundError(filename)
@@ -614,7 +616,9 @@ class FSMOperator:
     def merge_results(self, mfsm):
         #check is it is the same engine
         if (mfsm.results['sn'] == self.results['sn']):
+            print(f"\n***********************************")
             print(f"** Merging SN {self.results['sn']}")
+            print(f"***********************************")
             # fields to merge:
             # sn -> ok
             # save_date -> n/a
@@ -659,9 +663,9 @@ class FSMOperator:
             # oilpumptiming -> combine
             self.results['oilpumptiming'] += mfsm.results['oilpumptiming']
             # run2_failed -> combine
-            self.results['run2_failed'] += mfsm.results['run2_failed']
+            self.results['run2_failed'] = self.results.get('run2_failed',[]) + mfsm.results['run2_failed']
             # run4_failed -> combine
-            self.results['run4_failed'] += mfsm.results['run4_failed']
+            self.results['run4_failed'] = self.results.get('run4_failed',[]) + mfsm.results['run4_failed']
             print(f"\n** Merging dict elements :run2_content run4_content serviceselectortiming oilpumptiming run2_failed run4_failed")
             # runlog used/not stored
             # runlogdetail
