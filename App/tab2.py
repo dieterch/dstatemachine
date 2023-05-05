@@ -21,29 +21,22 @@ class Tab():
         self.title = '2. messages & FSM'
         self.tab2_out = widgets.Output()
         self.run2_chkbox = widgets.Checkbox(
-                value=False,
+                value=True,
                 description='FSM Run2',
-                disabled=False,
-                indent=False,
-                layout=widgets.Layout(width='100px'))
-
-        self.run2_refresh_chkbox = widgets.Checkbox(
-                value=False,
-                description='R2 Refresh',
                 disabled=False,
                 indent=False,
                 layout=widgets.Layout(width='100px'))
         
         self.run4_chkbox = widgets.Checkbox(
-                value=False,
+                value=True,
                 description='FSM Run4',
                 disabled=False,
                 indent=False,
                 layout=widgets.Layout(width='100px'))
 
-        self.run4_refresh_chkbox = widgets.Checkbox(
+        self.refresh_chkbox = widgets.Checkbox(
                 value=False,
-                description='R4 Refresh',
+                description='Refresh',
                 disabled=False,
                 indent=False,
                 layout=widgets.Layout(width='100px'))
@@ -124,7 +117,8 @@ class Tab():
         self.b_mergefsm = widgets.Button(
             description='Merge FSM\'s',
             disabled=False, 
-            button_style='primary')
+            button_style='primary',
+            layout=widgets.Layout(display='none'))
         self.b_mergefsm.on_click(self.fsm_merge) 
 
     @property
@@ -138,9 +132,8 @@ class Tab():
                 ]),
                 VBox([
                     self.run2_chkbox,
-                    self.run2_refresh_chkbox,
                     self.run4_chkbox,
-                    self.run4_refresh_chkbox,
+                    self.refresh_chkbox,
                     self.single_runs_chkbox
                 ]),
                 VBox([
@@ -187,6 +180,9 @@ class Tab():
             else: # engine was loaded from file
                 self.tab2_selected_engine.value = V.selected
                 self.b_loadmessages.description = 'append new messages'
+                self.b_mergefsm.layout.display = 'block'
+                self.b_runfsm.layout.display = 'none'
+                self.single_runs_chkbox.display = 'none'
                 self.check_buttons()
                 
         with self.tab2_out:        
@@ -243,10 +239,10 @@ class Tab():
                 V.fsm.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
                 #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
                 if self.run2_chkbox.value:
-                    V.fsm.run2(silent = False, p_refresh=self.run2_refresh_chkbox.value)
+                    V.fsm.run2(silent = False, p_refresh=self.refresh_chkbox.value)
                     #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
                 if self.run4_chkbox.value:
-                    V.fsm.run4(silent = False, p_refresh=self.run4_refresh_chkbox.value)
+                    V.fsm.run4(silent = False, p_refresh=self.refresh_chkbox.value)
                     #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
                 V.rdf = V.fsm.starts
                 self.check_buttons()
@@ -306,7 +302,7 @@ class Tab():
         with self.tab2_out:
             #tab2_out.clear_output()
             if V.fsm is not None:
-                V.fsm.run2(silent = False, debug=True, p_refresh=self.run2_refresh_chkbox.value)
+                V.fsm.run2(silent = False, debug=True, p_refresh=self.refresh_chkbox.value)
                 self.check_buttons()
                 V.rdf = V.fsm.starts
                 #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
@@ -316,7 +312,7 @@ class Tab():
         with self.tab2_out:
             #tab2_out.clear_output()
             if V.fsm is not None:
-                V.fsm.run4(silent = False, debug=True, p_refresh=self.run4_refresh_chkbox.value)
+                V.fsm.run4(silent = False, debug=True, p_refresh=self.refresh_chkbox.value)
                 self.check_buttons()
                 V.rdf = V.fsm.starts
                 #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
@@ -338,8 +334,8 @@ class Tab():
                 V.fsmappend = FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
                 V.fsmappend.run0(enforce=True, silent=False, debug=False)
                 V.fsmappend.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
-                V.fsmappend.run2(silent = False, p_refresh=self.run2_refresh_chkbox.value)
-                V.fsmappend.run4(silent = False, p_refresh=self.run4_refresh_chkbox.value)
+                V.fsmappend.run2(silent = False, p_refresh=self.refresh_chkbox.value)
+                V.fsmappend.run4(silent = False, p_refresh=self.refresh_chkbox.value)
                 V.fsm.merge_results(V.fsmappend)
 
     def check_buttons(self):

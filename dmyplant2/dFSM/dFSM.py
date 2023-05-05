@@ -626,6 +626,7 @@ class FSMOperator:
             # last_message
             print(f"\n** Merging lastmessage from {self.results['last_message']}")
             self.results['last_message'] = mfsm.results['last_message']
+            self._p_to = mfsm._p_to
             print(f"** Merging lastmessage to {self.results['last_message']}")
             # starts
             lastno = self.results['starts'][-1]['no']
