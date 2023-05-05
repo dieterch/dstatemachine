@@ -622,10 +622,6 @@ class FSMOperator:
             # fields to merge:
             # sn -> ok
             # save_date -> n/a
-            gap = mfsm.results['first_message']-self.results['last_message']
-            print(f"\n** Gap:{gap}")
-            print("no limitation to merge files that overlap or have big gaps, so be careful")
-            print("until i have a proper check in place.")
             # first_message -> stays the same
             # last_message
             print(f"\n** Merging lastmessage from {self.results['last_message']}")
@@ -633,9 +629,21 @@ class FSMOperator:
             print(f"** Merging lastmessage to {self.results['last_message']}")
             # starts
             lastno = self.results['starts'][-1]['no']
+            lastmode = self.results['starts'][-1]['mode']
+            nend = 10
+            for i in range(1,nend):
+                if self.results['starts'][-i]['starttime'] == mfsm.results['starts'][0]['starttime']:
+                    break
+            print(f"** Merging: Skipping first {i} Starts to align.")
+            if i == nend - 1:
+                raise ValueError('could not find matching starts in both files')
+            
             nextno = lastno + 1
-            for start in mfsm.results['starts']:
+            for start in mfsm.results['starts'][i:]:
                 start['no'] = nextno
+                # use state of first file until mode is defined in the 2nd file
+                if start['mode'] == 'undefined': 
+                    start['mode'] = lastmode
                 self.results['starts'].append(start)
                 nextno +=1
             print(f"\n** Merging: {lastno + 1} Starts in base file")

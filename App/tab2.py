@@ -210,7 +210,8 @@ class Tab():
                     #display(pd.DataFrame.from_dict(V.fsm.results['info'], orient='index').style.hide())
                     print()
                     pp(V.fsm.results['info'])
-                    self.t1.value = pd.to_datetime(V.fsm.results['info']['p_to'])
+                    #self.t1.value = pd.to_datetime(V.fsm.results['info']['p_to'])
+                    self.t1.value = pd.to_datetime(V.fsm.results['starts'][-3]['starttime'])
                     V.app.clear_all()
 
                 self.check_buttons()
