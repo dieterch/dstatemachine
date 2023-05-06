@@ -631,15 +631,15 @@ class FSMOperator:
             # starts
             lastno = self.results['starts'][-1]['no']
             lastmode = self.results['starts'][-1]['mode']
-            nend = 10
+            nend = len(self.results['starts']) # search for an exact time match from end to strt
             for i in range(1,nend):
                 if self.results['starts'][-i]['starttime'] == mfsm.results['starts'][0]['starttime']:
                     break
             print(f"** Merging: Skipping first {i} Starts to align.")
-            if i == nend - 1:
+            if i == nend - 1: # if no match was found, raise an error
                 raise ValueError('could not find matching starts in both files')
             
-            nextno = lastno + 1
+            nextno = lastno + 1 
             for start in mfsm.results['starts'][i:]:
                 start['no'] = nextno
                 # use state of first file until mode is defined in the 2nd file
