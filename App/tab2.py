@@ -114,12 +114,12 @@ class Tab():
             button_style='primary')
         self.b_savefsm.on_click(self.fsm_save) 
 
-        self.b_mergefsm = widgets.Button(
-            description='Merge FSM\'s',
+        self.b_appendfsm = widgets.Button(
+            description='Append FSM\'s',
             disabled=False, 
             button_style='primary',
             layout=widgets.Layout(display='none'))
-        self.b_mergefsm.on_click(self.fsm_merge) 
+        self.b_appendfsm.on_click(self.fsm_append) 
 
     @property
     def tab(self):
@@ -145,7 +145,7 @@ class Tab():
                     self.b_runfsm2,
                     self.b_runfsm4,
                     self.b_savefsm,
-                    self.b_mergefsm
+                    self.b_appendfsm
                 ])
             ])
         ],layout=widgets.Layout(min_height=V.hh))
@@ -180,7 +180,7 @@ class Tab():
             else: # engine was loaded from file
                 self.tab2_selected_engine.value = V.selected
                 self.b_loadmessages.description = 'append new messages'
-                self.b_mergefsm.layout.display = 'block'
+                self.b_appendfsm.layout.display = 'block'
                 self.b_runfsm.layout.display = 'none'
                 self.single_runs_chkbox.display = 'none'
                 self.check_buttons()
@@ -328,7 +328,7 @@ class Tab():
         #     if V.fsm is not None:
         #         V.fsm.store()
 
-    def fsm_merge(self,b):
+    def fsm_append(self,b):
         if V.fsm is not None:
             with self.tab2_out:
                 V.fsmappend = FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
@@ -336,7 +336,8 @@ class Tab():
                 V.fsmappend.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
                 V.fsmappend.run2(silent = False, p_refresh=self.refresh_chkbox.value)
                 V.fsmappend.run4(silent = False, p_refresh=self.refresh_chkbox.value)
-                V.fsm.merge_results(V.fsmappend)
+                V.fsm.append_results(V.fsmappend)
+                V.rdf = V.fsm.starts
 
     def check_buttons(self):
         #for b in [ self.b_loadmessages, self.b_runfsm, self.b_resultsfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:

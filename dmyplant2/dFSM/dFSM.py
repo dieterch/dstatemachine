@@ -613,7 +613,7 @@ class FSMOperator:
         else:
             raise FileNotFoundError(filename)
 
-    def merge_results(self, mfsm):
+    def append_results(self, mfsm):
         #check is it is the same engine
         if (mfsm.results['sn'] == self.results['sn']):
             print(f"\n***********************************")
