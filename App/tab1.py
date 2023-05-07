@@ -7,7 +7,7 @@ import ipywidgets as widgets
 import solara
 from IPython.display import display
 from ipyfilechooser import FileChooser
-from dmyplant2 import cred, MyPlant, FSMOperator, save_json, load_json
+import dmyplant2 as dmp2
 from .common import V, init_query_list, get_query_list, save_query_list,mp, tabs_out, tabs_html, status
 
 #cred()
@@ -175,7 +175,7 @@ class Tab():
         self.tab1_out.clear_output()
         if self.fdialog.selected.endswith('.dfsm'):
             status('tab1', f'⌛ loading {self.fdialog.selected}')
-            V.fsm = FSMOperator.load_results(mp, self.fdialog.selected)
+            V.fsm = dmp2.FSMOperator.load_results(mp, self.fdialog.selected)
             V.e = V.fsm._e
             V.rdf = V.fsm.starts
             self.selected_engine.value = V.selected = V.fsm.results['info']['Name']

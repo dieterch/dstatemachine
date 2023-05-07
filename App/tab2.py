@@ -8,7 +8,8 @@ from datetime import datetime, date, timedelta
 import ipywidgets as widgets
 from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 from IPython.display import display
-from dmyplant2 import cred, MyPlant, Engine, FSMOperator, get_size
+import dmyplant2 as dmp2
+#from dmyplant2 import cred, MyPlant, Engine, FSMOperator, get_size
 from App import tab1
 from App.common import loading_bar, V, mp, tabs_out, tabs_html
 
@@ -163,7 +164,7 @@ class Tab():
                         self.b_loadmessages.description = self.load_message_text
                         tabs_out.clear_output()
                         print(f'tab2 - ⌛ loading Myplant Engine Data for "{V.selected}" ...')
-                        V.e=Engine.from_fleet(mp, V.fleet.iloc[int(V.selected_number)])
+                        V.e=dmp2.Engine.from_fleet(mp, V.fleet.iloc[int(V.selected_number)])
                         self.tab2_selected_engine.value = V.selected
                         self.t1.value = pd.to_datetime(V.e['Commissioning Date'])
                         self.check_buttons()
@@ -199,7 +200,7 @@ class Tab():
             try:
                 if V.fsm is None:
                     print('tab2 - ⌛ loading messages.')
-                    V.fsm = FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
+                    V.fsm = dmp2.FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
                     tabs_out.clear_output()
                 else:
                     print('tab2 - ⌛ appending messages.')
@@ -331,7 +332,7 @@ class Tab():
     def fsm_append(self,b):
         if V.fsm is not None:
             with self.tab2_out:
-                V.fsmappend = FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
+                V.fsmappend = dmp2.FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
                 V.fsmappend.run0(enforce=True, silent=False, debug=False)
                 V.fsmappend.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
                 V.fsmappend.run2(silent = False, p_refresh=self.refresh_chkbox.value)

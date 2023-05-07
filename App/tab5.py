@@ -5,8 +5,9 @@ from datetime import datetime, date
 import ipywidgets as widgets
 from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 from IPython.display import display
-from dmyplant2 import cred, MyPlant
-from dmyplant2 import FSMOperator, cplotdef #, Engine
+import dmyplant2 as dmp2
+#from dmyplant2 import cred, MyPlant
+#from dmyplant2 import FSMOperator, cplotdef #, Engine
 from App.common import loading_bar, V, mp, tabs_out
 
 #########################################
@@ -117,7 +118,7 @@ class Tab():
                     (str(lookup).upper() in str(x['name']).upper()) or \
                     (str(lookup).upper() in str(x['unit']).upper()) or \
                     ((str(lookup).upper() in str(x['myPlantName']).upper() and self.txt_lookup_chbx.value)))
-            df = MyPlant.get_dataitems()
+            df = dmp2.MyPlant.get_dataitems()
             df = df[df.apply(lambda x: sfun(x), axis=1)].reset_index()
             if self.txt_lookup_exclude.value != '':
                 lookup = self.txt_lookup_exclude.value
