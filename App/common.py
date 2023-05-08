@@ -8,11 +8,12 @@ pd.set_option("display.precision", 2)
 import ipywidgets as widgets
 from IPython.display import display, HTML
 from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
-from dmyplant2 import cred, MyPlant, Engine, cplotdef, save_json, load_json
+import dmyplant2 as dmp2
+#from dmyplant2 import cred, MyPlant, Engine, cplotdef, save_json, load_json
 
 try:
-    cred()
-    mp = MyPlant(0)
+    dmp2.cred()
+    mp = dmp2.MyPlant(0)
 except Exception as err:
     print(str(err))
     sys.exit(1)
@@ -146,14 +147,14 @@ def get_query_list_pkl():
 
 def get_query_list():
     if os.path.exists(query_list_fn):
-        query_list=load_json(query_list_fn)
+        query_list=dmp2.load_json(query_list_fn)
     else:  
         query_list = init_query_list()
     return query_list
 
 def save_query_list(query_list):
     query_list = [q for q in query_list if not q in ['312','316','320','412','416','420','424','612','616','620','624','920']]
-    save_json(query_list_fn,query_list)    
+    dmp2.save_json(query_list_fn,query_list)    
 
 
 global V
@@ -166,7 +167,7 @@ class V:
     fleet = None
     e = None
     lfigures = myfigures()
-    plotdef, vset = cplotdef(mp, lfigures)
+    plotdef, vset = dmp2.cplotdef(mp, lfigures)
     fsm = None
     rdf = pd.DataFrame([])
     selected = ''
@@ -179,7 +180,7 @@ class V:
 def init_globals():
     V.e = None
     V.lfigures = myfigures()
-    V.plotdef, V.vset = cplotdef(mp, V.lfigures)
+    V.plotdef, V.vset = dmp2.cplotdef(mp, V.lfigures)
     V.fsm = None
     V.rdf = pd.DataFrame([])
     V.query_list = get_query_list()

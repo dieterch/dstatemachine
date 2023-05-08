@@ -5,13 +5,10 @@ import numpy as np
 import traceback
 from datetime import datetime, date
 import ipywidgets as widgets
+import bokeh
 from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 from IPython.display import display, HTML
-from dmyplant2 import (
-    cred, MyPlant, FSMOperator, startstopFSM, cplotdef, load_data, get_cycle_data2, get_cycle_data3, count_columns, 
-    FSM_splot, FSM_add_Notations, FSM_add_StatesLines, disp_alarms, disp_warnings, FSM_add_Alarms,
-    FSM_add_Warnings, bokeh_show, cvset
-)
+import dmyplant2 as dmp2
 from bokeh.io import push_notebook #, show, output_notebook
 from App.common import loading_bar, V, myfigures, mp, tabs_out, status
 #from App import tab2
@@ -163,7 +160,7 @@ class Tab():
         if V.fsm is not None: 
             self.selected_engine.value = V.selected
             V.lfigures = myfigures(V.e)
-            V.plotdef, V.vset = cplotdef(mp, V.lfigures)
+            V.plotdef, V.vset = dmp2.cplotdef(mp, V.lfigures)
             rdf = V.fsm.starts
             if not rdf.empty:
                 if self.sno_slider.max != (rdf.shape[0]-1):
@@ -171,6 +168,9 @@ class Tab():
             with tabs_out:
                 tabs_out.clear_output()
                 print('tab4')
+
+    def cleartab(self):
+        self.tab4_out.clear_output() 
 
     def calc_time_range(self,sv):
         tns = pd.to_datetime((sv['starttime'].timestamp() + self.time_range.value[0]/100.0 * (sv['endtime']-sv['starttime']).seconds), unit='s')
@@ -193,9 +193,9 @@ class Tab():
         try:
             if self.par_data_chkbox.value:
                 # load data using concurrent.futures
-                data = get_cycle_data3(fsm, startversuch, cycletime=1, silent=True, p_data=vset, t_range=plot_range, p_refresh=self.refresh_chkbox.value)
+                data = dmp2.get_cycle_data3(fsm, startversuch, cycletime=1, silent=True, p_data=vset, t_range=plot_range, p_refresh=self.refresh_chkbox.value)
             else:
-                data = get_cycle_data2(fsm, startversuch, cycletime=1, silent=True, p_data=vset, t_range=plot_range, p_refresh=self.refresh_chkbox.value)
+                data = dmp2.get_cycle_data2(fsm, startversuch, cycletime=1, silent=True, p_data=vset, t_range=plot_range, p_refresh=self.refresh_chkbox.value)
 
             data['bmep'] = data.apply(lambda x: V.fsm._e._calc_BMEP(x['Power_PowerAct'], V.fsm._e.Speed_nominal), axis=1)
             data['power_diff'] = pd.Series(np.gradient(data['Power_PowerAct']))
@@ -220,10 +220,10 @@ class Tab():
                     display(HTML(self.html_table(startversuch[V.fsm.results['run2_content'][res2_dict[doplot]]])))
                 dset = lfigures[doplot]
                 ltitle = f"{ftitle} | {doplot}"
-                if count_columns(dset) > 12: # no legend, if too many lines.
-                    fig = FSM_splot(fsm, startversuch, data, dset, title=ltitle, legend=False, figsize=self.pfigsize)
+                if dmp2.count_columns(dset) > 12: # no legend, if too many lines.
+                    fig = dmp2.FSM_splot(fsm, startversuch, data, dset, title=ltitle, legend=False, figsize=self.pfigsize)
                 else:
-                    fig = FSM_splot(fsm, startversuch, data, dset, title=ltitle, figsize=self.pfigsize)
+                    fig = dmp2.FSM_splot(fsm, startversuch, data, dset, title=ltitle, figsize=self.pfigsize)
 
                 if self.export_chkbox.value:
                     ndata = data[['time','Various_Values_SpeedAct']]
@@ -234,17 +234,17 @@ class Tab():
                     data.to_excel(fn2)
 
                 if self.annotations_chkbox.value:
-                    fig = FSM_add_Notations(fig, fsm, startversuch)
+                    fig = dmp2.FSM_add_Notations(fig, fsm, startversuch)
                 if self.stateslines_chkbox.value:
-                    fig = FSM_add_StatesLines(fig, fsm, startversuch)
+                    fig = dmp2.FSM_add_StatesLines(fig, fsm, startversuch)
 
-                disp_alarms(startversuch)
-                disp_warnings(startversuch)
+                dmp2.disp_alarms(startversuch)
+                dmp2.disp_warnings(startversuch)
                 if self.alarms_chkbox.value:
-                    fig = FSM_add_Alarms(fig, fsm, startversuch)
+                    fig = dmp2.FSM_add_Alarms(fig, fsm, startversuch)
                 if self.warnings_chkbox.value:
-                    fig = FSM_add_Warnings(fig, fsm, startversuch)
-                fig_handles.append(bokeh_show(fig, notebook_handle=True))
+                    fig = dmp2.FSM_add_Warnings(fig, fsm, startversuch)
+                fig_handles.append(dmp2.bokeh_show(fig, notebook_handle=True))
             for h in fig_handles:
                 push_notebook(handle=h)
 
@@ -300,7 +300,7 @@ class Tab():
                 links = 'links to Myplant: | '
                 time_new_start, time_new_end = self.calc_time_range(sv)
                 for doplot in self.plot_selection.options:
-                    ll = V.e.myplant_workbench_link(time_new_start, time_new_end, V.e.get_dataItems(dat=cvset(mp,V.lfigures[doplot])),doplot)
+                    ll = V.e.myplant_workbench_link(time_new_start, time_new_end, V.e.get_dataItems(dat=dmp2.cvset(mp,V.lfigures[doplot])),doplot)
                     links += f'{ll} | '
                 #self.start_table.value = links + ltitle + '<br>' + r
                 with self.start_table:

@@ -1,13 +1,15 @@
 import os
 import sys
 import pickle
+from pprint import pprint as pp
 from turtle import width
 import pandas as pd; pd.options.mode.chained_assignment = None
 from datetime import datetime, date, timedelta
 import ipywidgets as widgets
 from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 from IPython.display import display
-from dmyplant2 import cred, MyPlant, Engine, FSMOperator, get_size
+import dmyplant2 as dmp2
+#from dmyplant2 import cred, MyPlant, Engine, FSMOperator, get_size
 from App import tab1
 from App.common import loading_bar, V, mp, tabs_out, tabs_html
 
@@ -20,29 +22,22 @@ class Tab():
         self.title = '2. messages & FSM'
         self.tab2_out = widgets.Output()
         self.run2_chkbox = widgets.Checkbox(
-                value=False,
+                value=True,
                 description='FSM Run2',
-                disabled=False,
-                indent=False,
-                layout=widgets.Layout(width='100px'))
-
-        self.run2_refresh_chkbox = widgets.Checkbox(
-                value=False,
-                description='R2 Refresh',
                 disabled=False,
                 indent=False,
                 layout=widgets.Layout(width='100px'))
         
         self.run4_chkbox = widgets.Checkbox(
-                value=False,
+                value=True,
                 description='FSM Run4',
                 disabled=False,
                 indent=False,
                 layout=widgets.Layout(width='100px'))
 
-        self.run4_refresh_chkbox = widgets.Checkbox(
+        self.refresh_chkbox = widgets.Checkbox(
                 value=False,
-                description='R4 Refresh',
+                description='Refresh',
                 disabled=False,
                 indent=False,
                 layout=widgets.Layout(width='100px'))
@@ -82,7 +77,7 @@ class Tab():
 
         self.b_resultsfsm = widgets.Button(
             description='Results',
-            disabled=True, 
+            disabled=False, 
             button_style='primary')
         self.b_resultsfsm.on_click(self.fsm_results)
 
@@ -120,6 +115,13 @@ class Tab():
             button_style='primary')
         self.b_savefsm.on_click(self.fsm_save) 
 
+        self.b_appendfsm = widgets.Button(
+            description='Append FSM\'s',
+            disabled=False, 
+            button_style='primary',
+            layout=widgets.Layout(display='none'))
+        self.b_appendfsm.on_click(self.fsm_append) 
+
     @property
     def tab(self):
         return VBox([
@@ -131,9 +133,8 @@ class Tab():
                 ]),
                 VBox([
                     self.run2_chkbox,
-                    self.run2_refresh_chkbox,
                     self.run4_chkbox,
-                    self.run4_refresh_chkbox,
+                    self.refresh_chkbox,
                     self.single_runs_chkbox
                 ]),
                 VBox([
@@ -145,6 +146,7 @@ class Tab():
                     self.b_runfsm2,
                     self.b_runfsm4,
                     self.b_savefsm,
+                    self.b_appendfsm
                 ])
             ])
         ],layout=widgets.Layout(min_height=V.hh))
@@ -162,7 +164,7 @@ class Tab():
                         self.b_loadmessages.description = self.load_message_text
                         tabs_out.clear_output()
                         print(f'tab2 - ⌛ loading Myplant Engine Data for "{V.selected}" ...')
-                        V.e=Engine.from_fleet(mp, V.fleet.iloc[int(V.selected_number)])
+                        V.e=dmp2.Engine.from_fleet(mp, V.fleet.iloc[int(V.selected_number)])
                         self.tab2_selected_engine.value = V.selected
                         self.t1.value = pd.to_datetime(V.e['Commissioning Date'])
                         self.check_buttons()
@@ -179,20 +181,36 @@ class Tab():
             else: # engine was loaded from file
                 self.tab2_selected_engine.value = V.selected
                 self.b_loadmessages.description = 'append new messages'
+                self.b_appendfsm.layout.display = 'block'
+                self.b_runfsm.layout.display = 'none'
+                self.single_runs_chkbox.display = 'none'
                 self.check_buttons()
                 
         with self.tab2_out:        
             self.tab2_out.clear_output()
             self.check_buttons()
-                    
+
+    def cleartab(self):
+        self.tab2_out.clear_output() 
+
     def fsm_loadmessages(self,b):
         with tabs_out:
             tabs_out.clear_output()
-            print('tab2 - ⌛ loading messages.')
             #display(loading_bar)
             try:
-                V.fsm = FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
-                tabs_out.clear_output()
+                if V.fsm is None:
+                    print('tab2 - ⌛ loading messages.')
+                    V.fsm = dmp2.FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
+                    tabs_out.clear_output()
+                else:
+                    print('tab2 - ⌛ appending messages.')
+                    #display(pd.DataFrame.from_dict(V.fsm.results['info'], orient='index').style.hide())
+                    print()
+                    pp(V.fsm.results['info'])
+                    #self.t1.value = pd.to_datetime(V.fsm.results['info']['p_to'])
+                    self.t1.value = pd.to_datetime(V.fsm.results['starts'][-3]['starttime'])
+                    V.app.clear_all()
+
                 self.check_buttons()
             except Exception as err:
                 tabs_out.clear_output()
@@ -222,15 +240,18 @@ class Tab():
                 V.fsm.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
                 #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
                 if self.run2_chkbox.value:
-                    V.fsm.run2(silent = False, p_refresh=self.run2_refresh_chkbox.value)
+                    V.fsm.run2(silent = False, p_refresh=self.refresh_chkbox.value)
                     #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
                 if self.run4_chkbox.value:
-                    V.fsm.run4(silent = False, p_refresh=self.run4_refresh_chkbox.value)
+                    V.fsm.run4(silent = False, p_refresh=self.refresh_chkbox.value)
                     #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
                 V.rdf = V.fsm.starts
                 self.check_buttons()
 
     def print_result(self):
+            print()
+            print(f"First message: {V.fsm.first_message}")
+            print(f"Last message: {V.fsm.last_message}")
             print()
             print(f"Starts: {V.rdf.shape[0]}") 
             print(f"Runs: {V.fsm.runs_completed}")
@@ -282,7 +303,7 @@ class Tab():
         with self.tab2_out:
             #tab2_out.clear_output()
             if V.fsm is not None:
-                V.fsm.run2(silent = False, debug=True, p_refresh=self.run2_refresh_chkbox.value)
+                V.fsm.run2(silent = False, debug=True, p_refresh=self.refresh_chkbox.value)
                 self.check_buttons()
                 V.rdf = V.fsm.starts
                 #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
@@ -292,13 +313,14 @@ class Tab():
         with self.tab2_out:
             #tab2_out.clear_output()
             if V.fsm is not None:
-                V.fsm.run4(silent = False, debug=True, p_refresh=self.run4_refresh_chkbox.value)
+                V.fsm.run4(silent = False, debug=True, p_refresh=self.refresh_chkbox.value)
                 self.check_buttons()
                 V.rdf = V.fsm.starts
                 #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
 
     def fsm_save(self,b):
         if V.fsm is not None:
+            #filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}_{V.fsm.last_message.strftime("%Y%m%d")}.dfsm'
             filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm'
             with tabs_out:
                 print(filename)
@@ -307,8 +329,20 @@ class Tab():
         #     if V.fsm is not None:
         #         V.fsm.store()
 
+    def fsm_append(self,b):
+        if V.fsm is not None:
+            with self.tab2_out:
+                V.fsmappend = dmp2.FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
+                V.fsmappend.run0(enforce=True, silent=False, debug=False)
+                V.fsmappend.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
+                V.fsmappend.run2(silent = False, p_refresh=self.refresh_chkbox.value)
+                V.fsmappend.run4(silent = False, p_refresh=self.refresh_chkbox.value)
+                V.fsm.append_results(V.fsmappend)
+                V.rdf = V.fsm.starts
+
     def check_buttons(self):
-        for b in [ self.b_loadmessages, self.b_runfsm, self.b_resultsfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
+        #for b in [ self.b_loadmessages, self.b_runfsm, self.b_resultsfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
+        for b in [ self.b_loadmessages, self.b_runfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
             b.disabled=True
         if ((V.e is not None) and (self.t1.value is not None) and (self.t2.value is not None)):
             self.b_loadmessages.disabled=False
@@ -323,13 +357,13 @@ class Tab():
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1])):
             self.b_runfsm1.disabled = True
             self.b_runfsm2.disabled = False            
-            self.b_resultsfsm.disabled = False            
+            #self.b_resultsfsm.disabled = False            
             self.b_savefsm.disabled = False
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1,2])):
             self.b_runfsm1.disabled = True
             self.b_runfsm2.disabled = True            
             self.b_runfsm4.disabled = False            
-            self.b_resultsfsm.disabled = False            
+            #self.b_resultsfsm.disabled = False            
             self.b_savefsm.disabled = False
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1,2])):
             self.b_runfsm2.disabled = True            

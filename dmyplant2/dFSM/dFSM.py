@@ -589,6 +589,7 @@ class FSMOperator:
                 p_from = self._p_from,
                 p_to = self._p_to,
                 run2 = all(self.starts['run2']),
+                runs_completed = self.runs_completed,
                 starts = len(self.starts)
             )
             self.results['info'].update(self._e.description)
@@ -607,9 +608,84 @@ class FSMOperator:
                 e = Engine.from_sn(mp, results['info']['serialNumber'])
                 lfsm = cls(e, p_from=results['info']['p_from'], p_to=results['info']['p_to'])
                 lfsm.results = results
+                lfsm.runs_completed = results['info'].get('runs_completed',[])
                 return lfsm
         else:
             raise FileNotFoundError(filename)
+
+    def append_results(self, mfsm):
+        #check is it is the same engine
+        if (mfsm.results['sn'] == self.results['sn']):
+            print(f"\n***********************************")
+            print(f"** Merging SN {self.results['sn']}")
+            print(f"***********************************")
+            # fields to merge:
+            # sn -> ok
+            # save_date -> n/a
+            # first_message -> stays the same
+            # last_message
+            print(f"\n** Merging lastmessage from {self.results['last_message']}")
+            self.results['last_message'] = mfsm.results['last_message']
+            self._p_to = mfsm._p_to
+            print(f"** Merging lastmessage to {self.results['last_message']}")
+            # starts
+            lastno = self.results['starts'][-1]['no']
+            lastmode = self.results['starts'][-1]['mode']
+            nend = len(self.results['starts']) # search for an exact time match from end to strt
+            for i in range(1,nend):
+                if self.results['starts'][-i]['starttime'] == mfsm.results['starts'][0]['starttime']:
+                    break
+            print(f"** Merging: Skipping first {i} Starts to align.")
+            if i == nend - 1: # if no match was found, raise an error
+                raise ValueError('could not find matching starts in both files')
+            
+            nextno = lastno + 1 
+            for start in mfsm.results['starts'][i:]:
+                start['no'] = nextno
+                # use state of first file until mode is defined in the 2nd file
+                if start['mode'] == 'undefined': 
+                    start['mode'] = lastmode
+                self.results['starts'].append(start)
+                nextno +=1
+            print(f"\n** Merging: {lastno + 1} Starts in base file")
+            print(f"** Merging Added: {nextno - lastno -1} Starts")
+            # starts_counter
+            self.results['starts_counter'] = self.results['starts'][-1]['no'] + 1
+            print(f"** Merging starts_counter: {self.results['starts_counter']}")
+            # stops
+            lastno = self.results['stops'][-1]['no']
+            nextno = lastno + 1
+            for stop in mfsm.results['stops']:
+                stop['no'] = nextno
+                self.results['stops'].append(stop)
+                nextno +=1
+            print(f"\n** Merging: {lastno + 1} Stops in base file")
+            print(f"** Merging Added: {nextno - lastno -1} Stops")
+            # stops_counter
+            self.results['stops_counter'] = self.results['stops'][-1]['no'] + 1
+            print(f"** Merging stops_counter: {self.results['stops_counter']}")
+            # run2_content, run4_content -> use merged content (will be detected if not present in older dats)
+            self.results['run2_content'] = mfsm.results['run2_content']
+            self.results['run4_content'] = mfsm.results['run4_content']
+            # serviceselectortiming -> not yet i,plemented
+            self.results['serviceselectortiming'] += mfsm.results['serviceselectortiming']
+            # oilpumptiming -> combine
+            self.results['oilpumptiming'] += mfsm.results['oilpumptiming']
+            # run2_failed -> combine
+            self.results['run2_failed'] = self.results.get('run2_failed',[]) + mfsm.results['run2_failed']
+            # run4_failed -> combine
+            self.results['run4_failed'] = self.results.get('run4_failed',[]) + mfsm.results['run4_failed']
+            print(f"\n** Merging dict elements :run2_content run4_content serviceselectortiming oilpumptiming run2_failed run4_failed")
+            # runlog used/not stored
+            # runlogdetail
+            last_startno = self.results['runlogdetail'][-1]['startno']
+            print(f"** Mergine runlogdetail (*Bug startnumbers start at - 1 currently), last start {last_startno}")
+            for msg in mfsm.results['runlogdetail']:
+                msg['startno'] += last_startno + 2 # should be +1, for bug mitigation reasons +2 
+                self.results['runlogdetail'].append(msg)
+            print(f"** Mergine runlogdetails done")
+        else:
+            raise ValueError(f"** Merging different Engines {self.results['sn']} != {mfsm.results['sn']}")    
 
     @property        
     def exists(self):

@@ -5,8 +5,7 @@ from datetime import datetime, date
 import ipywidgets as widgets
 #from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 from IPython.display import display, HTML
-from dmyplant2 import cred, MyPlant
-from dmyplant2 import FSMOperator, equal_adjust, dbokeh_chart, bokeh_show
+import dmyplant2 as dmp2
 from App.common import loading_bar, V, overview_figure, tabs_out, disp_alwr, display_fmt
 #from App import tab2
 
@@ -111,6 +110,9 @@ class Tab():
             tabs_out.clear_output()
             print('tab3')
 
+    def cleartab(self):
+        self.tab3_out.clear_output() 
+
     def filter_msg(self, df, mnum):
         return any([m['msg']['name'] == str(mnum) for m in df['alarms']] + [m['msg']['name'] == str(mnum) for m in df['warnings']])
 
@@ -139,12 +141,12 @@ class Tab():
                     
                     #dfigsize = (20,10)
                     dset = overview_figure()['basic']
-                    dset = equal_adjust(dset, self.rde, do_not_adjust=[-1])
+                    dset = dmp2.equal_adjust(dset, self.rde, do_not_adjust=[-1])
                     ftitle = f"{V.fsm._e}"
                     try:
-                        fig = dbokeh_chart(self.rde, dset, style='both', figsize=V.dfigsize ,title=ftitle);
+                        fig = dmp2.dbokeh_chart(self.rde, dset, style='both', figsize=V.dfigsize ,title=ftitle);
                         print()
-                        bokeh_show(fig)
+                        dmp2.bokeh_show(fig)
                     except Exception as err:
                         print('\n','no figure to display, Error: ', str(err))
             
@@ -153,32 +155,32 @@ class Tab():
                     #dset2 = equal_adjust(dset2, self.rde, do_not_adjust=[-1])
                     ftitle = f"{V.fsm._e}"
                     try:
-                        fig2 = dbokeh_chart(self.rde, dset2, style='both', figsize=V.dfigsize ,title=ftitle);
+                        fig2 = dmp2.dbokeh_chart(self.rde, dset2, style='both', figsize=V.dfigsize ,title=ftitle);
                         print()
-                        bokeh_show(fig2)
+                        dmp2.bokeh_show(fig2)
                     except Exception as err:
                         print('\n','no figure to display, Error: ', str(err))
                         
-                    # vec = V.fsm.results['run2_content']['startstop']
-                    # print()
-                    # display(_=self.rde[vec].hist(bins=30,figsize=(20,20)))
-                    # print()
-                    # display(self.rde[vec].describe()
-                    #             .style
-                    #             .set_table_styles([
-                    #                 {'selector':'table,td,th', 'props': 'font-size: 0.7rem; '}
-                    #             ])
-                    #             .format(
-                    #         precision=0,
-                    #         na_rep='-',
-                    #         formatter={
-                    #             'starter': "{:.1f}",
-                    #             'idle': "{:.1f}",
-                    #             'PressBoost_max': "{:.2f}",
-                    #             'ramprate':"{:.2f}",
-                    #             'runout': lambda x: f"{x:0.1f}"
-                    #         }
-                    #     ))
+                    vec = V.fsm.results['run2_content']['startstop']
+                    print()
+                    display(_=self.rde[vec].hist(bins=30,figsize=(20,20)))
+                    print()
+                    display(self.rde[vec].describe()
+                                .style
+                                .set_table_styles([
+                                    {'selector':'table,td,th', 'props': 'font-size: 0.7rem; '}
+                                ])
+                                .format(
+                            precision=0,
+                            na_rep='-',
+                            formatter={
+                                'starter': "{:.1f}",
+                                'idle': "{:.1f}",
+                                'PressBoost_max': "{:.2f}",
+                                'ramprate':"{:.2f}",
+                                'runout': lambda x: f"{x:0.1f}"
+                            }
+                        ))
                     print()
                     if self.show_startlist.value:
                         display(self.rde[['starttime'] + V.fsm.results['run2_content']['startstop']][::-1]

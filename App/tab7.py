@@ -6,8 +6,7 @@ import ipywidgets as widgets
 #from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 from bokeh.models import Span
 from IPython.display import display
-from dmyplant2 import cred, MyPlant, equal_adjust, dbokeh_chart, bokeh_show
-from dmyplant2 import FSMOperator, cplotdef #, Engine
+import dmyplant2 as dmp2
 from App.common import loading_bar, V, tabs_out
 
 #########################################
@@ -86,10 +85,10 @@ class Tab():
                     #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
                     dr2set2_c = [r for r in dr2set2 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
  
-                    dr2set2 = equal_adjust(dr2set2_c, rde, do_not_adjust=['no'], minfactor=0.95, maxfactor=1.2)
+                    dr2set2 = dmp2.equal_adjust(dr2set2_c, rde, do_not_adjust=['no'], minfactor=0.95, maxfactor=1.2)
                     ftitle = f"{V.fsm._e}"
-                    fig2 = dbokeh_chart(rde, dr2set2, style='both', figsize=self.dfigsize ,title=ftitle);
-                    bokeh_show(fig2)
+                    fig2 = dmp2.dbokeh_chart(rde, dr2set2, style='both', figsize=self.dfigsize ,title=ftitle);
+                    dmp2.bokeh_show(fig2)
 
                     
                     if self.cb_loadcap.value:
@@ -105,17 +104,17 @@ class Tab():
                             {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
                             ]
                     try:
-                        dr2set2 = equal_adjust(dr2set2, rde, do_not_adjust=['no'], minfactor=1.0, maxfactor=1.1)
+                        dr2set2 = dmp2.equal_adjust(dr2set2, rde, do_not_adjust=['no'], minfactor=1.0, maxfactor=1.1)
                     except Exception as err:
                         print(f'Error: {str(err)}')
                     ntitle = ftitle + ' | BMEP at Start vs TJ Gas Temperature in °C '
-                    fig3 = dbokeh_chart(rde, dr2set2, x='TJ_GasTemp1_at_Min', style='circle', figsize=self.dfigsize ,title=ntitle);
+                    fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasTemp1_at_Min', style='circle', figsize=self.dfigsize ,title=ntitle);
                     fig3.add_layout(Span(location=V.fsm._e.BMEP,
                             dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
                     fig3.add_layout(Span(location=20.0,
                             dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
 
-                    bokeh_show(fig3)
+                    dmp2.bokeh_show(fig3)
                     
                     dr2set2 = [
                             {'col':['targetload'],'ylim': [4100, 4700], 'color':'red', 'unit':'kW'},
@@ -128,18 +127,18 @@ class Tab():
                     try:
                         #Check, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
                         dr2set2_c = [r for r in dr2set2 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
-                        dr2set2 = equal_adjust(dr2set2_c, rde, do_not_adjust=['no'], minfactor=1.0, maxfactor=1.1)
+                        dr2set2 = dmp2.equal_adjust(dr2set2_c, rde, do_not_adjust=['no'], minfactor=1.0, maxfactor=1.1)
                     except Exception as err:
                         print(f'Error: {str(err)}')
                         
                     ntitle = ftitle + ' | BMEP at Start vs TJ TJ_GasDiffPressMin in mbar '
-                    fig3 = dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle);
+                    fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle);
                     fig3.add_layout(Span(location=V.fsm._e.BMEP,
                             dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
                     #fig3.add_layout(Span(location=20.0,
                     #        dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
 
-                    bokeh_show(fig3)            
+                    dmp2.bokeh_show(fig3)            
                     
                 print()
                 display(rde[V.fsm.results['run4_content']['stop']].describe().style.format(precision=2, na_rep='-'))                
