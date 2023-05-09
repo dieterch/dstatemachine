@@ -49,7 +49,7 @@ def myfigures(e = None):
         {'col':['TecJet_GasDiffPress'],'_ylim': [0, 3], 'color':'olive', 'unit':'mbar'},
         {'col':['TecJet_ValvePos1'],'ylim': [0, 200], 'color':'purple', 'unit':'%'},
         ],
-        'lubrication' : [
+        'hydraulics' : [
         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
         {'col':['Hyd_PressCrankCase'],'ylim': [-100, 100], 'color':'orange', 'unit':'mbar'},
@@ -58,13 +58,13 @@ def myfigures(e = None):
         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
         {'col':['Hyd_TempOil','Hyd_TempCoolWat','Hyd_TempWatRetPreEng'],'ylim': [0, 110], 'color':['#2171b5','orangered','hotpink'], 'unit':'°C'},
         ],
-        'exhaust' : [
+        'exh_detail' : [
         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
         {'col':func_cyl('Exhaust_TempCyl*'),'ylim': [300, 700], 'unit':'°C'},
         ],
-        'exhaust2' : [
+        'exhaust' : [
         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
@@ -216,10 +216,11 @@ def disp_alwr(row, key):
         th {
             border: 0px solid grey;
             border-collapse: collapse;
-            padding: 0px 14px 0px 2px; 
+            padding: 0px; 
             margin: 0px;
             font-size:0.7rem;
-            /* min-width: 100px; */
+            line-height: 18px;
+            min-width: 110px;
         }
     </style>'''
     ll = []

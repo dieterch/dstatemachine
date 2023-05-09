@@ -24,7 +24,7 @@ class Tab():
             description='forget starts with power below',
             disabled=False,
             indent=False,
-            layout=widgets.Layout(max_width='220px')
+            layout=widgets.Layout(max_width='320px')
         )
 
         self.t_loadcap = widgets.IntText(
@@ -35,6 +35,24 @@ class Tab():
 
         self.t_loadcaplabel = widgets.Label(
             value="%"
+        )
+        
+        self.cb_spreadcap = widgets.Checkbox(
+            value=False,
+            description='forget starts with Exhaust spread below',
+            disabled=False,
+            indent=False,
+            layout=widgets.Layout(max_width='320px')
+        )
+
+        self.t_spreadcap = widgets.IntText(
+            #description='%:',
+            value=80,
+            layout=widgets.Layout(max_width='120px')
+        )
+
+        self.t_spreadcaplabel = widgets.Label(
+            value="°C"
         )
 
         self.b_tecjet = widgets.Button(
@@ -81,6 +99,7 @@ class Tab():
     def tab(self):
         return widgets.VBox([
             widgets.HBox([self.cb_loadcap, self.t_loadcap, self.t_loadcaplabel]),
+            widgets.HBox([self.cb_spreadcap, self.t_spreadcap, self.t_spreadcaplabel]),
             widgets.HBox([self.b_tecjet,self.b_exhaust,self.b_sync,self.b_oil,self.b_stop]),
             self.tab6_out],
             layout=widgets.Layout(min_height=V.hh))
@@ -127,9 +146,14 @@ class Tab():
                     fig2 = dmp2.dbokeh_chart(rde, dr2set2, style='both', figsize=self.dfigsize ,title=ftitle);
                     dmp2.bokeh_show(fig2)
 
-                    
+                    print()
+                    print('Figures below are filtered by targetload & Spread:')
+                    print()
                     if self.cb_loadcap.value:
                         rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    if self.cb_spreadcap.value:
+                        rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
+
                     rde['bmep'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['targetload'], V.fsm._e.Speed_nominal), axis=1)
                     rde['bmep2'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['maxload'], V.fsm._e.Speed_nominal), axis=1)
                     dr2set2 = [
@@ -200,50 +224,49 @@ class Tab():
                 rda = rda[thefilter].reset_index(drop='index')
                 #rdb = rda
                 rde = rda #.fillna('')
-                # self._content = ['ExTCylMax',
-                #                 'ExTCylMaxPos',
-                #                 'ExTCylMin@Max',
-                #                 'ExTCylMin@MaxPos',
-                #                 'ExSpread@Max',
-                #                 'PWR@ExTCylMax',
-                #                 'ExSpreadMax',
-                #                 'ExTCylMax@SpreadMax',
-                #                 'ExTCylMax@SpreadMaxPos',
-                #                 'ExTCylMin@SpreadMax',
-                #                 'ExTCylMin@SpreadMaxPos',
-                #                 'PWR@ExSpreadMax']
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
-                    ntitle = f"{V.fsm._e}" + ' | Exhaust Temperture at Start, Max, Min & Spread (@ Max Temp)'
-                    dr2set3 = [
-                            {'col':['ExTCylMax','ExTCylMin@Max'],'_ylim': [4200, 4800], 'color':['FireBrick','Crimson'], 'unit':'°C'},
-                            {'col':['ExTCylMaxNo','ExTCylMin@MaxNo'],'_ylim': [1, 24], 'color':['Thistle','Plum'], 'unit':'-'},
-                            {'col':['ExSpread@Max'],'_ylim': [0, 100], 'color':['dodgerblue'], 'unit':'°C'},
-                            {'col':['PWR@ExTCylMax'],'_ylim': [0, 100], 'color':['red'], 'unit':'kW'},
-                            {'col':['synchronize'],'_ylim':(-20,400), 'color':'brown', 'unit':'sec'},
-                            #{'col':['startpreparation'],'_ylim':(-1000,800), 'unit':'sec'},
-                            {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
-                            ]
-                    dr2set3 = dmp2.equal_adjust(dr2set3, rde, do_not_adjust=[5], minfactor=0.95, maxfactor=1.2)
-                    fig4 = dmp2.dbokeh_chart(rde, dr2set3, style='both', figsize=self.dfigsize ,title=ntitle);
-                    dmp2.bokeh_show(fig4)
-
+                    
                     print()
+                    print('Figures below are filtered by targetload & Spread:')
+                    print()
+                    if self.cb_loadcap.value:
+                        rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    if self.cb_spreadcap.value:
+                        rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
+
                     ntitle = f"{V.fsm._e}" + ' | Exhaust Temperture at Start, Max, Min & Spread (@ Max Spread)'
                     if self.cb_loadcap.value:
                         rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
                     dr2set4 = [
-                            {'col':['ExTCylMax@SpreadMax','ExTCylMin@SpreadMax'],'_ylim': [4200, 4800], 'color':['FireBrick','Crimson'], 'unit':'°C'},
-                            {'col':['ExTCylMax@SpreadMaxNo','ExTCylMin@SpreadMaxNo'],'_ylim': [1, 24], 'color':['Thistle','Plum'], 'unit':'-'},
-                            {'col':['ExSpreadMax'],'_ylim': [0, 100], 'color':['dodgerblue'], 'unit':'°C'},
-                            {'col':['PWR@ExSpreadMax'],'_ylim': [0, 100], 'color':['red'], 'unit':'kW'},
+                            {'col':['ExSpread@Spread'],'_ylim': [0, 100], 'color':['dodgerblue'], 'unit':'°C'},
+                            {'col':['ExSpread@MaxTemp','ExSpread@MinTemp'],'_ylim': [4200, 4800], 'color':['FireBrick','Crimson'], 'unit':'°C'},
+                            {'col':['ExSpread@MaxPos','ExSpread@MinPos'],'_ylim': [1, 24], 'color':['Thistle','Plum'], 'unit':'-'},
+                            {'col':['ExSpread@PWR'],'_ylim': [0, 100], 'color':['red'], 'unit':'kW'},
                             {'col':['synchronize'],'_ylim':(-20,400), 'color':'brown', 'unit':'sec'},
+                            {'col':['W','A','isuccess'],'_ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
                             #{'col':['startpreparation'],'_ylim':(-1000,800), 'unit':'sec'},
                             {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
                             ]
                     dr2set4 = dmp2.equal_adjust(dr2set4, rde, do_not_adjust=[5], minfactor=0.95, maxfactor=1.2)
                     fig5 = dmp2.dbokeh_chart(rde, dr2set4, style='both', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig5)
+
+                    print()
+                    ntitle = f"{V.fsm._e}" + ' | Exhaust Temperture at Start, Max, Min & Spread (@ Max Temp)'
+                    dr2set3 = [
+                            {'col':['ExTCylMax@Spread'],'_ylim': [0, 100], 'color':['dodgerblue'], 'unit':'°C'},
+                            {'col':['ExTCylMax@MaxTemp','ExTCylMax@MinTemp'],'_ylim': [4200, 4800], 'color':['FireBrick','Crimson'], 'unit':'°C'},
+                            {'col':['ExTCylMax@MaxPos','ExTCylMax@MinPos'],'_ylim': [1, 24], 'color':['Thistle','Plum'], 'unit':'-'},
+                            {'col':['ExTCylMax@PWR'],'_ylim': [0, 100], 'color':['red'], 'unit':'kW'},
+                            {'col':['synchronize'],'_ylim':(-20,400), 'color':'brown', 'unit':'sec'},
+                            {'col':['W','A','isuccess'],'_ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
+                            #{'col':['startpreparation'],'_ylim':(-1000,800), 'unit':'sec'},
+                            {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
+                            ]
+                    dr2set3 = dmp2.equal_adjust(dr2set3, rde, do_not_adjust=[5], minfactor=0.95, maxfactor=1.2)
+                    fig4 = dmp2.dbokeh_chart(rde, dr2set3, style='both', figsize=self.dfigsize ,title=ntitle);
+                    dmp2.bokeh_show(fig4)
 
                     print()
                     display(rde[V.fsm.results['run2_content']['exhaust']].describe()
@@ -273,6 +296,15 @@ class Tab():
                 # ['rpm_dmax','rpm_dmin','rpm_spread', 'Lambda_rpm_max', 'TempOil_rpm_max', 'TempCoolWat_rpm_max']
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
+
+                    print()
+                    print('Figures below are filtered by targetload & Spread:')
+                    print()
+                    if self.cb_loadcap.value:
+                        rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    if self.cb_spreadcap.value:
+                        rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
+                    
                     dr2set3 = [
                         {'col':['rpm_dmax'],'_ylim': [4200, 4800], 'color':'red', 'unit':'rpm'},
                         {'col':['rpm_dmin'],'_ylim': [0, 100], 'color':'blue', 'unit':'rpm'},
@@ -289,9 +321,6 @@ class Tab():
                     ntitle = f"{V.fsm._e}" + ' | Speed Max, Min & Spread between Speedmax and GC On'
                     fig4 = dmp2.dbokeh_chart(rde, dr2set3, style='both', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig4)
-
-                    if self.cb_loadcap.value:
-                        rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
 
                     dr2set3 = [
                         {'col':['rpm_dmax'],'_ylim': [4200, 4800], 'color':'red', 'unit':'rpm'},
@@ -350,8 +379,13 @@ class Tab():
                     fig4 = dmp2.dbokeh_chart(rde, dr2set3, style='both', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig4)
 
+                    print()
+                    print('Figures below are filtered by targetload & Spread:')
+                    print()
                     if self.cb_loadcap.value:
                         rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    if self.cb_spreadcap.value:
+                        rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
 
                     dr2set3 = [
                         {'col':['PressOilMax'],'_ylim': [0, 20], 'color':'brown', 'unit':'bar'},

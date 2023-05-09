@@ -16,7 +16,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from dmyplant2.dEngine import Engine
-from .dFSMToolBox import Target_load_Collector, Exhaust_temp_Collector, Tecjet_Collector, Sync_Current_Collector, Oil_Start_Collector, Stop_Collector, load_data, msg_smalltxt
+from .dFSMToolBox import Target_load_Collector, Exhaust_temp_Collector, Tecjet_Collector, Sync_Current_Collector, Oil_Start_Collector, Rampdown_Collector,Coolrun_Collector,Runout_Collector,load_data, msg_smalltxt
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -680,7 +680,7 @@ class FSMOperator:
             # runlogdetail
             last_startno = self.results['runlogdetail'][-1]['startno']
             print(f"** Mergine runlogdetail (*Bug startnumbers start at - 1 currently), last start {last_startno}")
-            for msg in mfsm.results['runlogdetail']:
+            for msg in mfsm.results['runlogdetail'][i:]:
                 msg['startno'] += last_startno + 2 # should be +1, for bug mitigation reasons +2 
                 self.results['runlogdetail'].append(msg)
             print(f"** Mergine runlogdetails done")
@@ -1062,15 +1062,21 @@ class FSMOperator:
 ####################################
 
     def run4_collectors_setup(self):
-        self.stop_collector = Stop_Collector(self.results, self._e)
-        
+        self.rampdown_collector = Rampdown_Collector(self.results, self._e)
+        self.coolrun_collector = Coolrun_Collector(self.results, self._e)
+        self.runout_collector = Runout_Collector(self.results, self._e)
+
     def run4_collectors_register(self, startversuch):
         vset = []; tfrom=None; tto=None
-        vset, tfrom, tto = self.stop_collector.register(startversuch, vset, tfrom, tto)
+        vset, tfrom, tto = self.rampdown_collector.register(startversuch, vset, tfrom, tto)
+        vset, tfrom, tto = self.coolrun_collector.register(startversuch, vset, tfrom, tto)
+        vset, tfrom, tto = self.runout_collector.register(startversuch, vset, tfrom, tto)
         return vset, tfrom, tto 
 
     def run4_collectors_collect(self, startversuch, results, data):
-        results = self.stop_collector.collect(startversuch, results, data)
+        results = self.rampdown_collector.collect(startversuch, results, data)
+        results = self.coolrun_collector.collect(startversuch, results, data)
+        results = self.runout_collector.collect(startversuch, results, data)
         return results
 
     def run4(self, silent=False, debug=False, p_refresh=False):
