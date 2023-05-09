@@ -14,6 +14,7 @@ import dmyplant2 as dmp2
 try:
     dmp2.cred()
     mp = dmp2.MyPlant(0)
+    mp._fetch_installed_base(); # refresh local installed fleet database
 except Exception as err:
     print(str(err))
     sys.exit(1)
