@@ -361,24 +361,24 @@ class Engine:
             ret.update({ res.get('id',None) : [res.get('name',None),res.get('unit', '')] })
         return ret
 
-    def assess_dataItems(self, testset, p_ts):
-        result = []
-        for item in testset:
-            try:
-                testdata = self._mp.hist_data(
-                    self.id,
-                    itemIds= self.get_dataItems([item]), 
-                    p_from=p_ts, 
-                    p_to=p_ts.shift(seconds=1), 
-                    timeCycle=1,
-                    silent=True)
-                result.append({
-                    item:True, 
-                    'value': testdata[item].iloc[0] if not testdata.empty else -9999,
-                    })
-            except ValueError as err:
-                result.append({item:False})
-        return result
+    # def assess_dataItems(self, testset, p_ts):
+    #     result = []
+    #     for item in testset:
+    #         try:
+    #             testdata = self._mp.hist_data(
+    #                 self.id,
+    #                 itemIds= self.get_dataItems([item]), 
+    #                 p_from=p_ts, 
+    #                 p_to=p_ts.shift(seconds=30), 
+    #                 timeCycle=30,
+    #                 silent=True)
+    #             result.append({
+    #                 item:True, 
+    #                 'value': testdata[item].iloc[0] if not testdata.empty else -9999,
+    #                 })
+    #         except ValueError as err:
+    #             result.append({item:False})
+    #     return result
 
     def dataItemsCyl(self, name):
         return [name.replace('*',f"{i+1:02d}") for i in range(self.Cylinders)]
@@ -600,8 +600,8 @@ class Engine:
                     self.id,
                     itemIds= self.get_dataItems([item]), 
                     p_from=p_ts, 
-                    p_to=p_ts.shift(seconds=1), 
-                    timeCycle=1,
+                    p_to=p_ts.shift(seconds=30), 
+                    timeCycle=30,
                     silent=True)
                 result.append({
                     item:True, 
@@ -624,7 +624,7 @@ class Engine:
         """
         try:
             res = self._mp.historical_dataItem(
-                self['id'], itemId, mp_ts(timestamp)).get('value', None)
+                self.id, itemId, mp_ts(timestamp))
         except Exception as e:
             print(e)
             res = None

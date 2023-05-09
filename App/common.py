@@ -69,12 +69,14 @@ def myfigures(e = None):
         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
+        {'col':['Exhaust_TempHexIn'], 'ylim': [0,700], 'color': 'purple', 'unit':'°C'},
         {'col':func_cyl('Exhaust_TempCyl*'),'ylim': [0, 700], 'unit':'°C'},
         ],
         'valvenoise' : [
         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
+        {'col':['Exhaust_TempHexIn'], 'ylim': [0,700], 'color': 'purple', 'unit':'°C'},
         {'col':func_cyl('Knock_Valve_Noise_Cyl*'),'ylim': [0, 12000], 'unit':'mV'},
         ],
         'knocking' : [

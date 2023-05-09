@@ -309,13 +309,13 @@ class MyPlant:
 
 
 ############# CHATGPT variante
-    def fetchdata(self, url):
+    def fetchdata(self, url, num_retries=3):
         """login and return data based on url"""
         #self.login()
         logging.debug(f'url: {url}')
 
         retries = 0
-        while retries < 3:
+        while retries <= num_retries:
             try:
                 headers = {'x-seshat-token': self.app_token}
                 response = type(self)._session.get(burl + url, headers=headers, timeout=30)
@@ -329,8 +329,9 @@ class MyPlant:
                 #if isinstance(e, requests.exceptions.Timeout):
                 #    self.login() # login again if a timeout occurred
                 retries += 1
-                time.sleep(5)
-        logging.error(f'Failed to fetch data from {url} after 3 attempts')
+                if retries <= num_retries:
+                    time.sleep(5)
+        logging.error(f'Failed to fetch data from {url} after {num_retries} attempts')
         return None
 #############
 
@@ -465,7 +466,7 @@ class MyPlant:
         r = self._request('post', endpoint='graphql', json_data={'query': graphQL})
         return r.json()
 
-    def historical_dataItem(self, id, itemId, timestamp):
+    def historical_dataItem(self, id, itemId, timestamp, num_retries=3):
         """
         url: /asset/{assetId}/dataitem/{dataItemId}
         Parameters:
@@ -475,8 +476,9 @@ class MyPlant:
         timestamp   int64   Optional,  timestamp in the DataItem history to query for.
         highres     Boolean Whether to use high res data. Much slower but gives the raw data.
         """
-        res = self.fetchdata(url=fr"/asset/{id}/dataitem/{itemId}?timestamp={timestamp}")
-        return res['value']
+        res = self.fetchdata(url=fr"/asset/{id}/dataitem/{itemId}?timestamp={timestamp}", num_retries=num_retries)
+        if res is not None:
+            return res['value']
 
     # def history_dataItem(self, id, itemId, p_from, p_to, timeCycle=3600):
     #     """

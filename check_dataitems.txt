@@ -1,0 +1,1382 @@
+ATD1                                          0.0      nan      1. ATD information for the table
+ATD2                                          0.0      nan      2. ATD information for the table
+Aux_CH4Cont                                   0.0      %        CH4 content
+Aux_GasPress                                  0.0      mbar     Gas pressure
+Aux_GasRail_rDPr_SetAct                       0.0      nan      Mainchamber gas train set-actual deviation
+Aux_GasRail_rPr_Out_Calc                      -0.95    nan      Gas pressure gas train outlet - calculated
+Aux_GasRail_rPr_a_Filt                        0.0      nan      Mainchamber gas train gas pressure after filter
+Aux_GasRail_rPr_sp                            5.84     nan      Mainchamber gastrain set pressure
+Aux_GasTemp                                   0.0      °C       Gas temperature
+Aux_GasVol                                    938.0    m3/h     Gas volume
+Aux_O2Cont                                    0.0      %        O2 content
+Aux_PreChambDifPress                          -1498.0  mbar     Prechamber gas difference pressure
+Aux_PreChambGasTrainPress                     4.35     bar      Prechamber gas pressure (engine)
+Aux_PreChambGasTrain_rDPr_SetAct              0.0      nan      Prechamber gas train set-actual deviation
+Aux_PreChambGasTrain_rPr_Out                  0.0      nan      Prechamber gas pressure gastrain outlet
+Aux_PreChambGasTrain_rPr_a_Filt               6.94     bar      Prechamber gas train gas pressure after filter
+Aux_PreChambGasTrain_rPr_sp                   4.44     bar      Prechamber gastrain set pressure
+Aux_RoomTemp                                  24.2     °C       Room temperature
+Aux_SucPress                                  0.0      mbar     Suction pressure
+Aux_TempOutDoor                               0.0      °C       Outdoor temperature
+Aux_rPr_Baro                                  1001.0   bar      Barometric pressure
+Bear_Conrod_Temp01                            0.0      °C       Conrod bearing temperature 01
+Bear_Conrod_Temp02                            0.0      °C       Conrod bearing temperature 02
+Bear_Conrod_Temp03                            0.0      °C       Conrod bearing temperature 03
+Bear_Conrod_Temp04                            0.0      °C       Conrod bearing temperature 04
+Bear_Conrod_Temp05                            0.0      °C       Conrod bearing temperature 05
+Bear_Conrod_Temp06                            0.0      °C       Conrod bearing temperature 06
+Bear_Conrod_Temp07                            0.0      °C       Conrod bearing temperature 07
+Bear_Conrod_Temp08                            0.0      °C       Conrod bearing temperature 08
+Bear_Conrod_Temp09                            0.0      °C       Conrod bearing temperature 09
+Bear_Conrod_Temp10                            0.0      °C       Conrod bearing temperature 10
+Bear_Conrod_Temp11                            0.0      °C       Conrod bearing temperature 11
+Bear_Conrod_Temp12                            0.0      °C       Conrod bearing temperature 12
+Bear_Conrod_Temp13                            0.0      °C       Conrod bearing temperature 13
+Bear_Conrod_Temp14                            0.0      °C       Conrod bearing temperature 14
+Bear_Conrod_Temp15                            0.0      °C       Conrod bearing temperature 15
+Bear_Conrod_Temp16                            0.0      °C       Conrod bearing temperature 16
+Bear_Conrod_Temp17                            0.0      °C       Conrod bearing temperature 17
+Bear_Conrod_Temp18                            0.0      °C       Conrod bearing temperature 18
+Bear_Conrod_Temp19                            0.0      °C       Conrod bearing temperature 19
+Bear_Conrod_Temp20                            0.0      °C       Conrod bearing temperature 20
+Bear_Conrod_Temp21                            0.0      °C       Conrod bearing temperature 21
+Bear_Conrod_Temp22                            0.0      °C       Conrod bearing temperature 22
+Bear_Conrod_Temp23                            0.0      °C       Conrod bearing temperature 23
+Bear_Conrod_Temp24                            0.0      °C       Conrod bearing temperature 24
+Bear_Conrod_TempMax                           0.0      °C       Conrod bearing temperature maximum
+Bear_Main_Temp01                              0.0      °C       Main bearing temperature 01
+Bear_Main_Temp02                              0.0      °C       Main bearing temperature 02
+Bear_Main_Temp03                              0.0      °C       Main bearing temperature 03
+Bear_Main_Temp04                              0.0      °C       Main bearing temperature 04
+Bear_Main_Temp05                              0.0      °C       Main bearing temperature 05
+Bear_Main_Temp06                              0.0      °C       Main bearing temperature 06
+Bear_Main_Temp07                              0.0      °C       Main bearing temperature 07
+Bear_Main_Temp08                              0.0      °C       Main bearing temperature 08
+Bear_Main_Temp09                              0.0      °C       Main bearing temperature 09
+Bear_Main_Temp10                              0.0      °C       Main bearing temperature 10
+Bear_Main_Temp11                              0.0      °C       Main bearing temperature 11
+Bear_Main_TempMax                             0.0      °C       Main bearing temperature maximum
+CMU_rDPr_AirFilt_A                            0.0      mbar     Charge air filter difference pressure bank A
+CMU_rDPr_AirFilt_B                            0.0      mbar     Charge air filter difference pressure bank B
+CMU_rDPr_BbFilt                               3.4      mbar     Difference pressure blow by filter
+CMU_rDPr_Ch_AirFilt                           -20.0    mbar     Charge air filter difference pressure
+CMU_rDPr_Ch_FA                                12.0     nan      Flame arrestor differential pressure
+CMU_rDPr_Ch_HPCooler                          50.0     nan      Charge cooler differential pressure
+CMU_rDPr_Ch_LPCooler                          118.0    nan      Charge cooler differential pressure LP
+CMU_rPr_Ch_P2HP                               5.93     bar      Charge pressure after turbocharger
+CMU_rPr_Ch_P2LP                               2.86     bar      Charge pressure after low-pressure turbocharger
+CMU_rPr_Ch_P2bFA                              5.87     bar      Charge pressure before flame arrestor
+CMU_rPr_a_BbFilt                              -52.1    nan      Pressure after blowby filter
+CMU_rPr_a_BbFilt_A                            0.0      mbar     Pressure after blowby filter bank A
+CMU_rPr_a_BbFilt_B                            0.0      mbar     Pressure after blowby filter bank B
+CMU_rPr_f_BbFilt                              -48.5    nan      Pressure before blowby filter
+CMU_rPr_f_BbFilt_A                            0.0      mbar     Pressure before blowby filter bank A
+CMU_rPr_f_BbFilt_B                            0.0      mbar     Pressure before blowby filter bank B
+Combustion_Quality_Cyl01                      0.0      %        CQ 1
+Combustion_Quality_Cyl02                      0.0      %        CQ 2
+Combustion_Quality_Cyl03                      0.0      %        CQ 3
+Combustion_Quality_Cyl04                      0.0      %        CQ 4
+Combustion_Quality_Cyl05                      0.0      %        CQ 5
+Combustion_Quality_Cyl06                      0.0      %        CQ 6
+Combustion_Quality_Cyl07                      0.0      %        CQ 7
+Combustion_Quality_Cyl08                      0.0      %        CQ 8
+Combustion_Quality_Cyl09                      0.0      %        CQ 9
+Combustion_Quality_Cyl10                      0.0      %        CQ 10
+Combustion_Quality_Cyl11                      0.0      %        CQ 11
+Combustion_Quality_Cyl12                      0.0      %        CQ 12
+Combustion_Quality_Cyl13                      0.0      %        CQ 13
+Combustion_Quality_Cyl14                      0.0      %        CQ 14
+Combustion_Quality_Cyl15                      0.0      %        CQ 15
+Combustion_Quality_Cyl16                      0.0      %        CQ 16
+Combustion_Quality_Cyl17                      0.0      %        CQ 17
+Combustion_Quality_Cyl18                      0.0      %        CQ 18
+Combustion_Quality_Cyl19                      0.0      %        CQ 19
+Combustion_Quality_Cyl20                      0.0      %        CQ 20
+Combustion_Quality_Cyl21                      0.0      %        CQ 21
+Combustion_Quality_Cyl22                      0.0      %        CQ 22
+Combustion_Quality_Cyl23                      0.0      %        CQ 23
+Combustion_Quality_Cyl24                      0.0      %        CQ 24
+Combustion_Quality_Max_Cyl01                  0.0      %        CQ max 1
+Combustion_Quality_Max_Cyl02                  0.0      %        CQ max 2
+Combustion_Quality_Max_Cyl03                  0.0      %        CQ max 3
+Combustion_Quality_Max_Cyl04                  0.0      %        CQ max 4
+Combustion_Quality_Max_Cyl05                  0.0      %        CQ max 5
+Combustion_Quality_Max_Cyl06                  0.0      %        CQ max 6
+Combustion_Quality_Max_Cyl07                  0.0      %        CQ max 7
+Combustion_Quality_Max_Cyl08                  0.0      %        CQ max 8
+Combustion_Quality_Max_Cyl09                  0.0      %        CQ max 9
+Combustion_Quality_Max_Cyl10                  0.0      %        CQ max 10
+Combustion_Quality_Max_Cyl11                  0.0      %        CQ max 11
+Combustion_Quality_Max_Cyl12                  0.0      %        CQ max 12
+Combustion_Quality_Max_Cyl13                  0.0      %        CQ max 13
+Combustion_Quality_Max_Cyl14                  0.0      %        CQ max 14
+Combustion_Quality_Max_Cyl15                  0.0      %        CQ max 15
+Combustion_Quality_Max_Cyl16                  0.0      %        CQ max 16
+Combustion_Quality_Max_Cyl17                  0.0      %        CQ max 17
+Combustion_Quality_Max_Cyl18                  0.0      %        CQ max 18
+Combustion_Quality_Max_Cyl19                  0.0      %        CQ max 19
+Combustion_Quality_Max_Cyl20                  0.0      %        CQ max 20
+Combustion_Quality_Max_Cyl21                  0.0      %        CQ max 21
+Combustion_Quality_Max_Cyl22                  0.0      %        CQ max 22
+Combustion_Quality_Max_Cyl23                  0.0      %        CQ max 23
+Combustion_Quality_Max_Cyl24                  0.0      %        CQ max 24
+Cooling_Water_Degassing                       0.04     bar      Cooling Water Degassing
+Cooling_Water_TopUp                           0.03     bar      Cooling Water TopUp
+Count_Counter1                                32.0     nan      Counter 1
+Count_Counter10                               0.0      nan      Counter 10
+Count_Counter2                                0.0      nan      Counter 2
+Count_Counter3                                0.0      nan      Counter 3
+Count_Counter4                                0.0      nan      Counter 4
+Count_Counter5                                0.0      nan      Counter 5
+Count_Counter6                                0.0      nan      Counter 6
+Count_Counter7                                0.0      nan      Counter 7
+Count_Counter8                                0.0      nan      Counter 8
+Count_Counter9                                0.0      nan      Counter 9
+Count_Maintenance1                            322.0    h        Maintenance counter 1
+Count_Maintenance2                            4322.0   h        Maintenance counter 2
+Count_Maintenance3                            8322.0   h        Maintenance counter 3
+Count_Maintenance4                            28322.0  h        Maintenance counter 4
+Count_Maintenance5                            198.0    nan      Maintenance counter 5
+Count_Maintenance6                            598198.0 nan      Maintenance counter 6
+Count_Maintenance7                            698198.0 nan      Maintenance counter 7
+Count_Maintenance8                            798198.0 nan      Maintenance counter 8
+Count_OpHour                                  1802.0   h        Operating hours engine
+Count_OpHourGenSet                            1802.0   h        Operating hours genset
+Count_Start                                   777.0    nan      Starts
+CtrMixTemp_X                                  52.0     C        X - Current value controller 09
+CtrMixTemp_Y                                  0.0      %        Y/OP - Position controller 09
+CtrModule_Ctr10_W                             50.0     nan      W - Set value current controller 10
+CtrModule_Ctr10_X                             50.6     nan      X - Current value controller 10
+CtrModule_Ctr10_Y                             26.1     %        Y/OP - Position controller 10
+CtrModule_Ctr11_W                             0.0      nan      W - Set value current controller 11
+CtrModule_Ctr11_X                             0.0      nan      X - Current value controller 11
+CtrModule_Ctr11_Y                             0.0      %        Y/OP - Position controller 11
+CtrModule_Ctr12_W                             28.0     nan      W - Set value current controller 12
+CtrModule_Ctr12_X                             24.2     nan      X - Current value controller 12
+CtrModule_Ctr12_Y                             0.0      %        Y/OP - Position controller 12
+CtrModule_Ctr13_W                             0.0      nan      W - Set value current controller 13
+CtrModule_Ctr13_X                             0.0      nan      X - Current value controller 13
+CtrModule_Ctr13_Y                             0.0      %        Y/OP - Position controller 13
+CtrModule_Ctr14_W                             99.0     nan      W - Set value current controller 14
+CtrModule_Ctr14_X                             3276.6   nan      X - Current value controller 14
+CtrModule_Ctr14_Y                             100.0    nan      Y/OP - Position controller 14
+CtrModule_Ctr15_W                             52.0     nan      W - Set value current controller 15
+CtrModule_Ctr15_X                             52.0     nan      X - Current value controller 15
+CtrModule_Ctr15_Y                             0.0      nan      Y/OP - Position controller 15
+CtrModule_Ctr16_W                             80.2     nan      W - Set value current controller 16
+CtrModule_Ctr16_X                             80.2     nan      X - Current value controller 16
+CtrModule_Ctr16_Y                             0.0      nan      Y/OP - Position controller 16
+CtrModule_Ctr1_W                              48.0     nan      W - Set value current controller 01
+CtrModule_Ctr1_X                              50.6     nan      X - Current value controller 01
+CtrModule_Ctr1_Y                              100.0    %        Y/OP - Position controller 01
+CtrModule_Ctr2_W                              0.0      nan      W - Set value current controller 02
+CtrModule_Ctr2_X                              0.0      nan      X - Current value controller 02
+CtrModule_Ctr2_Y                              0.0      %        Y/OP - Position controller 02
+CtrModule_Ctr3_W                              0.0      nan      W - Set value current controller 03
+CtrModule_Ctr3_X                              0.0      nan      X - Current value controller 03
+CtrModule_Ctr3_Y                              0.0      %        Y/OP - Position controller 03
+CtrModule_Ctr4_W                              0.0      nan      W - Set value current controller 04
+CtrModule_Ctr4_X                              0.0      nan      X - Current value controller 04
+CtrModule_Ctr4_Y                              0.0      %        Y/OP - Position controller 04
+CtrModule_Ctr5_W                              0.0      nan      W - Set value current controller 05
+CtrModule_Ctr5_X                              0.0      nan      X - Current value controller 05
+CtrModule_Ctr5_Y                              0.0      %        Y/OP - Position controller 05
+CtrModule_Ctr6_W                              0.0      nan      W - Set value current controller 06
+CtrModule_Ctr6_X                              0.0      nan      X - Current value controller 06
+CtrModule_Ctr6_Y                              0.0      %        Y/OP - Position controller 06
+CtrModule_Ctr7_W                              0.0      nan      W - Set value current controller 07
+CtrModule_Ctr7_X                              0.0      nan      X - Current value controller 07
+CtrModule_Ctr7_Y                              0.0      %        Y/OP - Position controller 07
+CtrModule_Ctr8_W                              0.0      nan      W - Set value current controller 08
+CtrModule_Ctr8_X                              0.0      nan      X - Current value controller 08
+CtrModule_Ctr8_Y                              0.0      %        Y/OP - Position controller 08
+CylState_1                                    2.0      nan      Cylinder state Cyl. 01
+CylState_10                                   2.0      nan      Cylinder state Cyl. 10
+CylState_11                                   2.0      nan      Cylinder state Cyl. 11
+CylState_12                                   2.0      nan      Cylinder state Cyl. 12
+CylState_13                                   2.0      nan      Cylinder state Cyl. 13
+CylState_14                                   2.0      nan      Cylinder state Cyl. 14
+CylState_15                                   2.0      nan      Cylinder state Cyl. 15
+CylState_16                                   2.0      nan      Cylinder state Cyl. 16
+CylState_17                                   2.0      nan      Cylinder state Cyl. 17
+CylState_18                                   2.0      nan      Cylinder state Cyl. 18
+CylState_19                                   2.0      nan      Cylinder state Cyl. 19
+CylState_2                                    2.0      nan      Cylinder state Cyl. 02
+CylState_20                                   2.0      nan      Cylinder state Cyl. 20
+CylState_3                                    2.0      nan      Cylinder state Cyl. 03
+CylState_4                                    2.0      nan      Cylinder state Cyl. 04
+CylState_5                                    2.0      nan      Cylinder state Cyl. 05
+CylState_6                                    2.0      nan      Cylinder state Cyl. 06
+CylState_7                                    2.0      nan      Cylinder state Cyl. 07
+CylState_8                                    2.0      nan      Cylinder state Cyl. 08
+CylState_9                                    2.0      nan      Cylinder state Cyl. 09
+Estimated_Compressor_Bypass_Position          25.27    %        Estimated Compressor Bypass Position
+Estimated_IntakeTemperatureRange              0.0      C        Estimated IntakeTemperatureRange
+Exhaust_TCSpeedA                              41102.0  1000/min Turbocharger speed bank A
+Exhaust_TCSpeedB                              41267.0  1000/min Turbocharger speed bank B
+Exhaust_TCSpeedLPA                            0.0      1000/min Low-pressure TC speed bank A
+Exhaust_TCSpeedLPB                            0.0      1000/min Low-pressure TC speed bank B
+Exhaust_TempBoil                              0.0      C        Boiler temperature
+Exhaust_TempCatIn                             0.0      C        Catalysator inlet temp.
+Exhaust_TempCatOut                            0.0      C        Catalysator outlet temp.
+Exhaust_TempCyl01                             566.0    °C       Exhaust temperature cyl. 01
+Exhaust_TempCyl02                             565.0    °C       Exhaust temperature cyl. 02
+Exhaust_TempCyl03                             564.0    °C       Exhaust temperature cyl. 03
+Exhaust_TempCyl04                             568.0    °C       Exhaust temperature cyl. 04
+Exhaust_TempCyl05                             567.0    °C       Exhaust temperature cyl. 05
+Exhaust_TempCyl06                             566.0    °C       Exhaust temperature cyl. 06
+Exhaust_TempCyl07                             565.0    °C       Exhaust temperature cyl. 07
+Exhaust_TempCyl08                             568.0    °C       Exhaust temperature cyl. 08
+Exhaust_TempCyl09                             569.0    °C       Exhaust temperature cyl. 09
+Exhaust_TempCyl10                             567.0    °C       Exhaust temperature cyl. 10
+Exhaust_TempCyl11                             564.0    °C       Exhaust temperature cyl. 11
+Exhaust_TempCyl12                             563.0    °C       Exhaust temperature cyl. 12
+Exhaust_TempCyl13                             563.0    °C       Exhaust temperature cyl. 13
+Exhaust_TempCyl14                             564.0    °C       Exhaust temperature cyl. 14
+Exhaust_TempCyl15                             566.0    °C       Exhaust temperature cyl. 15
+Exhaust_TempCyl16                             568.0    °C       Exhaust temperature cyl. 16
+Exhaust_TempCyl17                             567.0    °C       Exhaust temperature cyl. 17
+Exhaust_TempCyl18                             568.0    °C       Exhaust temperature cyl. 18
+Exhaust_TempCyl19                             568.0    °C       Exhaust temperature cyl. 19
+Exhaust_TempCyl20                             566.0    °C       Exhaust temperature cyl. 20
+Exhaust_TempCyl21                             568.0    °C       Exhaust temperature cyl. 21
+Exhaust_TempCyl22                             568.0    °C       Exhaust temperature cyl. 22
+Exhaust_TempCyl23                             566.0    °C       Exhaust temperature cyl. 23
+Exhaust_TempCyl24                             565.0    °C       Exhaust temperature cyl. 24
+Exhaust_TempCylAvg                            566.0    °C       Exhaust temperature cyl. average
+Exhaust_TempCylMax                            569.0    °C       Exhaust temperature cyl. maximum
+Exhaust_TempCylMin                            563.0    °C       Exhaust temperature cyl. minimum
+Exhaust_TempETCIn                             0.0      °C       Turbocharger inlet temp.
+Exhaust_TempHexIn                             348.0    °C       Turbocharger outlet temperature
+Exhaust_TempHexOut                            0.0      °C       Heat exchanger outlet temp.
+Exhaust_TempLPTCOutletA                       350.0    °C       Exhaust gas temperature after low pressure TC A
+Exhaust_TempLPTCOutletB                       349.0    °C       Exhaust gas temperature after low pressure TC B
+G2_Knck_Abs01                                 0.0      nan      RKS knocking absolute cylinder 01
+G2_Knck_Abs02                                 0.0      nan      RKS knocking absolute cylinder 02
+G2_Knck_Abs03                                 0.0      nan      RKS knocking absolute cylinder 03
+G2_Knck_Abs04                                 0.0      nan      RKS knocking absolute cylinder 04
+G2_Knck_Abs05                                 0.0      nan      RKS knocking absolute cylinder 05
+G2_Knck_Abs06                                 0.0      nan      RKS knocking absolute cylinder 06
+G2_Knck_Abs07                                 0.0      nan      RKS knocking absolute cylinder 07
+G2_Knck_Abs08                                 0.0      nan      RKS knocking absolute cylinder 08
+G2_Knck_Abs09                                 0.0      nan      RKS knocking absolute cylinder 09
+G2_Knck_Abs10                                 0.0      nan      RKS knocking absolute cylinder 10
+G2_Knck_Abs11                                 0.0      nan      RKS knocking absolute cylinder 11
+G2_Knck_Abs12                                 0.0      nan      RKS knocking absolute cylinder 12
+G2_Knck_Abs13                                 0.0      nan      RKS knocking absolute cylinder 13
+G2_Knck_Abs14                                 0.0      nan      RKS knocking absolute cylinder 14
+G2_Knck_Abs15                                 0.0      nan      RKS knocking absolute cylinder 15
+G2_Knck_Abs16                                 0.0      nan      RKS knocking absolute cylinder 16
+G2_Knck_Abs17                                 0.0      nan      RKS knocking absolute cylinder 17
+G2_Knck_Abs18                                 0.0      nan      RKS knocking absolute cylinder 18
+G2_Knck_Abs19                                 0.0      nan      RKS knocking absolute cylinder 19
+G2_Knck_Abs20                                 0.0      nan      RKS knocking absolute cylinder 20
+G2_Knck_Rel01                                 0.0      nan      RKS knocking relative cylinder 01
+G2_Knck_Rel02                                 0.0      nan      RKS knocking relative cylinder 02
+G2_Knck_Rel03                                 0.0      nan      RKS knocking relative cylinder 03
+G2_Knck_Rel04                                 0.0      nan      RKS knocking relative cylinder 04
+G2_Knck_Rel05                                 0.0      nan      RKS knocking relative cylinder 05
+G2_Knck_Rel06                                 0.0      nan      RKS knocking relative cylinder 06
+G2_Knck_Rel07                                 0.0      nan      RKS knocking relative cylinder 07
+G2_Knck_Rel08                                 0.0      nan      RKS knocking relative cylinder 08
+G2_Knck_Rel09                                 0.0      nan      RKS knocking relative cylinder 09
+G2_Knck_Rel10                                 0.0      nan      RKS knocking relative cylinder 10
+G2_Knck_Rel11                                 0.0      nan      RKS knocking relative cylinder 11
+G2_Knck_Rel12                                 0.0      nan      RKS knocking relative cylinder 12
+G2_Knck_Rel13                                 0.0      nan      RKS knocking relative cylinder 13
+G2_Knck_Rel14                                 0.0      nan      RKS knocking relative cylinder 14
+G2_Knck_Rel15                                 0.0      nan      RKS knocking relative cylinder 15
+G2_Knck_Rel16                                 0.0      nan      RKS knocking relative cylinder 16
+G2_Knck_Rel17                                 0.0      nan      RKS knocking relative cylinder 17
+G2_Knck_Rel18                                 0.0      nan      RKS knocking relative cylinder 18
+G2_Knck_Rel19                                 0.0      nan      RKS knocking relative cylinder 19
+G2_Knck_Rel20                                 0.0      nan      RKS knocking relative cylinder 20
+Gasmixer_AirThrot                             0.0      mm       Air throttle
+Gasmixer_AirThrotEnc1                         0.0      %        Airthrottle position stepper 1
+Gasmixer_AirThrotEnc2                         0.0      %        Airthrottle position stepper 2
+Gasmixer_GasMix1Pos                           0.0      %        Gas mixer 1 position
+Gasmixer_GasMix2Pos                           0.0      %        Gas mixer 2 position
+Gasmixer_GasThrot                             0.0      %        Gas throttle
+Generator_TempBear1                           37.3     C        Generator bearing temp. DE
+Generator_TempBear2                           31.4     C        Generator bearing temp. NDE
+Generator_TempWind1                           52.6     C        Generator winding temp. L1
+Generator_TempWind2                           53.1     C        Generator winding temp. L2
+Generator_TempWind3                           52.1     C        Generator winding temp. L3
+Generator_VoltExit                            23.4     V        Generator voltage excitation
+Hyd_OilCount_Trend_ActiveEnergy               12942.0  nan      Oil counter active energy
+Hyd_OilCount_Trend_AvgPower                   4314.0   kW       Oil counter power average
+Hyd_OilCount_Trend_DeltaOpH                   3.0      nan      Oil counter operational hours delta
+Hyd_OilCount_Trend_OilConsumption             0.034    g/kWh    Oil counter oil consumption
+Hyd_OilCount_Trend_OilVolume                  500.0    ml       Oil counter oil volume
+Hyd_PressCoolWat                              2.81     bar      Cooling water pressure
+Hyd_PressCrankCase                            -45.1    mbar     Pressure crankcase
+Hyd_PressOil                                  4.13     bar      Oil pressure
+Hyd_PressOilDif                               0.67     bar      Oil difference pressure
+Hyd_PressTCOilFiltIn                          0.0      bar      Oil pressure TC filter inlet
+Hyd_TempCoolWat                               80.2     C        Cooling water temperature
+Hyd_TempOil                                   77.4     C        Oil temperature
+Hyd_TempOilPumpOut                            0.0      °C       Oil temperature pump outlet
+Hyd_TempWatRet                                0.0      C        Return water temperature
+Hyd_TempWatRetCoolOut                         0.0      °C       Return water temperature cooler outlet
+Hyd_TempWatRetPreEng                          50.6     C        Return water temp. before engine
+Ignition_ITPAvg                               19.9     °KW      ITP average
+Ignition_ITPCyl01                             19.9     °KW      ITP cyl. 01
+Ignition_ITPCyl02                             19.9     °KW      ITP cyl. 02
+Ignition_ITPCyl03                             19.9     °KW      ITP cyl. 03
+Ignition_ITPCyl04                             19.9     °KW      ITP cyl. 04
+Ignition_ITPCyl05                             19.9     °KW      ITP cyl. 05
+Ignition_ITPCyl06                             19.9     °KW      ITP cyl. 06
+Ignition_ITPCyl07                             19.9     °KW      ITP cyl. 07
+Ignition_ITPCyl08                             19.9     °KW      ITP cyl. 08
+Ignition_ITPCyl09                             19.9     °KW      ITP cyl. 09
+Ignition_ITPCyl10                             19.9     °KW      ITP cyl. 10
+Ignition_ITPCyl11                             19.9     °KW      ITP cyl. 11
+Ignition_ITPCyl12                             19.9     °KW      ITP cyl. 12
+Ignition_ITPCyl13                             19.9     °KW      ITP cyl. 13
+Ignition_ITPCyl14                             19.9     °KW      ITP cyl. 14
+Ignition_ITPCyl15                             19.9     °KW      ITP cyl. 15
+Ignition_ITPCyl16                             19.9     °KW      ITP cyl. 16
+Ignition_ITPCyl17                             19.9     °KW      ITP cyl. 17
+Ignition_ITPCyl18                             19.9     °KW      ITP cyl. 18
+Ignition_ITPCyl19                             19.9     °KW      ITP cyl. 19
+Ignition_ITPCyl20                             19.9     °KW      ITP cyl. 20
+Ignition_ITPCyl21                             19.9     °KW      ITP cyl. 21
+Ignition_ITPCyl22                             19.9     °KW      ITP cyl. 22
+Ignition_ITPCyl23                             19.9     °KW      ITP cyl. 23
+Ignition_ITPCyl24                             19.9     °KW      ITP cyl. 24
+Ignition_SAFI_ElectTemp1                      55.7     C        SAFI 1/2 electronic temperature
+Ignition_SAFI_ElectTemp10                     59.6     °C       SAFI 19/20 electronic temperature
+Ignition_SAFI_ElectTemp11                     59.5     C        SAFI 21/22 electronic temperature
+Ignition_SAFI_ElectTemp12                     58.7     C        SAFI 23/24 electronic temperature
+Ignition_SAFI_ElectTemp2                      52.1     C        SAFI 3/4 electronic temperature
+Ignition_SAFI_ElectTemp3                      54.0     C        SAFI 5/6 electronic temperature
+Ignition_SAFI_ElectTemp4                      53.6     C        SAFI 7/8 electronic temperature
+Ignition_SAFI_ElectTemp5                      54.6     C        SAFI 9/10 electronic temperature
+Ignition_SAFI_ElectTemp6                      54.2     C        SAFI 11/12 electronic temperature
+Ignition_SAFI_ElectTemp7                      57.3     °C       SAFI 13/14 electronic temperature
+Ignition_SAFI_ElectTemp8                      56.8     C        SAFI 15/16 electronic temperature
+Ignition_SAFI_ElectTemp9                      59.7     C        SAFI 17/18 electronic temperature
+Knock_KLS90_CurrSensor1                       0.0      mA       KLS90 knocking sensor 1
+Knock_KLS90_CurrSensor2                       0.0      mA       KLS90 knocking sensor 2
+Knock_KLS98_IntKnock_Cyl01                    -15.1    %        Knock integrator cyl. 01
+Knock_KLS98_IntKnock_Cyl02                    -15.1    %        Knock integrator cyl. 02
+Knock_KLS98_IntKnock_Cyl03                    -15.1    %        Knock integrator cyl. 03
+Knock_KLS98_IntKnock_Cyl04                    -15.1    %        Knock integrator cyl. 04
+Knock_KLS98_IntKnock_Cyl05                    -15.1    %        Knock integrator cyl. 05
+Knock_KLS98_IntKnock_Cyl06                    -15.1    %        Knock integrator cyl. 06
+Knock_KLS98_IntKnock_Cyl07                    -15.1    %        Knock integrator cyl. 07
+Knock_KLS98_IntKnock_Cyl08                    -15.1    %        Knock integrator cyl. 08
+Knock_KLS98_IntKnock_Cyl09                    -15.1    %        Knock integrator cyl. 09
+Knock_KLS98_IntKnock_Cyl10                    -15.1    %        Knock integrator cyl. 10
+Knock_KLS98_IntKnock_Cyl11                    -15.1    %        Knock integrator cyl. 11
+Knock_KLS98_IntKnock_Cyl12                    -15.1    %        Knock integrator cyl. 12
+Knock_KLS98_IntKnock_Cyl13                    -15.1    %        Knock integrator cyl. 13
+Knock_KLS98_IntKnock_Cyl14                    -15.1    %        Knock integrator cyl. 14
+Knock_KLS98_IntKnock_Cyl15                    -15.1    %        Knock integrator cyl. 15
+Knock_KLS98_IntKnock_Cyl16                    -15.1    %        Knock integrator cyl. 16
+Knock_KLS98_IntKnock_Cyl17                    -15.1    %        Knock integrator cyl. 17
+Knock_KLS98_IntKnock_Cyl18                    -15.1    %        Knock integrator cyl. 18
+Knock_KLS98_IntKnock_Cyl19                    -15.1    %        Knock integrator cyl. 19
+Knock_KLS98_IntKnock_Cyl20                    -15.1    %        Knock integrator cyl. 20
+Knock_KLS98_IntKnock_Cyl21                    -15.1    %        Knock integrator cyl. 21
+Knock_KLS98_IntKnock_Cyl22                    -15.1    %        Knock integrator cyl. 22
+Knock_KLS98_IntKnock_Cyl23                    -15.1    %        Knock integrator cyl. 23
+Knock_KLS98_IntKnock_Cyl24                    -15.1    %        Knock integrator cyl. 24
+Knock_KLS98_Knock_Cyl01                       253.0    mV       Knock noise cyl. 01
+Knock_KLS98_Knock_Cyl02                       141.0    mV       Knock noise cyl. 02
+Knock_KLS98_Knock_Cyl03                       158.0    mV       Knock noise cyl. 03
+Knock_KLS98_Knock_Cyl04                       174.0    mV       Knock noise cyl. 04
+Knock_KLS98_Knock_Cyl05                       141.0    mV       Knock noise cyl. 05
+Knock_KLS98_Knock_Cyl06                       79.0     mV       Knock noise cyl. 06
+Knock_KLS98_Knock_Cyl07                       141.0    mV       Knock noise cyl. 07
+Knock_KLS98_Knock_Cyl08                       189.0    mV       Knock noise cyl. 08
+Knock_KLS98_Knock_Cyl09                       158.0    mV       Knock noise cyl. 09
+Knock_KLS98_Knock_Cyl10                       141.0    mV       Knock noise cyl. 10
+Knock_KLS98_Knock_Cyl11                       220.0    mV       Knock noise cyl. 11
+Knock_KLS98_Knock_Cyl12                       110.0    mV       Knock noise cyl. 12
+Knock_KLS98_Knock_Cyl13                       158.0    mV       Knock noise cyl. 13
+Knock_KLS98_Knock_Cyl14                       141.0    mV       Knock noise cyl. 14
+Knock_KLS98_Knock_Cyl15                       220.0    mV       Knock noise cyl. 15
+Knock_KLS98_Knock_Cyl16                       110.0    mV       Knock noise cyl. 16
+Knock_KLS98_Knock_Cyl17                       189.0    mV       Knock noise cyl. 17
+Knock_KLS98_Knock_Cyl18                       110.0    mV       Knock noise cyl. 18
+Knock_KLS98_Knock_Cyl19                       141.0    mV       Knock noise cyl. 19
+Knock_KLS98_Knock_Cyl20                       141.0    mV       Knock noise cyl. 20
+Knock_KLS98_Knock_Cyl21                       174.0    mV       Knock noise cyl. 21
+Knock_KLS98_Knock_Cyl22                       141.0    mV       Knock noise cyl. 22
+Knock_KLS98_Knock_Cyl23                       189.0    mV       Knock noise cyl. 23
+Knock_KLS98_Knock_Cyl24                       269.0    mV       Knock noise cyl. 24
+Knock_PBC_KnockPress_Avg                      0.0      mbar     Knock signal average
+Knock_PBC_KnockPress_Cyl01                    0.0      mbar     Knock signal 01
+Knock_PBC_KnockPress_Cyl02                    0.0      mbar     Knock signal 02
+Knock_PBC_KnockPress_Cyl03                    0.0      mbar     Knock signal 03
+Knock_PBC_KnockPress_Cyl04                    0.0      mbar     Knock signal 04
+Knock_PBC_KnockPress_Cyl05                    0.0      mbar     Knock signal 05
+Knock_PBC_KnockPress_Cyl06                    0.0      mbar     Knock signal 06
+Knock_PBC_KnockPress_Cyl07                    0.0      mbar     Knock signal 07
+Knock_PBC_KnockPress_Cyl08                    0.0      mbar     Knock signal 08
+Knock_PBC_KnockPress_Cyl10                    0.0      mbar     Knock signal 10
+Knock_PBC_KnockPress_Cyl11                    0.0      mbar     Knock signal 11
+Knock_PBC_KnockPress_Cyl12                    0.0      mbar     Knock signal 12
+Knock_PBC_KnockPress_Cyl13                    0.0      mbar     Knock signal 13
+Knock_PBC_KnockPress_Cyl14                    0.0      mbar     Knock signal 14
+Knock_PBC_KnockPress_Cyl15                    0.0      mbar     Knock signal 15
+Knock_PBC_KnockPress_Cyl16                    0.0      mbar     Knock signal 16
+Knock_PBC_KnockPress_Cyl17                    0.0      mbar     Knock signal 17
+Knock_PBC_KnockPress_Cyl18                    0.0      mbar     Knock signal 18
+Knock_PBC_KnockPress_Cyl19                    0.0      mbar     Knock signal 19
+Knock_PBC_KnockPress_Cyl20                    0.0      mbar     Knock signal 20
+Knock_PBC_KnockPress_Cyl21                    0.0      mbar     Knock signal 21
+Knock_PBC_KnockPress_Cyl22                    0.0      mbar     Knock signal 22
+Knock_PBC_KnockPress_Cyl23                    0.0      mbar     Knock signal 23
+Knock_PBC_KnockPress_Cyl24                    0.0      mbar     Knock signal 24
+Knock_PBC_KnockPress_Max                      0.0      mbar     Knock signal maximum
+Knock_PBC_KnockPress_Min                      0.0      mbar     Knock signal minimum
+Knock_PBC_PMax_Avg                            0.0      bar      P-max average
+Knock_PBC_PMax_Cyl01                          0.0      bar      P-max 01
+Knock_PBC_PMax_Cyl02                          0.0      bar      P-max 02
+Knock_PBC_PMax_Cyl03                          0.0      bar      P-max 03
+Knock_PBC_PMax_Cyl04                          0.0      bar      P-max 04
+Knock_PBC_PMax_Cyl05                          0.0      bar      P-max 05
+Knock_PBC_PMax_Cyl06                          0.0      bar      P-max 06
+Knock_PBC_PMax_Cyl07                          0.0      bar      P-max 07
+Knock_PBC_PMax_Cyl08                          0.0      bar      P-max 08
+Knock_PBC_PMax_Cyl09                          0.0      bar      P-max 09
+Knock_PBC_PMax_Cyl10                          0.0      bar      P-max 10
+Knock_PBC_PMax_Cyl11                          0.0      bar      P-max 11
+Knock_PBC_PMax_Cyl12                          0.0      bar      P-max 12
+Knock_PBC_PMax_Cyl13                          0.0      bar      P-max 13
+Knock_PBC_PMax_Cyl14                          0.0      bar      P-max 14
+Knock_PBC_PMax_Cyl15                          0.0      bar      P-max 15
+Knock_PBC_PMax_Cyl16                          0.0      bar      P-max 16
+Knock_PBC_PMax_Cyl17                          0.0      bar      P-max 17
+Knock_PBC_PMax_Cyl18                          0.0      bar      P-max 18
+Knock_PBC_PMax_Cyl19                          0.0      bar      P-max 19
+Knock_PBC_PMax_Cyl20                          0.0      bar      P-max 20
+Knock_PBC_PMax_Cyl21                          0.0      bar      P-max 21
+Knock_PBC_PMax_Cyl22                          0.0      bar      P-max 22
+Knock_PBC_PMax_Cyl23                          0.0      bar      P-max 23
+Knock_PBC_PMax_Cyl24                          0.0      bar      P-max 24
+Knock_PBC_PMax_Max                            0.0      bar      P-max maximum
+Knock_PBC_PMax_Min                            0.0      bar      P-max minimum
+Knock_Valve_Noise_Cyl01                       463.0    mV       Mechanical noise cyl. 01
+Knock_Valve_Noise_Cyl02                       512.0    mV       Mechanical noise cyl. 02
+Knock_Valve_Noise_Cyl03                       525.0    mV       Mechanical noise cyl. 03
+Knock_Valve_Noise_Cyl04                       488.0    mV       Mechanical noise cyl. 04
+Knock_Valve_Noise_Cyl05                       366.0    mV       Mechanical noise cyl. 05
+Knock_Valve_Noise_Cyl06                       354.0    mV       Mechanical noise cyl. 06
+Knock_Valve_Noise_Cyl07                       390.0    mV       Mechanical noise cyl. 07
+Knock_Valve_Noise_Cyl08                       525.0    mV       Mechanical noise cyl. 08
+Knock_Valve_Noise_Cyl09                       415.0    mV       Mechanical noise cyl. 09
+Knock_Valve_Noise_Cyl10                       305.0    mV       Mechanical noise cyl. 10
+Knock_Valve_Noise_Cyl11                       378.0    mV       Mechanical noise cyl. 11
+Knock_Valve_Noise_Cyl12                       317.0    mV       Mechanical noise cyl. 12
+Knock_Valve_Noise_Cyl13                       573.0    mV       Mechanical noise cyl. 13
+Knock_Valve_Noise_Cyl14                       525.0    mV       Mechanical noise cyl. 14
+Knock_Valve_Noise_Cyl15                       305.0    mV       Mechanical noise cyl. 15
+Knock_Valve_Noise_Cyl16                       378.0    mV       Mechanical noise cyl. 16
+Knock_Valve_Noise_Cyl17                       463.0    mV       Mechanical noise cyl. 17
+Knock_Valve_Noise_Cyl18                       476.0    mV       Mechanical noise cyl. 18
+Knock_Valve_Noise_Cyl19                       476.0    mV       Mechanical noise cyl. 19
+Knock_Valve_Noise_Cyl20                       451.0    mV       Mechanical noise cyl. 20
+Knock_Valve_Noise_Cyl21                       415.0    mV       Mechanical noise cyl. 21
+Knock_Valve_Noise_Cyl22                       427.0    mV       Mechanical noise cyl. 22
+Knock_Valve_Noise_Cyl23                       354.0    mV       Mechanical noise cyl. 23
+Knock_Valve_Noise_Cyl24                       329.0    mV       Mechanical noise cyl. 24
+Leanox_P2Error                                0.0      mbar     LEANOX controller deviation
+Leanox_RatioMix                               0.0      %        Gas mixing ratio
+MMD_CountEnergAct                             8021.6   MWh      Energy active counter
+MMD_CountEnergReact                           6.1      Mvarh    Energy reactive counter
+MMD_CurrAvg                                   242.0    A        Current avarage
+MMD_PowerReact                                0.0      kvar     Power reactive
+MMD_VoltAvg                                   10687.0  V        Voltage average
+Monic_VoltAvg                                 25.1     kV       Ignition voltage average
+Monic_VoltCyl01                               25.5     kV       Ignition voltage cyl. 01
+Monic_VoltCyl02                               20.6     kV       Ignition voltage cyl. 02
+Monic_VoltCyl03                               23.1     kV       Ignition voltage cyl. 03
+Monic_VoltCyl04                               25.0     kV       Ignition voltage cyl. 04
+Monic_VoltCyl05                               26.1     kV       Ignition voltage cyl. 05
+Monic_VoltCyl06                               25.6     kV       Ignition voltage cyl. 06
+Monic_VoltCyl07                               23.5     kV       Ignition voltage cyl. 07
+Monic_VoltCyl08                               23.6     kV       Ignition voltage cyl. 08
+Monic_VoltCyl09                               23.4     kV       Ignition voltage cyl. 09
+Monic_VoltCyl10                               26.9     kV       Ignition voltage Cyl. 10
+Monic_VoltCyl11                               25.3     kV       Ignition voltage cyl. 11
+Monic_VoltCyl12                               27.3     kV       Ignition voltage cyl. 12
+Monic_VoltCyl13                               24.0     kV       Ignition voltage cyl. 13
+Monic_VoltCyl14                               25.4     kV       Ignition voltage cyl. 14
+Monic_VoltCyl15                               26.5     kV       Ignition voltage cyl. 15
+Monic_VoltCyl16                               23.5     kV       Ignition voltage cyl. 16
+Monic_VoltCyl17                               27.2     kV       Ignition voltage cyl. 17
+Monic_VoltCyl18                               27.4     kV       Ignition voltage cyl. 18
+Monic_VoltCyl19                               25.5     kV       Ignition voltage cyl. 19
+Monic_VoltCyl20                               25.9     kV       Ignition voltage cyl. 20
+Monic_VoltCyl21                               26.6     kV       Ignition voltage cyl. 21
+Monic_VoltCyl22                               24.6     kV       Ignition voltage cyl. 22
+Monic_VoltCyl23                               27.5     kV       Ignition voltage cyl. 23
+Monic_VoltCyl24                               24.2     kV       Ignition voltage cyl. 24
+Monic_VoltMax                                 27.5     kV       Ignition voltage maximum
+Monic_VoltMin                                 20.6     kV       Ignition voltage minimum
+OPHSR_calc_OphToStart                         2.32     nan      Ratio of Operating Hours to Starts 
+PBC_HeatCharVar_Avg                           0.0      °CA      AI Average
+PBC_HeatCharVar_Cyl01                         0.0      °CA      AI 01
+PBC_HeatCharVar_Cyl02                         0.0      °CA      AI 02
+PBC_HeatCharVar_Cyl03                         0.0      °CA      AI 03
+PBC_HeatCharVar_Cyl04                         0.0      °CA      AI 04
+PBC_HeatCharVar_Cyl05                         0.0      °CA      AI 05
+PBC_HeatCharVar_Cyl06                         0.0      °CA      AI 06
+PBC_HeatCharVar_Cyl07                         0.0      °CA      AI 07
+PBC_HeatCharVar_Cyl08                         0.0      °CA      AI 08
+PBC_HeatCharVar_Cyl09                         0.0      °CA      AI 09
+PBC_HeatCharVar_Cyl10                         0.0      °CA      AI 10
+PBC_HeatCharVar_Cyl11                         0.0      °CA      AI 11
+PBC_HeatCharVar_Cyl12                         0.0      °CA      AI 12
+PBC_HeatCharVar_Cyl13                         0.0      °CA      AI 13
+PBC_HeatCharVar_Cyl14                         0.0      °CA      AI 14
+PBC_HeatCharVar_Cyl15                         0.0      °CA      AI 15
+PBC_HeatCharVar_Cyl16                         0.0      °CA      AI 16
+PBC_HeatCharVar_Cyl17                         0.0      °CA      AI 17
+PBC_HeatCharVar_Cyl18                         0.0      °CA      AI 18
+PBC_HeatCharVar_Cyl19                         0.0      °CA      AI 19
+PBC_HeatCharVar_Cyl20                         0.0      °CA      AI 20
+PBC_HeatCharVar_Cyl21                         0.0      °CA      AI 21
+PBC_HeatCharVar_Cyl22                         0.0      °CA      AI 22
+PBC_HeatCharVar_Cyl23                         0.0      °CA      AI 23
+PBC_HeatCharVar_Cyl24                         0.0      °CA      AI 24
+PBC_HeatCharVar_Max                           0.0      °CA      AI Maximum
+PBC_HeatCharVar_Min                           0.0      °CA      AI Minimum
+PBC_Press49bfTDC_Avg                          0.0      mbar     Pressure 49° before TDC average
+PBC_Press49bfTDC_Cyl01                        0.0      mbar     Pressure 49° before TDC cyl. 01
+PBC_Press49bfTDC_Cyl02                        0.0      mbar     Pressure 49° before TDC cyl. 02
+PBC_Press49bfTDC_Cyl03                        0.0      mbar     Pressure 49° before TDC cyl. 03
+PBC_Press49bfTDC_Cyl04                        0.0      mbar     Pressure 49° before TDC cyl. 04
+PBC_Press49bfTDC_Cyl05                        0.0      mbar     Pressure 49° before TDC cyl. 05
+PBC_Press49bfTDC_Cyl06                        0.0      mbar     Pressure 49° before TDC cyl. 06
+PBC_Press49bfTDC_Cyl07                        0.0      mbar     Pressure 49° before TDC cyl. 07
+PBC_Press49bfTDC_Cyl08                        0.0      mbar     Pressure 49° before TDC cyl. 08
+PBC_Press49bfTDC_Cyl09                        0.0      mbar     Pressure 49° before TDC cyl. 09
+PBC_Press49bfTDC_Cyl10                        0.0      mbar     Pressure 49° before TDC cyl. 10
+PBC_Press49bfTDC_Cyl11                        0.0      mbar     Pressure 49° before TDC cyl. 11
+PBC_Press49bfTDC_Cyl12                        0.0      mbar     Pressure 49° before TDC cyl. 12
+PBC_Press49bfTDC_Cyl13                        0.0      mbar     Pressure 49° before TDC cyl. 13
+PBC_Press49bfTDC_Cyl14                        0.0      mbar     Pressure 49° before TDC cyl. 14
+PBC_Press49bfTDC_Cyl15                        0.0      mbar     Pressure 49° before TDC cyl. 15
+PBC_Press49bfTDC_Cyl16                        0.0      mbar     Pressure 49° before TDC cyl. 16
+PBC_Press49bfTDC_Cyl17                        0.0      mbar     Pressure 49° before TDC cyl. 17
+PBC_Press49bfTDC_Cyl18                        0.0      mbar     Pressure 49° before TDC cyl. 18
+PBC_Press49bfTDC_Cyl19                        0.0      mbar     Pressure 49° before TDC cyl. 19
+PBC_Press49bfTDC_Cyl20                        0.0      mbar     Pressure 49° before TDC cyl. 20
+PBC_Press49bfTDC_Cyl21                        0.0      mbar     Pressure 49° before TDC cyl. 21
+PBC_Press49bfTDC_Cyl22                        0.0      mbar     Pressure 49° before TDC cyl. 22
+PBC_Press49bfTDC_Cyl23                        0.0      mbar     Pressure 49° before TDC cyl. 23
+PBC_Press49bfTDC_Cyl24                        0.0      mbar     Pressure 49° before TDC cyl. 24
+PBC_Press49bfTDC_Max                          0.0      mbar     Pressure 49° before TDC maximum
+PBC_Press49bfTDC_Min                          0.0      mbar     Pressure 49° before TDC minimum
+PBC_PressMean_Avg                             0.0      bar      IMEP average
+PBC_PressMean_Cyl01                           0.0      bar      IMEP 01
+PBC_PressMean_Cyl02                           0.0      bar      IMEP 02
+PBC_PressMean_Cyl03                           0.0      bar      IMEP 03
+PBC_PressMean_Cyl04                           0.0      bar      IMEP 04
+PBC_PressMean_Cyl05                           0.0      bar      IMEP 05
+PBC_PressMean_Cyl06                           0.0      bar      IMEP 06
+PBC_PressMean_Cyl07                           0.0      bar      IMEP 07
+PBC_PressMean_Cyl08                           0.0      bar      IMEP 08
+PBC_PressMean_Cyl09                           0.0      bar      IMEP 09
+PBC_PressMean_Cyl10                           0.0      bar      IMEP 10
+PBC_PressMean_Cyl11                           0.0      bar      IMEP 11
+PBC_PressMean_Cyl12                           0.0      bar      IMEP 12
+PBC_PressMean_Cyl13                           0.0      bar      IMEP 13
+PBC_PressMean_Cyl14                           0.0      bar      IMEP 14
+PBC_PressMean_Cyl15                           0.0      bar      IMEP 15
+PBC_PressMean_Cyl16                           0.0      bar      IMEP 16
+PBC_PressMean_Cyl17                           0.0      bar      IMEP 17
+PBC_PressMean_Cyl18                           0.0      bar      IMEP 18
+PBC_PressMean_Cyl19                           0.0      bar      IMEP 19
+PBC_PressMean_Cyl20                           0.0      bar      IMEP 20
+PBC_PressMean_Cyl21                           0.0      bar      IMEP 21
+PBC_PressMean_Cyl22                           0.0      bar      IMEP 22
+PBC_PressMean_Cyl23                           0.0      bar      IMEP 23
+PBC_PressMean_Cyl24                           0.0      bar      IMEP 24
+PBC_PressMean_Max                             0.0      bar      IMEP maximum
+PBC_PressMean_Min                             0.0      bar      IMEP minimum
+PI_Commissioning                              0.0      nan      Optimizer commissioning mode
+PI_Duration_Avg                               0.0      °CA      Duration of opening average
+PI_Duration_Cyl01                             0.0      °CA      Duration of opening 01
+PI_Duration_Cyl02                             0.0      °CA      Duration of opening 02
+PI_Duration_Cyl03                             0.0      °CA      Duration of opening 03
+PI_Duration_Cyl04                             0.0      °CA      Duration of opening 04
+PI_Duration_Cyl05                             0.0      °CA      Duration of opening 05
+PI_Duration_Cyl06                             0.0      °CA      Duration of opening 06
+PI_Duration_Cyl07                             0.0      °CA      Duration of opening 07
+PI_Duration_Cyl08                             0.0      °CA      Duration of opening 08
+PI_Duration_Cyl09                             0.0      °CA      Duration of opening 09
+PI_Duration_Cyl10                             0.0      °CA      Duration of opening 10
+PI_Duration_Cyl11                             0.0      °CA      Duration of opening 11
+PI_Duration_Cyl12                             0.0      °CA      Duration of opening 12
+PI_Duration_Cyl13                             0.0      °CA      Duration of opening 13
+PI_Duration_Cyl14                             0.0      °CA      Duration of opening 14
+PI_Duration_Cyl15                             0.0      °CA      Duration of opening 15
+PI_Duration_Cyl16                             0.0      °CA      Duration of opening 16
+PI_Duration_Cyl17                             0.0      °CA      Duration of opening 17
+PI_Duration_Cyl18                             0.0      °CA      Duration of opening 18
+PI_Duration_Cyl19                             0.0      °CA      Duration of opening 19
+PI_Duration_Cyl20                             0.0      °CA      Duration of opening 20
+PI_Duration_Cyl21                             0.0      °CA      Duration of opening 21
+PI_Duration_Cyl22                             0.0      °CA      Duration of opening 22
+PI_Duration_Cyl23                             0.0      °CA      Duration of opening 23
+PI_Duration_Cyl24                             0.0      °CA      Duration of opening 24
+PI_Duration_Max                               0.0      °CA      Duration of opening maximum
+PI_Duration_Min                               0.0      °CA      Duration of opening minimum
+PI_Man_Req                                    0.0      nan      Optimization manual trigger
+PI_Numb_SkipCyl_Act                           0.0      nan      Number skipped cylinder
+PI_Required                                   0.0      nan      optimization run is required
+PI_ResetMap                                   0.0      nan      Optimizer map deleted
+PI_SteadyState                                0.0      nan      steady state reached
+Power_PowerAct                                4488.0   kW       Power current
+Power_PowerNominal                            4495.0   kW       Power nominal
+Power_RedExt                                  0.0      %        Power red. external analogue
+Power_RedExtBus                               0.0      %        Power red. external bus
+Power_RedKnock                                0.0      %        Power red. knocking
+Power_RedMisfire                              0.0      %        Power red. misfire
+Power_RedMixTemp                              0.0      %        Power red. boost temperature
+Power_RedPowerAct                             4495.0   kW       Power reduction Pmax
+Power_SetPower                                4491.0   kW       Power set current
+RMD_ListBuffMAvgOilConsume_OilConsumption     0.036500000000000005 g/kWh    Averaged Oil Consumption 
+RMD_ListBuffMAvgOilDiffPress_OilDiffPress     0.6865454545454543 bar      Averaged Oil Differential Pressure in Operation
+SAFI_Electronic_Temp_Average                  58.08    °C       SAFI Electronic Temp Average
+SendingDataConditionNumeric                   30.0     nan      Engine Data Flow (30 = OK, 20 = Never, 10 = NO, 0 = Unknown)
+SlowDownTime00                                52.0     nan      Slow down time 01
+SlowDownTime01                                52.0     nan      Slow down time 02
+SlowDownTime02                                52.0     nan      Slow down time 03
+SlowDownTime03                                52.0     nan      Slow down time 04
+SlowDownTime04                                52.0     nan      Slow down time 05
+SlowDownTime05                                52.0     nan      Slow down time 06
+SlowDownTime06                                52.0     nan      Slow down time 07
+SlowDownTime07                                52.0     nan      Slow down time 08
+SlowDownTime08                                52.0     nan      Slow down time 09
+SlowDownTime09                                52.0     nan      Slow down time 10
+SlowDownTime10                                52.0     nan      Slow down time 11
+SlowDownTime11                                52.0     nan      Slow down time 12
+SlowDownTime12                                52.0     nan      Slow down time 13
+SlowDownTime13                                52.0     nan      Slow down time 14
+SlowDownTime14                                52.0     nan      Slow down time 15
+SlowDownTime15                                52.0     nan      Slow down time 16
+SlowDownTime16                                52.0     nan      Slow down time 17
+SlowDownTime17                                52.0     nan      Slow down time 18
+SlowDownTime18                                52.0     nan      Slow down time 19
+SlowDownTime19                                52.0     nan      Slow down time 20
+StartsCnt_Statistic                           92.0     nan      Counter for the startstatistic
+TecJet_GasDiffPress                           55.0     mbar     Gas prop. valve 1 diff. pressure
+TecJet_GasDiffPress2                          0.0      mbar     Gas prop. valve 2 diff. pressure
+TecJet_GasDiffPress3                          0.0      mbar     Gas prop. valve 3 diff. pressure
+TecJet_GasDiffPress4                          0.0      mbar     Gas prop. valve 4 diff. pressure
+TecJet_GasFlow1                               278.9    l/s      Gas prop. valve 1 gas quantity
+TecJet_GasFlow2                               0.0      l/s      Gas prop. valve 2 gas quantity
+TecJet_GasFlow3                               0.0      nan      Gas prop. valve 3 gas quantity
+TecJet_GasFlow4                               0.0      l/s      Gas prop. valve 4 gas quantity
+TecJet_GasPress1                              1049.0   mbar     Gas prop. valve 1 pressure
+TecJet_GasPress2                              0.0      mbar     Gas prop. valve 2 pressure
+TecJet_GasPress3                              0.0      mbar     Gas prop. valve 3 pressure
+TecJet_GasPress4                              0.0      mbar     Gas prop. valve 4 pressure
+TecJet_GasTemp1                               13.5     °C       Gas prop. valve 1 temperature
+TecJet_GasTemp2                               0.0      °C       Gas prop. valve 2 temperature
+TecJet_GasTemp3                               0.0      °C       Gas prop. valve 3 temperature
+TecJet_GasTemp4                               0.0      °C       Gas prop. valve 4 temperature
+TecJet_Lambda1                                1.958    a/f      Lambda
+TecJet_ValvePos1                              38.7     %        Gas proportioning valve 1 position
+TecJet_ValvePos2                              0.0      %        Gas proportioning valve 2 position
+TecJet_ValvePos3                              0.0      %        Gas proportioning valve 3 position
+TecJet_ValvePos4                              0.0      %        Gas proportioning valve 4 position
+Various_Bits_CollAlarm                        0.0      nan      Various_Bits_CollAlarm
+Various_Bits_CollWarning                      1.0      nan      Various_Bits_CollWarning
+Various_Bits_GenSwitchOn                      1.0      nan      Generator switch on/off
+Various_Bits_OperationOn                      1.0      nan      Operation
+Various_SetValues_SetWasteGate                0.0      %        Waste gate A/B position (W) (0)
+Various_Values_PosThrottle                    100.0    %        Throttle valve position (X)
+Various_Values_PosThrottleA1                  99.9     %        Throttle valve X1 - A
+Various_Values_PosThrottleA2                  99.5     %        Throttle valve X2 - A
+Various_Values_PosThrottleB1                  0.0      %        Throttle valve X1 - B
+Various_Values_PosThrottleB2                  0.0      %        Throttle valve X2 - B
+Various_Values_PosTurboBypass                 16.0     %        Compressor bypass
+Various_Values_PosTurboBypassA1               15.7     %        Compressor bypass valve X1 - A
+Various_Values_PosTurboBypassA2               0.0      %        Compressor bypass valve X2 - A
+Various_Values_PosTurboBypassB1               16.0     %        Compressor bypass valve X1 - B
+Various_Values_PosTurboBypassB2               0.0      %        Compressor bypass valve X1 - B
+Various_Values_PosWasteGateA                  0.0      %        Waste gate - position A
+Various_Values_PosWasteGateB                  0.0      %        Waste gate - position B
+Various_Values_PressBoost                     5.84     bar      Charge pressure (p2')
+Various_Values_PressBoostP2A                  0.0      bar      Charge pressure before throttle valve A (p2)
+Various_Values_PressBoostP2B                  0.0      bar      Charge pressure before throttle valve B (p2)
+Various_Values_PressBoostP2sA                 0.0      bar      Charge pressure A (p2')
+Various_Values_PressBoostP2sB                 0.0      bar      Charge pressure B (p2')
+Various_Values_SetPosThrottleA1               100.0    %        Throttle valve W1 - A
+Various_Values_SetPosThrottleA2               100.0    %        Throttle valve W2 - A
+Various_Values_SetPosThrottleB1               100.0    %        Throttle valve W1 - B
+Various_Values_SetPosThrottleB2               100.0    %        Throttle valve W2 - B
+Various_Values_SetPosTurboBypassA1            16.0     %        Compressor bypass valve W1 - A
+Various_Values_SetPosTurboBypassA2            16.0     %        Compressor bypass valve W2 - A
+Various_Values_SetPosTurboBypassB1            16.0     %        Compressor bypass valve W1 - B
+Various_Values_SetPosTurboBypassB2            16.0     %        Compressor bypass valve W2 - B
+Various_Values_SetSpeed                       1500.0   rpm      Set speed current
+Various_Values_SpeedAct                       1503.0   rpm      Speed current
+Various_Values_TempMixture                    52.0     C        Charge temperature
+Various_Values_TempT2sA                       0.0      °C       Charge temperature (t2') A
+Various_Values_TempT2sB                       0.0      °C       Charge temperature (t2') B
+bFS_Req                                       0.0      nan      Fast start requested
+bLoad                                         1.0      nan      target load reached 
+bScavDone                                     1.0      nan      exhaust purge done
+bSync                                         1.0      nan      GCB closed engine is syncronised
+bT_ECW_Ok                                     1.0      nan      engine cooling water temperature okay
+bT_EO_Ok                                      1.0      nan      engine oil temperature okay
+bp_red_active                                 0.0      nan      Power reduction active
+chargingunit_rvol_ch_engine_norm              19006.0  m3N/h    Exhaust volume flow (calculated)
+cust_analoginput_ai001_value                  0.0      float    Custom analog input 1
+cust_analoginput_ai002_value                  0.0      float    Custom analog input 2
+cust_analoginput_ai003_value                  0.0      float    Custom analog input 3
+cust_analoginput_ai004_value                  0.0      float    Custom analog input 4
+cust_analoginput_ai005_value                  0.0      float    Custom analog input 5
+cust_analoginput_ai006_value                  0.0      float    Custom analog input 6
+cust_analoginput_ai007_value                  0.0      float    Custom analog input 7
+cust_analoginput_ai008_value                  0.0      float    Custom analog input 8
+cust_analoginput_ai009_value                  0.0      float    Custom analog input 9
+emission_bamm_nox_noxs_engout_avg             1.0      nan      LXplus NOx signal valid 
+emission_blx2_active                          0.0      nan      LXplus active
+emission_blx2_ctrl_enable                     0.0      nan      LXplus closed loop ctrl active
+emission_bscr_injectvalve_urea                0.0      nan      Air/urea valve - Urea opened
+emission_cnt_noxs_engout_lastdiag             0.0      nan      NOx sensor last self diagnosis
+emission_diff_pres_cat_max                    20.0     mbar     Exhaust / SCR / Exhaust differential pressure CAT maximum (13907)
+emission_inoxs_catout_ophours                 0.0      hours    NOx sensor operating hours CAT out
+emission_inoxs_engout_a_ophours               0.0      hours    NOx sensor operating hours engine out A
+emission_inoxs_engout_b_ophours               0.0      hours    NOx sensor operating hours engine out B
+emission_inoxs_engout_ophours                 0.0      hours    NOx sensor operating hours engine out
+emission_nox_noxs_engout_durdiag              0.0      nan      NOx sensor engine out NOx during self diag
+emission_o2_noxs_engout_durdiag               0.0      nan      NOx sensor engine out O2 during self diag
+emission_pc_noxs_engout_diagresult            0.0      nan      NOx sensor engine out result self diag
+emission_rco_scr_cemsextcatout                0.0      ppm      External CEMS CO
+emission_rflow_scr_ureadosingout              0.0      l/h      Urea flow
+emission_rflow_scr_ureadosingunit_ff          6.88     l/h      FF-NOx controller
+emission_rhum_catout                          8.0      %        Exhaust water content (calculated)
+emission_rno2_scr_cemsextcatout               0.0      ppm      External CEMS NO2
+emission_rno_scr_cemsextcatout                0.0      ppm      External CEMS NO
+emission_rnox_em_avgdaily                     0.0      mg/Nm3   NOx emissions - daily average normal operation
+emission_rnox_em_avgshortterm                 0.0      mg/Nm3   NOx emissions - short-term average
+emission_rnox_em_engout_set                   74.9     ppm      NOx emissions at engine outlet - setpoint
+emission_rnox_noxs_catout                     0.0      ppm      NOx sensor at catalyst outlet - NOx
+emission_rnox_noxs_catout_durdiag             0.0      ppm      NOx sensor CAT out NOx during self diag 
+emission_rnox_noxs_engout                     0.0      ppm      NOx sensor at engine outlet - NOx
+emission_rnox_noxs_engout_a                   0.0      ppm      NOx sensor at engine outlet bank A - NOx
+emission_rnox_noxs_engout_a_durdiag           0.0      ppm      NOx sensor bank A NOx during self diag 
+emission_rnox_noxs_engout_b                   0.0      ppm      NOx sensor at engine outlet bank B - NOx
+emission_rnox_noxs_engout_b_durdiag           0.0      ppm      NOx sensor bank B NOx during self diag 
+emission_rnox_noxs_engout_mg_avg              0.0      mg/Nm3   NOx sensor at engine outlet - NOx average mg
+emission_ro2_noxs_catout                      0.0      %        NOx sensor at catalyst outlet - O2
+emission_ro2_noxs_catout_durdiag              0.0      %        NOx sensor CAT out O2 during self diag
+emission_ro2_noxs_engout                      0.0      %        NOx sensor at engine outlet - O2
+emission_ro2_noxs_engout_a                    0.0      %        NOx sensor at engine outlet bank A - O2
+emission_ro2_noxs_engout_a_durdiag            0.0      %        NOx sensor bank A O2 during self diag
+emission_ro2_noxs_engout_b                    0.0      %        NOx sensor at engine outlet bank B - O2
+emission_ro2_noxs_engout_b_durdiag            0.0      %        NOx sensor bank B O2 during self diag
+emission_ro2_scr_cemsextcatout                0.0      %        External CEMS O2
+emission_rpc_noxs_catout_diagresult           0.0      %        NOx sensor CAT out result self diag
+emission_rpc_noxs_engout_a_diagresult         0.0      %        NOx sensor bank A result self diag
+emission_rpc_noxs_engout_b_diagresult         0.0      %        NOx sensor bank B result self diag
+emission_rpr_scr_catin                        0.0      mbar     Exhaust pressure CAT inlet
+emission_rpr_scr_catout                       0.0      mbar     Exhaust pressure CAT outlet
+emission_rpr_scr_comprairsupply               0.0      bar      Air supply pressure
+emission_rpr_scr_ureadosingin                 0.0      bar      Urea pressure before dosing
+emission_rpr_scr_ureadosingout                0.0      bar      Urea pressure after dosing
+emission_rt_scr_catavg                        0.0      °C       Exhaust temperature CAT average
+emission_rt_scr_catin                         0.0      °C       Exhaust temperature CAT inlet
+emission_rt_scr_catout                        0.0      °C       Exhaust temperature CAT outlet
+emission_rvol_scr_ureaconsumption             0.0      m3       Urea consumption - sum
+enginecontroller_blx2_ss                      0.0      nan      LEANOX PLUS Steady State
+enginecontroller_rhum_airin_abs               0.0      g/kg     Humidity absolute (calculated)
+enginecontroller_rhum_airin_rel               0.0      %        Humidity relative
+exhaust_rpr_oxicat_in_fast                    0.0      bar      Exhaust gas pressure fast
+exhaust_rpr_oxicat_in_fast_peak               0.0      bar      Exhaust gas pressure fast peak
+gas_qualmix                                   0.0      nan      Gas quality ratio
+gas_type                                      1.0      nan      Gas types
+halio_power_apparent_s                        4488.0   kVA      Power apperent
+halio_power_fact_cos_phi                      0.999    nan      Power factor
+halio_rf_mmd                                  50.15    Hz       Frequency
+halio_rf_mmd_2                                0.0      Hz       Frequency [2]
+halio_ru_bus_l1_2                             10671.0  V        Phase to phase voltage L1-L2
+halio_ru_bus_l1n                              6164.0   V        Phase voltage L1-N
+halio_ru_bus_l2_3                             10651.0  V        Phase to phase voltage L2-L3
+halio_ru_bus_l2n                              6153.0   V        Phase voltage L2-N
+halio_ru_bus_l3_1                             10671.0  V        Phase to phase voltage L3-L1
+halio_ru_bus_l3n                              6153.0   V        Phase voltage L3-N
+halio_ru_l1_2                                 10672.0  V        Generator voltage phase 1 - 2
+halio_ru_l1n                                  6174.0   V        Generator voltage phase 1 - N
+halio_ru_l2_3                                 10676.0  V        Generator voltage phase 2 - 3
+halio_ru_l2n                                  6155.0   V        Generator voltage phase 2 - N
+halio_ru_l3_1                                 10684.0  V        Generator voltage phase 3 - 1
+halio_ru_l3n                                  6162.0   V        Generator voltage phase 3 - N
+iDays_SinceStart                              0.0      nan      days since last start
+iSA_PICurGrad01                               0.0      nan      Close current gradient cyl. 01
+iSA_PICurGrad02                               0.0      nan      Close current gradient cyl. 02
+iSA_PICurGrad03                               0.0      nan      Close current gradient cyl. 03
+iSA_PICurGrad04                               0.0      nan      Close current gradient cyl. 04
+iSA_PICurGrad05                               0.0      nan      Close current gradient cyl. 05
+iSA_PICurGrad06                               0.0      nan      Close current gradient cyl. 06
+iSA_PICurGrad07                               0.0      nan      Close current gradient cyl. 07
+iSA_PICurGrad08                               0.0      nan      Close current gradient cyl. 08
+iSA_PICurGrad09                               0.0      nan      Close current gradient cyl. 09
+iSA_PICurGrad10                               0.0      nan      Close current gradient cyl. 10
+iSA_PICurGrad11                               0.0      nan      Close current gradient cyl. 11
+iSA_PICurGrad12                               0.0      nan      Close current gradient cyl. 12
+iSA_PICurGrad13                               0.0      nan      Close current gradient cyl. 13
+iSA_PICurGrad14                               0.0      nan      Close current gradient cyl. 14
+iSA_PICurGrad15                               0.0      nan      Close current gradient cyl. 15
+iSA_PICurGrad16                               0.0      nan      Close current gradient cyl. 16
+iSA_PICurGrad17                               0.0      nan      Close current gradient cyl. 17
+iSA_PICurGrad18                               0.0      nan      Close current gradient cyl. 18
+iSA_PICurGrad19                               0.0      nan      Close current gradient cyl. 19
+iSA_PICurGrad20                               0.0      nan      Close current gradient cyl. 20
+manualdata_valverecession_EngineOpH           0.0      hours    Valve Recession - Engine Operating Hours
+manualdata_valverecession_EngineStarts        0.0      Starts   Valve Recession - Engine Starts
+manualdata_valverecession_lev_cyl01           7.45     mm       Valve Recession - Cyl01 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl02           7.57     mm       Valve Recession - Cyl02 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl03           7.51     mm       Valve Recession - Cyl03 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl04           7.65     mm       Valve Recession - Cyl04 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl05           7.55     mm       Valve Recession - Cyl05 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl06           7.58     mm       Valve Recession - Cyl06 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl07           7.59     mm       Valve Recession - Cyl07 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl08           7.65     mm       Valve Recession - Cyl08 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl09           7.73     mm       Valve Recession - Cyl09 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl10           7.57     mm       Valve Recession - Cyl10 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl11           7.67     mm       Valve Recession - Cyl11 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl12           7.48     mm       Valve Recession - Cyl12 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl13           7.51     mm       Valve Recession - Cyl13 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl15           7.61     mm       Valve Recession - Cyl15 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl16           7.7      mm       Valve Recession - Cyl16 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl17           7.59     mm       Valve Recession - Cyl17 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl18           7.63     mm       Valve Recession - Cyl18 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl19           7.41     mm       Valve Recession - Cyl19 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl20           7.53     mm       Valve Recession - Cyl20 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl21           7.54     mm       Valve Recession - Cyl21 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl22           7.57     mm       Valve Recession - Cyl22 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl23           7.39     mm       Valve Recession - Cyl23 - Left Outlet Measurement
+manualdata_valverecession_lev_cyl24           7.49     mm       Valve Recession - Cyl24 - Left Outlet Measurement
+manualdata_valverecession_liv_cyl01           -0.13    mm       Valve Recession - Cyl01 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl02           -0.26    mm       Valve Recession - Cyl02 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl03           -0.13    mm       Valve Recession - Cyl03 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl04           -0.26    mm       Valve Recession - Cyl04 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl05           -0.25    mm       Valve Recession - Cyl05 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl06           -0.18    mm       Valve Recession - Cyl06 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl07           -0.23    mm       Valve Recession - Cyl07 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl08           -0.42    mm       Valve Recession - Cyl08 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl09           -0.36    mm       Valve Recession - Cyl09 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl10           -0.29    mm       Valve Recession - Cyl10 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl11           -0.3     mm       Valve Recession - Cyl11 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl12           -0.37    mm       Valve Recession - Cyl12 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl13           -0.24    mm       Valve Recession - Cyl13 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl14           -0.23    mm       Valve Recession - Cyl14 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl15           -0.01    mm       Valve Recession - Cyl15 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl16           -0.18    mm       Valve Recession - Cyl16 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl17           -0.16    mm       Valve Recession - Cyl17 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl18           -0.17    mm       Valve Recession - Cyl18 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl19           -0.31    mm       Valve Recession - Cyl19 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl20           -0.18    mm       Valve Recession - Cyl20 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl21           -0.2     mm       Valve Recession - Cyl21 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl22           -0.13    mm       Valve Recession - Cyl22 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl23           -0.15    mm       Valve Recession - Cyl23 - Left Inlet Measurement
+manualdata_valverecession_liv_cyl24           -0.41    mm       Valve Recession - Cyl24 - Left Inlet Measurement
+manualdata_valverecession_rev_cyl01           7.63     mm       Valve Recession - Cyl01 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl02           7.64     mm       Valve Recession - Cyl02 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl03           7.68     mm       Valve Recession - Cyl03 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl04           7.71     mm       Valve Recession - Cyl04 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl05           7.63     mm       Valve Recession - Cyl05 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl06           7.59     mm       Valve Recession - Cyl06 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl07           7.64     mm       Valve Recession - Cyl07 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl08           7.65     mm       Valve Recession - Cyl08 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl09           7.47     mm       Valve Recession - Cyl09 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl10           7.61     mm       Valve Recession - Cyl10 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl11           7.61     mm       Valve Recession - Cyl11 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl12           7.59     mm       Valve Recession - Cyl12 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl13           7.76     mm       Valve Recession - Cyl13 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl14           7.49     mm       Valve Recession - Cyl14 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl15           7.74     mm       Valve Recession - Cyl15 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl16           7.68     mm       Valve Recession - Cyl16 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl17           7.59     mm       Valve Recession - Cyl17 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl18           7.53     mm       Valve Recession - Cyl18 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl19           7.62     mm       Valve Recession - Cyl19 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl20           7.46     mm       Valve Recession - Cyl20 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl21           7.54     mm       Valve Recession - Cyl21 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl22           7.54     mm       Valve Recession - Cyl22 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl23           7.51     mm       Valve Recession - Cyl23 - Right Outlet Measurement
+manualdata_valverecession_rev_cyl24           7.49     mm       Valve Recession - Cyl24 - Right Outlet Measurement
+manualdata_valverecession_riv_cyl01           -0.39    mm       Valve Recession - Cyl01 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl02           -0.4     mm       Valve Recession - Cyl02 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl03           -0.44    mm       Valve Recession - Cyl03 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl04           -0.41    mm       Valve Recession - Cyl04 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl05           -0.05    mm       Valve Recession - Cyl05 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl07           -0.34    mm       Valve Recession - Cyl07 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl08           -0.58    mm       Valve Recession - Cyl08 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl09           -0.13    mm       Valve Recession - Cyl09 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl10           -0.41    mm       Valve Recession - Cyl10 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl11           -0.37    mm       Valve Recession - Cyl11 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl12           -0.13    mm       Valve Recession - Cyl12 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl13           -0.21    mm       Valve Recession - Cyl13 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl14           -0.38    mm       Valve Recession - Cyl14 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl15           -0.22    mm       Valve Recession - Cyl15 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl16           -0.24    mm       Valve Recession - Cyl16 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl17           -0.23    mm       Valve Recession - Cyl17 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl18           -0.22    mm       Valve Recession - Cyl18 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl19           -0.38    mm       Valve Recession - Cyl19 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl20           -0.29    mm       Valve Recession - Cyl20 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl21           -0.35    mm       Valve Recession - Cyl21 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl22           -0.19    mm       Valve Recession - Cyl22- Right Inlet Measurement
+manualdata_valverecession_riv_cyl23           -0.24    mm       Valve Recession - Cyl23 - Right Inlet Measurement
+manualdata_valverecession_riv_cyl24           -0.38    mm       Valve Recession - Cyl24 - Right Inlet Measurement
+out_ha_rf_mmd_busbar_1                        50.16    nan      Frequency bus-bar
+out_ha_rf_mmd_synch1_1                        50.15    nan      Frequency system 1
+out_ha_rf_mmd_synch1_2                        0.0      nan      Frequency system 1 [2]
+out_ha_rf_mmd_synch2_1                        50.15    nan      Frequency system 2
+out_ha_rf_mmd_synch2_2                        0.0      nan      Frequency system 2 [2]
+p_reddelta_ch4_norm                           0.0      %        Power red. CH4
+p_reddelta_ch_t1hp_norm                       0.0      %        Power red. boost temp. HP TC inlet
+p_reddelta_cospctr_f_norm                     0.0      %        Power red. under/over frequency
+p_reddelta_cospctr_t_norm                     0.0      %        Power red. generator winding temp.
+p_reddelta_cospctr_u_norm                     0.0      %        Power red. under/over voltage
+p_reddelta_cv_norm                            0.0      %        Power red. calorific value
+p_reddelta_egt_norm                           0.0      %        Power red. exhaust gas temp.
+p_reddelta_eta_gen_norm                       0.0      %        Power red. power factor < 1
+p_reddelta_evu_norm                           0.0      %        Power reduction utility
+p_reddelta_gaspr_norm                         0.0      %        Power red. gas pressure
+p_reddelta_hictr_norm                         0.0      %        Power red. hierarchic controller
+p_reddelta_hum_norm                           0.0      %        Power red. humidity
+p_reddelta_knck_opti_norm                     0.0      %        Power reduction cylinder optimization
+p_reddelta_leanox_norm                        0.0      %        Power red. LEANOX
+p_reddelta_pbc_norm                           0.0      %        Power red. PBC
+p_reddelta_pr_cc_norm                         0.0      %        Power red. crankcase pressure
+p_reddelta_pr_gr_norm                         0.0      %        Power red. gas pressure minimum
+p_reddelta_pr_pcgt_norm                       0.0      %        Power red. pre chamber gas pressure
+p_reddelta_sg_norm                            0.0      %        Power red. glow ignition
+p_reddelta_suctpr_norm                        0.0      %        Power red. suction pressure
+p_reddelta_t_ecw_norm                         0.0      %        Power red. cool water temp.
+p_reddelta_t_genairin_norm                    0.0      %        Power red. generator intake air temperature
+p_reddelta_t_genswitchcab_norm                0.0      %        Power red. gen. switch cabinet
+p_reddelta_t_hwr_norm                         0.0      %        Power red. return water temp.
+p_reddelta_t_inairer_norm                     0.0      %        Power red. intake air temp.
+p_reddelta_t_oil_norm                         0.0      %        Power red. oil temp.
+p_reddelta_t_transformer_norm                 0.0      %        Power red. transformer temperature
+p_reddelta_tc_norm                            0.0      %        Power red. turbocharger speed
+p_unred                                       4492.0   kW       Set power unreduced
+pr_ch_p1hp_a                                  0.0      bar      Charge pressure before turbocharger bank A
+pr_ch_p1hp_b                                  2.74     bar      Charge pressure before turbocharger bank B
+pr_egahptc_a                                  0.0      bar      Exhaust gas pressure after high pressure TC A
+pr_egahptc_b                                  0.0      bar      Exhaust gas pressure after high pressure TC B
+pr_egalptc_a                                  0.0      bar      Exhaust gas pressure after low pressure TC A
+pr_egalptc_b                                  0.0      bar      Exhaust gas pressure after low pressure TC B
+pr_egbhptc_a                                  0.0      bar      Exhaust gas pressure before high pressure TC A
+pr_egbhptc_b                                  0.0      bar      Exhaust gas pressure before high pressure TC B
+rE_SinceStart                                 0.6      nan      producted energy since last start
+rHours_SinceStart                             0.1      nan      hours since last start
+rP_Ramp_Act                                   0.0      nan      actual value for load ramp
+rP_Ramp_Set                                   0.72     nan      setpoint for load ramp
+rP_Targ_LastStart                             4495.0   nan      Target load for the last start
+rT_ECW_FS_Perm                                55.0     nan      minimum value for engine cooling water temperature for fast start
+rT_EGaHPTC                                    348.0    nan      minimum T3 low pressure 
+rT_EO_FS_Perm                                 0.0      nan      minimum value for engine oil temperature for fast start
+rTi_Load_0                                    130.0    nan      Time till target load for the last 10 starts
+rTi_Load_2                                    122.0    nan      Time till target load for the last start
+rTi_Prep_0                                    103.0    nan      Time for start preparation
+rTi_Prep_1                                    101.0    nan      Time for start preparation for the last 10 starts
+rTi_Prep_2                                    107.0    nan      Time for start preparation for the last start
+rTi_Speedup_0                                 39.0     nan      Time till nominla speed
+rTi_Speedup_1                                 32.0     nan      Time till nominla speed for the last 10 starts
+rTi_Speedup_2                                 35.0     nan      Time till nominla speed for the last start
+rTi_Start_0                                   286.0    nan      Total start time
+rTi_Start_1                                   276.0    nan      Total start time for the last 10 starts
+rTi_Start_2                                   277.0    nan      Total start time for the last start
+rTi_SumLoad                                   277.0    nan      time from demand till target load reached
+rTi_SumSync                                   154.0    nan      time from demand till GCB closing
+rTi_Sync_0                                    20.0     nan      Time for synchronisation
+rTi_Sync_1                                    14.0     nan      Time for synchronisation  for the last 10 starts
+rTi_Sync_2                                    13.0     nan      Time for synchronisation for the last start
+rTi_Targ                                      0.0      nan      time for target load reached
+rpr_oil_lptc_in_a                             0.0      bar      Oil pressure LP TC A inlet
+rpr_oil_lptc_in_b                             0.0      bar      Oil pressure LP TC B inlet
+rpr_tc_eof_after                              2.26     bar      Oil pressure TC (controller inlet)
+safi_valvelashset_1                           0.0      nan      Valve lash adjusted to nominal value cyl. 1
+safi_valvelashset_10                          0.0      nan      Valve lash adjusted cyl. 10
+safi_valvelashset_11                          0.0      nan      Valve lash adjusted cyl. 11
+safi_valvelashset_12                          0.0      nan      Valve lash adjusted cyl. 12
+safi_valvelashset_13                          0.0      nan      Valve lash adjusted cyl. 13
+safi_valvelashset_14                          0.0      nan      Valve lash adjusted cyl. 14
+safi_valvelashset_15                          0.0      nan      Valve lash adjusted cyl. 15
+safi_valvelashset_16                          0.0      nan      Valve lash adjusted cyl. 16
+safi_valvelashset_17                          0.0      nan      Valve lash adjusted cyl. 17
+safi_valvelashset_18                          0.0      nan      Valve lash adjusted cyl. 18
+safi_valvelashset_19                          0.0      nan      Valve lash adjusted cyl. 19
+safi_valvelashset_2                           0.0      nan      Valve lash adjusted cyl. 02
+safi_valvelashset_20                          0.0      nan      Valve lash adjusted cyl. 20
+safi_valvelashset_21                          0.0      nan      Valve lash adjusted cyl. 21
+safi_valvelashset_22                          0.0      nan      Valve lash adjusted cyl. 22
+safi_valvelashset_23                          0.0      nan      Valve lash adjusted cyl. 23
+safi_valvelashset_24                          0.0      nan      Valve lash adjusted cyl. 24
+safi_valvelashset_3                           0.0      nan      Valve lash adjusted cyl. 03
+safi_valvelashset_4                           0.0      nan      Valve lash adjusted cyl. 04
+safi_valvelashset_5                           0.0      nan      Valve lash adjusted cyl. 05
+safi_valvelashset_6                           0.0      nan      Valve lash adjusted cyl. 06
+safi_valvelashset_7                           0.0      nan      Valve lash adjusted cyl. 07
+safi_valvelashset_8                           0.0      nan      Valve lash adjusted cyl. 08
+safi_valvelashset_9                           0.0      nan      Valve lash adjusted cyl. 09
+safi_win3_1                                   367.0    °CA      Outlet valve closure timing cyl. 01
+safi_win3_10                                  370.0    °CA      Outlet valve closure timing cyl. 10
+safi_win3_11                                  0.0      °CA      Outlet valve closure timing cyl. 11
+safi_win3_12                                  375.0    °CA      Outlet valve closure timing cyl. 12
+safi_win3_13                                  376.0    °CA      Outlet valve closure timing cyl. 13
+safi_win3_14                                  376.0    °CA      Outlet valve closure timing cyl. 14
+safi_win3_15                                  372.0    °CA      Outlet valve closure timing cyl. 15
+safi_win3_16                                  374.0    °CA      Outlet valve closure timing cyl. 16
+safi_win3_17                                  376.0    °CA      Outlet valve closure timing cyl. 17
+safi_win3_18                                  375.0    °CA      Outlet valve closure timing cyl. 18
+safi_win3_19                                  376.0    °CA      Outlet valve closure timing cyl. 19
+safi_win3_2                                   375.0    °CA      Outlet valve closure timing cyl. 02
+safi_win3_20                                  367.0    °CA      Outlet valve closure timing cyl. 20
+safi_win3_21                                  374.0    °CA      Outlet valve closure timing cyl. 21
+safi_win3_22                                  373.0    °CA      Outlet valve closure timing cyl. 22
+safi_win3_23                                  372.0    °CA      Outlet valve closure timing cyl. 23
+safi_win3_24                                  0.0      °CA      Outlet valve closure timing cyl. 24
+safi_win3_3                                   0.0      °CA      Outlet valve closure timing cyl. 03
+safi_win3_4                                   366.0    °CA      Outlet valve closure timing cyl. 04
+safi_win3_5                                   375.0    °CA      Outlet valve closure timing cyl. 05
+safi_win3_6                                   373.0    °CA      Outlet valve closure timing cyl. 06
+safi_win3_7                                   374.0    °CA      Outlet valve closure timing cyl. 07
+safi_win3_8                                   365.0    °CA      Outlet valve closure timing cyl. 08
+safi_win3_9                                   367.0    °CA      Outlet valve closure timing cyl. 09
+safi_win4_1                                   495.0    °CA      Inlet valve closure timing cyl. 01
+safi_win4_10                                  495.0    °CA      Inlet valve closure timing cyl. 10
+safi_win4_11                                  495.0    °CA      Inlet valve closure timing cyl. 11
+safi_win4_12                                  496.0    °CA      Inlet valve closure timing cyl. 12
+safi_win4_13                                  496.0    °CA      Inlet valve closure timing cyl. 13
+safi_win4_14                                  496.0    °CA      Inlet valve closure timing cyl. 14
+safi_win4_15                                  497.0    °CA      Inlet valve closure timing cyl. 15
+safi_win4_16                                  495.0    °CA      Inlet valve closure timing cyl. 16
+safi_win4_17                                  496.0    °CA      Inlet valve closure timing cyl. 17
+safi_win4_18                                  497.0    °CA      Inlet valve closure timing cyl. 18
+safi_win4_19                                  496.0    °CA      Inlet valve closure timing cyl. 19
+safi_win4_2                                   496.0    °CA      Inlet valve closure timing cyl. 02
+safi_win4_20                                  495.0    °CA      Inlet valve closure timing cyl. 20
+safi_win4_21                                  495.0    °CA      Inlet valve closure timing cyl. 21
+safi_win4_22                                  495.0    °CA      Inlet valve closure timing cyl. 22
+safi_win4_23                                  495.0    °CA      Inlet valve closure timing cyl. 23
+safi_win4_24                                  497.0    °CA      Inlet valve closure timing cyl. 24
+safi_win4_3                                   495.0    °CA      Inlet valve closure timing cyl. 03
+safi_win4_4                                   495.0    °CA      Inlet valve closure timing cyl. 04
+safi_win4_5                                   495.0    °CA      Inlet valve closure timing cyl. 05
+safi_win4_6                                   496.0    °CA      Inlet valve closure timing cyl. 06
+safi_win4_7                                   496.0    °CA      Inlet valve closure timing cyl. 07
+safi_win4_8                                   494.0    °CA      Inlet valve closure timing cyl. 08
+safi_win4_9                                   495.0    °CA      Inlet valve closure timing cyl. 09
+synchronization_bmcb_on                       1.0      nan      Network switch on/off
+t_ch_t1hp_a                                   0.0      °C       Charge temperature before turbocharger bank A
+t_ch_t1hp_b                                   53.1     °C       Charge temperature before turbocharger bank B
+t_egahptc_a                                   0.0      °C       Exhaust gas temperature after high pressure TC A
+t_egahptc_b                                   0.0      °C       Exhaust gas temperature after high pressure TC B
+t_egbhptc_a                                   0.0      °C       Exhaust gas temperature before high pressure TC A
+t_egbhptc_b                                   0.0      °C       Exhaust gas temperature before high pressure TC B
+valverecession_cyl01_new_cyl_head             1.0      nan      Valve Recession - Cyl01 - New Cyl Head Flag
+valverecession_cyl02_new_cyl_head             1.0      nan      Valve Recession - Cyl02 - New Cyl Head Flag
+valverecession_cyl03_new_cyl_head             1.0      nan      Valve Recession - Cyl03 - New Cyl Head Flag
+valverecession_cyl04_new_cyl_head             1.0      nan      Valve Recession - Cyl04 - New Cyl Head Flag
+valverecession_cyl05_new_cyl_head             1.0      nan      Valve Recession - Cyl05 - New Cyl Head Flag
+valverecession_cyl06_new_cyl_head             1.0      nan      Valve Recession - Cyl06 - New Cyl Head Flag
+valverecession_cyl07_new_cyl_head             1.0      nan      Valve Recession - Cyl07 - New Cyl Head Flag
+valverecession_cyl08_new_cyl_head             1.0      nan      Valve Recession - Cyl08 - New Cyl Head Flag
+valverecession_cyl09_new_cyl_head             1.0      nan      Valve Recession - Cyl09 - New Cyl Head Flag
+valverecession_cyl10_new_cyl_head             1.0      nan      Valve Recession - Cyl10 - New Cyl Head Flag
+valverecession_cyl11_new_cyl_head             1.0      nan      Valve Recession - Cyl11 - New Cyl Head Flag
+valverecession_cyl12_new_cyl_head             1.0      nan      Valve Recession - Cyl12 - New Cyl Head Flag
+valverecession_cyl13_new_cyl_head             1.0      nan      Valve Recession - Cyl13 - New Cyl Head Flag
+valverecession_cyl14_new_cyl_head             1.0      nan      Valve Recession - Cyl14 - New Cyl Head Flag
+valverecession_cyl15_new_cyl_head             1.0      nan      Valve Recession - Cyl15 - New Cyl Head Flag
+valverecession_cyl16_new_cyl_head             1.0      nan      Valve Recession - Cyl16 - New Cyl Head Flag
+valverecession_cyl18_new_cyl_head             1.0      nan      Valve Recession - Cyl18 - New Cyl Head Flag
+valverecession_cyl19_new_cyl_head             1.0      nan      Valve Recession - Cyl19 - New Cyl Head Flag
+valverecession_cyl20_new_cyl_head             1.0      nan      Valve Recession - Cyl20 - New Cyl Head Flag
+valverecession_cyl21_new_cyl_head             1.0      nan      Valve Recession - Cyl21 - New Cyl Head Flag
+valverecession_cyl22_new_cyl_head             1.0      nan      Valve Recession - Cyl22 - New Cyl Head Flag
+valverecession_cyl23_new_cyl_head             1.0      nan      Valve Recession - Cyl23 - New Cyl Head Flag
+valverecession_cyl24_new_cyl_head             1.0      nan      Valve Recession - Cyl24 - New Cyl Head Flag
+valverecession_lev_cyl01_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl01 - Left Outlet Wear
+valverecession_lev_cyl01_deltaVRSinceInit     0.0      mm       Cyl. 01 Valve Wear Left Exhaust
+valverecession_lev_cyl01_init                 7.45     mm       Valve Recession - Cyl01 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl02_deltaVRSinceInit     0.0      mm       Cyl. 02 Valve Wear Left Exhaust
+valverecession_lev_cyl02_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl02 - Left Outlet Wear
+valverecession_lev_cyl02_init                 7.57     mm       Valve Recession - Cyl02 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl03_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl03 - Left Outlet Wear
+valverecession_lev_cyl03_deltaVRSinceInit     0.0      mm       Cyl. 03 Valve Wear Left Exhaust
+valverecession_lev_cyl03_init                 7.51     mm       Valve Recession - Cyl03 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl04_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl04 - Left Outlet Wear
+valverecession_lev_cyl04_deltaVRSinceInit     0.0      mm       Cyl. 04 Valve Wear Left Exhaust
+valverecession_lev_cyl04_init                 7.65     mm       Valve Recession - Cyl04 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl05_deltaVRSinceInit     0.0      mm       Cyl. 05 Valve Wear Left Exhaust
+valverecession_lev_cyl05_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl05 - Left Outlet Wear
+valverecession_lev_cyl05_init                 7.55     mm       Valve Recession - Cyl05 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl06_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl06 - Left Outlet Wear
+valverecession_lev_cyl06_deltaVRSinceInit     0.0      mm       Cyl. 06 Valve Wear Left Exhaust
+valverecession_lev_cyl06_init                 7.58     mm       Valve Recession - Cyl06 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl07_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl07 - Left Outlet Wear
+valverecession_lev_cyl07_deltaVRSinceInit     0.0      mm       Cyl. 07 Valve Wear Left Exhaust
+valverecession_lev_cyl07_init                 7.59     mm       Valve Recession - Cyl07 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl08_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl08 - Left Outlet Wear
+valverecession_lev_cyl08_deltaVRSinceInit     0.0      mm       Cyl. 08 Valve Wear Left Exhaust
+valverecession_lev_cyl08_init                 7.65     mm       Valve Recession - Cyl08 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl09_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl09 - Left Outlet Wear
+valverecession_lev_cyl09_deltaVRSinceInit     0.0      mm       Cyl. 09 Valve Wear Left Exhaust
+valverecession_lev_cyl09_init                 7.73     mm       Valve Recession - Cyl09 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl10_deltaVRSinceInit     0.0      mm       Cyl. 10 Valve Wear Left Exhaust
+valverecession_lev_cyl10_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl10 - Left Outlet Wear
+valverecession_lev_cyl10_init                 7.57     mm       Valve Recession - Cyl10 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl11_deltaVRSinceInit     0.0      mm       Cyl. 11 Valve Wear Left Exhaust
+valverecession_lev_cyl11_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl11 - Left Outlet Wear
+valverecession_lev_cyl11_init                 7.67     mm       Valve Recession - Cyl11 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl12_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl12 - Left Outlet Wear
+valverecession_lev_cyl12_deltaVRSinceInit     0.0      mm       Cyl. 12 Valve Wear Left Exhaust
+valverecession_lev_cyl12_init                 7.48     mm       Valve Recession - Cyl12 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl13_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl13 - Left Outlet Wear
+valverecession_lev_cyl13_deltaVRSinceInit     0.0      mm       Cyl. 13 Valve Wear Left Exhaust
+valverecession_lev_cyl13_init                 7.51     mm       Valve Recession - Cyl13 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl14_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl14 - Left Outlet Wear
+valverecession_lev_cyl14_deltaVRSinceInit     0.0      mm       Cyl. 14 Valve Wear Left Exhaust
+valverecession_lev_cyl14_init                 7.41     mm       Valve Recession - Cyl14 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl15_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl15 - Left Outlet Wear
+valverecession_lev_cyl15_deltaVRSinceInit     0.0      mm       Cyl. 15 Valve Wear Left Exhaust
+valverecession_lev_cyl15_init                 7.61     mm       Valve Recession - Cyl15 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl16_deltaVRSinceInit     0.0      mm       Cyl. 16 Valve Wear Left Exhaust
+valverecession_lev_cyl16_init                 7.7      mm       Valve Recession - Cyl16 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl17_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl17 - Left Outlet Wear
+valverecession_lev_cyl17_deltaVRSinceInit     0.0      mm       Cyl. 17 Valve Wear Left Exhaust
+valverecession_lev_cyl17_init                 7.59     mm       Valve Recession - Cyl17 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl18_deltaVRSinceInit     0.0      mm       Cyl. 18 Valve Wear Left Exhaust
+valverecession_lev_cyl18_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl18 - Left Outlet Wear
+valverecession_lev_cyl18_init                 7.63     mm       Valve Recession - Cyl18 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl19_deltaVRSinceInit     0.0      mm       Cyl. 19 Valve Wear Left Exhaust
+valverecession_lev_cyl19_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl19 - Left Outlet Wear
+valverecession_lev_cyl19_init                 7.41     mm       Valve Recession - Cyl19 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl20_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl20 - Left Outlet Wear
+valverecession_lev_cyl20_deltaVRSinceInit     0.0      mm       Cyl. 20 Valve Wear Left Exhaust
+valverecession_lev_cyl20_init                 7.53     mm       Valve Recession - Cyl20 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl21_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl21 - Left Outlet Wear
+valverecession_lev_cyl21_deltaVRSinceInit     0.0      mm       Cyl. 21 Valve Wear Left Exhaust
+valverecession_lev_cyl21_init                 7.54     mm       Valve Recession - Cyl21 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl22_deltaVRSinceInit     0.0      mm       Cyl. 22 Valve Wear Left Exhaust
+valverecession_lev_cyl22_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl22 - Left Outlet Wear
+valverecession_lev_cyl22_init                 7.57     mm       Valve Recession - Cyl22 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl23_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl23 - Left Outlet Wear
+valverecession_lev_cyl23_deltaVRSinceInit     0.0      mm       Cyl. 23 Valve Wear Left Exhaust
+valverecession_lev_cyl23_init                 7.39     mm       Valve Recession - Cyl23 - Left Outlet - Init Value at Exchange
+valverecession_lev_cyl24_deltaVRSinceInit     0.0      mm       Cyl. 24 Valve Wear Left Exhaust
+valverecession_lev_cyl24_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl24 - Left Outlet Wear
+valverecession_lev_cyl24_init                 7.49     mm       Valve Recession - Cyl24 - Left Outlet - Init Value at Exchange
+valverecession_liv_cyl01_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl01 - Left Inlet Wear
+valverecession_liv_cyl01_deltaVRSinceInit     0.0      mm       Cyl. 01 Valve Wear Left Inlet
+valverecession_liv_cyl01_init                 -0.13    mm       Valve Recession - Cyl01 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl02_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl02 - Left Inlet Wear
+valverecession_liv_cyl02_deltaVRSinceInit     0.0      mm       Cyl. 02 Valve Wear Left Inlet
+valverecession_liv_cyl02_init                 -0.26    mm       Valve Recession - Cyl02 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl03_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl03 - Left Inlet Wear
+valverecession_liv_cyl03_deltaVRSinceInit     0.0      mm       Cyl. 03 Valve Wear Left Inlet
+valverecession_liv_cyl03_init                 -0.13    mm       Valve Recession - Cyl03 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl04_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl04 - Left Inlet Wear
+valverecession_liv_cyl04_deltaVRSinceInit     0.0      mm       Cyl. 04 Valve Wear Left Inlet
+valverecession_liv_cyl04_init                 -0.26    mm       Valve Recession - Cyl04 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl05_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl05 - Left Inlet Wear
+valverecession_liv_cyl05_deltaVRSinceInit     0.0      mm       Cyl. 05 Valve Wear Left Inlet
+valverecession_liv_cyl05_init                 -0.25    mm       Valve Recession - Cyl05 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl06_deltaVRSinceInit     0.0      mm       Cyl. 06 Valve Wear Left Inlet
+valverecession_liv_cyl06_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl06 - Left Inlet Wear
+valverecession_liv_cyl06_init                 -0.18    mm       Valve Recession - Cyl06 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl07_deltaVRSinceInit     0.0      mm       Cyl. 07 Valve Wear Left Inlet
+valverecession_liv_cyl07_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl07 - Left Inlet Wear
+valverecession_liv_cyl07_init                 -0.23    mm       Valve Recession - Cyl07 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl08_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl08 - Left Inlet Wear
+valverecession_liv_cyl08_deltaVRSinceInit     0.0      mm       Cyl. 08 Valve Wear Left Inlet
+valverecession_liv_cyl08_init                 -0.42    mm       Valve Recession - Cyl08 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl09_deltaVRSinceInit     0.0      mm       Cyl. 09 Valve Wear Left Inlet
+valverecession_liv_cyl09_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl09 - Left Inlet Wear
+valverecession_liv_cyl09_init                 -0.36    mm       Valve Recession - Cyl09 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl10_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl10 - Left Inlet Wear
+valverecession_liv_cyl10_deltaVRSinceInit     0.0      mm       Cyl. 10 Valve Wear Left Inlet
+valverecession_liv_cyl10_init                 -0.29    mm       Valve Recession - Cyl10 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl11_deltaVRSinceInit     0.0      mm       Cyl. 11 Valve Wear Left Inlet
+valverecession_liv_cyl11_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl11 - Left Inlet Wear
+valverecession_liv_cyl11_init                 -0.3     mm       Valve Recession - Cyl11 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl12_deltaVRSinceInit     0.0      mm       Cyl. 12 Valve Wear Left Inlet
+valverecession_liv_cyl12_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl12 - Left Inlet Wear
+valverecession_liv_cyl12_init                 -0.37    mm       Valve Recession - Cyl12 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl13_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl13 - Left Inlet Wear
+valverecession_liv_cyl13_deltaVRSinceInit     0.0      mm       Cyl. 13 Valve Wear Left Inlet
+valverecession_liv_cyl13_init                 -0.24    mm       Valve Recession - Cyl13 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl14_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl14 - Left Inlet Wear
+valverecession_liv_cyl14_deltaVRSinceInit     0.0      mm       Cyl. 14 Valve Wear Left Inlet
+valverecession_liv_cyl14_init                 -0.23    mm       Valve Recession - Cyl14 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl15_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl15 - Left Inlet Wear
+valverecession_liv_cyl15_deltaVRSinceInit     0.0      mm       Cyl. 15 Valve Wear Left Inlet
+valverecession_liv_cyl15_init                 -0.01    mm       Valve Recession - Cyl15 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl16_deltaVRSinceInit     0.0      mm       Cyl. 16 Valve Wear Left Inlet
+valverecession_liv_cyl16_init                 -0.18    mm       Valve Recession - Cyl16 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl17_deltaVRSinceInit     0.0      mm       Cyl. 17 Valve Wear Left Inlet
+valverecession_liv_cyl17_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl17 - Left Inlet Wear
+valverecession_liv_cyl17_init                 -0.16    mm       Valve Recession - Cyl17 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl18_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl18 - Left Inlet Wear
+valverecession_liv_cyl18_deltaVRSinceInit     0.0      mm       Cyl. 18 Valve Wear Left Inlet
+valverecession_liv_cyl18_init                 -0.17    mm       Valve Recession - Cyl18 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl19_deltaVRSinceInit     0.0      mm       Cyl. 19 Valve Wear Left Inlet
+valverecession_liv_cyl19_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl19 - Left Inlet Wear
+valverecession_liv_cyl19_init                 -0.31    mm       Valve Recession - Cyl19 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl20_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl20 - Left Inlet Wear
+valverecession_liv_cyl20_deltaVRSinceInit     0.0      mm       Cyl. 20 Valve Wear Left Inlet
+valverecession_liv_cyl20_init                 -0.18    mm       Valve Recession - Cyl20 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl21_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl21 - Left Inlet Wear
+valverecession_liv_cyl21_deltaVRSinceInit     0.0      mm       Cyl. 21 Valve Wear Left Inlet
+valverecession_liv_cyl21_init                 -0.2     mm       Valve Recession - Cyl21 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl22_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl22 - Left Inlet Wear
+valverecession_liv_cyl22_deltaVRSinceInit     0.0      mm       Cyl. 22 Valve Wear Left Inlet
+valverecession_liv_cyl22_init                 -0.13    mm       Valve Recession - Cyl22 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl23_deltaVRSinceInit     0.0      mm       Cyl. 23 Valve Wear Left Inlet
+valverecession_liv_cyl23_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl23 - Left Inlet Wear
+valverecession_liv_cyl23_init                 -0.15    mm       Valve Recession - Cyl23 - Left Inlet - Init Value at Exchange
+valverecession_liv_cyl24_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl24 - Left Inlet Wear
+valverecession_liv_cyl24_deltaVRSinceInit     0.0      mm       Cyl. 24 Valve Wear Left Inlet
+valverecession_liv_cyl24_init                 -0.41    mm       Valve Recession - Cyl24 - Left Inlet - Init Value at Exchange
+valverecession_rev_cyl01_deltaVRSinceInit     0.0      mm       Cyl. 01 Valve Wear Right Exhaust
+valverecession_rev_cyl01_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl01 - Right Outlet Wear
+valverecession_rev_cyl01_init                 7.63     mm       Valve Recession - Cyl01 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl02_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl02 - Right Outlet Wear
+valverecession_rev_cyl02_deltaVRSinceInit     0.0      mm       Cyl. 02 Valve Wear Right Exhaust
+valverecession_rev_cyl02_init                 7.64     mm       Valve Recession - Cyl02 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl03_deltaVRSinceInit     0.0      mm       Cyl. 03 Valve Wear Right Exhaust
+valverecession_rev_cyl03_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl03 - Right Outlet Wear
+valverecession_rev_cyl03_init                 7.68     mm       Valve Recession - Cyl03 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl04_deltaVRSinceInit     0.0      mm       Cyl. 04 Valve Wear Right Exhaust
+valverecession_rev_cyl04_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl04 - Right Outlet Wear
+valverecession_rev_cyl04_init                 7.71     mm       Valve Recession - Cyl04 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl05_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl05 - Right Outlet Wear
+valverecession_rev_cyl05_init                 7.63     mm       Valve Recession - Cyl05 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl06_init                 7.59     mm       Valve Recession - Cyl06 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl07_deltaVRSinceInit     0.0      mm       Cyl. 07 Valve Wear Right Exhaust
+valverecession_rev_cyl07_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl07 - Right Outlet Wear
+valverecession_rev_cyl07_init                 7.64     mm       Valve Recession - Cyl07 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl08_deltaVRSinceInit     0.0      mm       Cyl. 08 Valve Wear Right Exhaust
+valverecession_rev_cyl08_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl08 - Right Outlet Wear
+valverecession_rev_cyl08_init                 7.65     mm       Valve Recession - Cyl08 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl09_init                 7.47     mm       Valve Recession - Cyl09 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl10_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl10 - Right Outlet Wear
+valverecession_rev_cyl10_deltaVRSinceInit     0.0      mm       Cyl. 10 Valve Wear Right Exhaust
+valverecession_rev_cyl10_init                 7.61     mm       Valve Recession - Cyl10 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl11_deltaVRSinceInit     0.0      mm       Cyl. 11 Valve Wear Right Exhaust
+valverecession_rev_cyl11_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl11 - Right Outlet Wear
+valverecession_rev_cyl11_init                 7.61     mm       Valve Recession - Cyl11 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl12_deltaVRSinceInit     0.0      mm       Cyl. 12 Valve Wear Right Exhaust
+valverecession_rev_cyl12_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl12 - Right Outlet Wear
+valverecession_rev_cyl12_init                 7.59     mm       Valve Recession - Cyl12 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl13_deltaVRSinceInit     0.0      mm       Cyl. 13 Valve Wear Right Exhaust
+valverecession_rev_cyl13_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl13 - Right Outlet Wear
+valverecession_rev_cyl13_init                 7.76     mm       Valve Recession - Cyl13 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl14_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl14 - Right Outlet Wear
+valverecession_rev_cyl14_deltaVRSinceInit     0.0      mm       Cyl. 14 Valve Wear Right Exhaust
+valverecession_rev_cyl14_init                 7.49     mm       Valve Recession - Cyl14 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl15_deltaVRSinceInit     0.0      mm       Cyl. 15 Valve Wear Right Exhaust
+valverecession_rev_cyl15_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl15 - Right Outlet Wear
+valverecession_rev_cyl15_init                 7.74     mm       Valve Recession - Cyl15 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl16_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl16 - Right Outlet Wear
+valverecession_rev_cyl16_deltaVRSinceInit     0.0      mm       Cyl. 16 Valve Wear Right Exhaust
+valverecession_rev_cyl16_init                 7.68     mm       Valve Recession - Cyl16 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl17_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl17 - Right Outlet Wear
+valverecession_rev_cyl17_deltaVRSinceInit     0.0      mm       Cyl. 17 Valve Wear Right Exhaust
+valverecession_rev_cyl17_init                 7.59     mm       Valve Recession - Cyl17 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl18_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl18 - Right Outlet Wear
+valverecession_rev_cyl18_deltaVRSinceInit     0.0      mm       Cyl. 18 Valve Wear Right Exhaust
+valverecession_rev_cyl18_init                 7.53     mm       Valve Recession - Cyl18 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl19_deltaVRSinceInit     0.0      mm       Cyl. 19 Valve Wear Right Exhaust
+valverecession_rev_cyl19_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl19 - Right Outlet Wear
+valverecession_rev_cyl19_init                 7.62     mm       Valve Recession - Cyl19 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl20_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl20 - Right Outlet Wear
+valverecession_rev_cyl20_deltaVRSinceInit     0.0      mm       Cyl. 20 Valve Wear Right Exhaust
+valverecession_rev_cyl20_init                 7.46     mm       Valve Recession - Cyl20 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl21_deltaVRSinceInit     0.0      mm       Cyl. 21 Valve Wear Right Exhaust
+valverecession_rev_cyl21_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl21 - Right Outlet Wear
+valverecession_rev_cyl21_init                 7.54     mm       Valve Recession - Cyl21 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl22_deltaVRSinceInit     0.0      mm       Cyl. 22 Valve Wear Right Exhaust
+valverecession_rev_cyl22_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl22 - Right Outlet Wear
+valverecession_rev_cyl22_init                 7.54     mm       Valve Recession - Cyl22 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl23_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl23 - Right Outlet Wear
+valverecession_rev_cyl23_deltaVRSinceInit     0.0      mm       Cyl. 23 Valve Wear Right Exhaust
+valverecession_rev_cyl23_init                 7.51     mm       Valve Recession - Cyl23 - Right Outlet - Init Value at Exchange
+valverecession_rev_cyl24_deltaVRSinceInit     0.0      mm       Cyl. 24 Valve Wear Right Exhaust
+valverecession_rev_cyl24_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl24 - Right Outlet Wear
+valverecession_rev_cyl24_init                 7.49     mm       Valve Recession - Cyl24 - Right Outlet - Init Value at Exchange
+valverecession_riv_cyl01_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl01 - Right Inlet Wear
+valverecession_riv_cyl01_deltaVRSinceInit     0.0      mm       Cyl. 01 Valve Wear Right Inlet
+valverecession_riv_cyl01_init                 -0.39    mm       Valve Recession - Cyl01 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl02_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl02 - Right Inlet Wear
+valverecession_riv_cyl02_deltaVRSinceInit     0.0      mm       Cyl. 02 Valve Wear Right Inlet
+valverecession_riv_cyl02_init                 -0.4     mm       Valve Recession - Cyl02 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl03_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl03 - Right Inlet Wear
+valverecession_riv_cyl03_deltaVRSinceInit     0.0      mm       Cyl. 03 Valve Wear Right Inlet
+valverecession_riv_cyl03_init                 -0.44    mm       Valve Recession - Cyl03 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl04_deltaVRSinceInit     0.0      mm       Cyl. 04 Valve Wear Right Inlet
+valverecession_riv_cyl04_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl04 - Right Inlet Wear
+valverecession_riv_cyl04_init                 -0.41    mm       Valve Recession - Cyl04 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl05_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl05 - Right Inlet Wear
+valverecession_riv_cyl05_deltaVRSinceInit     0.0      mm       Cyl. 05 Valve Wear Right Inlet
+valverecession_riv_cyl05_init                 -0.05    mm       Valve Recession - Cyl05 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl06_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl06 - Right Inlet Wear
+valverecession_riv_cyl06_deltaVRSinceInit     0.0      mm       Cyl. 06 Valve Wear Right Inlet
+valverecession_riv_cyl06_init                 -0.4     mm       Valve Recession - Cyl06 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl07_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl07 - Right Inlet Wear
+valverecession_riv_cyl07_deltaVRSinceInit     0.0      mm       Cyl. 07 Valve Wear Right Inlet
+valverecession_riv_cyl07_init                 -0.34    mm       Valve Recession - Cyl07 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl08_deltaVRSinceInit     0.0      mm       Cyl. 08 Valve Wear Right Inlet
+valverecession_riv_cyl08_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl08 - Right Inlet Wear
+valverecession_riv_cyl08_init                 -0.58    mm       Valve Recession - Cyl08 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl09_deltaVRSinceInit     0.0      mm       Cyl. 09 Valve Wear Right Inlet
+valverecession_riv_cyl09_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl09 - Right Inlet Wear
+valverecession_riv_cyl09_init                 -0.13    mm       Valve Recession - Cyl09 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl10_deltaVRSinceInit     0.0      mm       Cyl. 10 Valve Wear Right Inlet
+valverecession_riv_cyl10_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl10 - Right Inlet Wear
+valverecession_riv_cyl10_init                 -0.41    mm       Valve Recession - Cyl10 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl11_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl11 - Right Inlet Wear
+valverecession_riv_cyl11_deltaVRSinceInit     0.0      mm       Cyl. 11 Valve Wear Right Inlet
+valverecession_riv_cyl11_init                 -0.37    mm       Valve Recession - Cyl11 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl12_deltaVRSinceInit     0.0      mm       Cyl. 12 Valve Wear Right Inlet
+valverecession_riv_cyl12_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl12 - Right Inlet Wear
+valverecession_riv_cyl12_init                 -0.13    mm       Valve Recession - Cyl12 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl13_init                 -0.21    mm       Valve Recession - Cyl13 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl14_deltaVRSinceInit     0.0      mm       Cyl. 14 Valve Wear Right Inlet
+valverecession_riv_cyl14_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl14 - Right Inlet Wear
+valverecession_riv_cyl14_init                 -0.38    mm       Valve Recession - Cyl14 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl15_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl15 - Right Inlet Wear
+valverecession_riv_cyl15_deltaVRSinceInit     0.0      mm       Cyl. 15 Valve Wear Right Inlet
+valverecession_riv_cyl16_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl16 - Right Inlet Wear
+valverecession_riv_cyl16_deltaVRSinceInit     0.0      mm       Cyl. 16 Valve Wear Right Inlet
+valverecession_riv_cyl16_init                 -0.24    mm       Valve Recession - Cyl16 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl17_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl17 - Right Inlet Wear
+valverecession_riv_cyl17_deltaVRSinceInit     0.0      mm       Cyl. 17 Valve Wear Right Inlet
+valverecession_riv_cyl17_init                 -0.23    mm       Valve Recession - Cyl17 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl18_deltaVRSinceInit     0.0      mm       Cyl. 18 Valve Wear Right Inlet
+valverecession_riv_cyl18_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl18 - Right Inlet Wear
+valverecession_riv_cyl18_init                 -0.22    mm       Valve Recession - Cyl18 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl19_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl19 - Right Inlet Wear
+valverecession_riv_cyl19_deltaVRSinceInit     0.0      mm       Cyl. 19 Valve Wear Right Inlet
+valverecession_riv_cyl19_init                 -0.38    mm       Valve Recession - Cyl19 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl20_deltaVRSinceInit     0.0      mm       Cyl. 20 Valve Wear Right Inlet
+valverecession_riv_cyl20_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl20 - Right Inlet Wear
+valverecession_riv_cyl20_init                 -0.29    mm       Valve Recession - Cyl20 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl21_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl21 - Right Inlet Wear
+valverecession_riv_cyl21_deltaVRSinceInit     0.0      mm       Cyl. 21 Valve Wear Right Inlet
+valverecession_riv_cyl21_init                 -0.35    mm       Valve Recession - Cyl21 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl22_deltaVRSinceInit     0.0      mm       Cyl. 22 Valve Wear Right Inlet
+valverecession_riv_cyl22_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl22 - Right Inlet Wear
+valverecession_riv_cyl22_init                 -0.19    mm       Valve Recession - Cyl22 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl23_deltaVRSinceInit     0.0      mm       Cyl. 23 Valve Wear Right Inlet
+valverecession_riv_cyl23_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl23 - Right Inlet Wear
+valverecession_riv_cyl23_init                 -0.24    mm       Valve Recession - Cyl23 - Right Inlet - Init Value at Exchange
+valverecession_riv_cyl24_deltaVRSinceInit     0.0      mm       Cyl. 24 Valve Wear Right Inlet
+valverecession_riv_cyl24_deltaVRSinceInit     0.0      mm       Valve Recession - Cyl24 - Right Inlet Wear
+valverecession_riv_cyl24_init                 -0.38    mm       Valve Recession - Cyl24 - Right Inlet - Init Value at Exchange
+vibration_measurement_engine_1                12.05197525024414 mm/s     Pos. 1 Engine vibration measurement
