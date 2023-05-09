@@ -157,19 +157,18 @@ class Exhaust_temp_Collector(Data_Collector):
         self._vset += ['Power_PowerAct','Exhaust_TempCylMin','Exhaust_TempCylMax'] + self.tcyl
 
         # results to collect:
-        #self._content = ['ExhTempCylMax','ExhSpread_at_Max','Power_at_ExhTempCylMax','ExhSpreadMax','Power_at_ExhSpreadMax']
-        self._content = ['ExTCylMax',
-                        'ExTCylMaxNo',
-                        'ExTCylMin@Max',
-                        'ExTCylMin@MaxNo',
-                        'ExSpread@Max',
-                        'PWR@ExTCylMax',
-                        'ExSpreadMax',
-                        'ExTCylMax@SpreadMax',
-                        'ExTCylMax@SpreadMaxNo',
-                        'ExTCylMin@SpreadMax',
-                        'ExTCylMin@SpreadMaxNo',
-                        'PWR@ExSpreadMax']
+        self._content = ['ExTCylMax@MaxTemp', # Collect Exh Data at Max Exhaust Temperature position
+                        'ExTCylMax@MaxPos',
+                        'ExTCylMax@MinTemp',
+                        'ExTCylMax@MinPos',
+                        'ExTCylMax@Spread',
+                        'ExTCylMax@PWR',
+                        'ExSpread@MaxTemp', # Collect Exh Data at Max Exhaust Temperature Spread position
+                        'ExSpread@MaxPos',
+                        'ExSpread@MinTemp',
+                        'ExSpread@MinPos',
+                        'ExSpread@Spread',
+                        'ExSpread@PWR']
         results['run2_content'][self.name] = ['no'] + self._content
 
     def collect(self, startversuch, results, data):
@@ -177,6 +176,7 @@ class Exhaust_temp_Collector(Data_Collector):
         res = { k:np.nan for k in self._content } # initialize results
         if not tdata.empty:
 
+            # Collect Exh Data at Max Exhaust Temperature position
             point = tdata['Exhaust_TempCylMax'].idxmax()
             if point == point: # test for not NaN
                 datapoint = tdata.loc[point]
@@ -184,19 +184,20 @@ class Exhaust_temp_Collector(Data_Collector):
                 tmax = max(te); tmax_pos = te.index(tmax)
                 tmin = min(te); tmin_pos = te.index(tmin)
                 #tmax_org = tdata.at[datapoint.name,'Exhaust_TempCylMax']
-                #tmin_org = tdata.at[datapoint.name,'Exhaust_TempCylMin']
-                tspread = tmax - tmin
+                tmin_org = tdata.at[datapoint.name,'Exhaust_TempCylMin']
+                tspread = tmax - tmin_org
+                #tspread = tmax - tmin
                 tpow  = tdata.at[datapoint.name,'Power_PowerAct']
-                res.update({'ExTCylMax':tmax,
+                res.update({'ExTCylMax@MaxTemp':tmax,
                             #'ExhTempCylMaxOrg':tmax_org,
-                            'ExTCylMaxNo':tmax_pos + 1,
-                            'ExTCylMin@Max':tmin,
+                            'ExTCylMax@MaxPos':tmax_pos + 1,
+                            'ExTCylMax@MinTemp':tmin_org,
                             #'ExhTempCylMin_at_Max_org':tmin_org,
-                            'ExTCylMin@MaxNo':tmin_pos +1 ,
-                            'ExSpread@Max':tspread,  
-                            'PWR@ExTCylMax':tpow })
+                            'ExTCylMax@MinPos':tmin_pos +1 ,
+                            'ExTCylMax@Spread':tspread,  
+                            'ExTCylMax@PWR':tpow })
 
-            #ExhaustTempSpreadMax            
+            # Collect Exh Data at Max Exhaust Temperature Spread position            
             tdata['spread'] = tdata['Exhaust_TempCylMax'] - tdata['Exhaust_TempCylMin']
             point = tdata['spread'].idxmax()
             if point == point:
@@ -206,12 +207,12 @@ class Exhaust_temp_Collector(Data_Collector):
                 stmin = min(ste); stmin_pos = ste.index(stmin)
                 spreadmax = tdata.at[sdatapoint.name,'spread']
                 spreadpow = tdata.at[sdatapoint.name,'Power_PowerAct']
-                res.update({'ExSpreadMax':spreadmax,
-                            'ExTCylMax@SpreadMax':stmax,
-                            'ExTCylMax@SpreadMaxNo':stmax_pos + 1,
-                            'ExTCylMin@SpreadMax':stmin,
-                            'ExTCylMin@SpreadMaxNo':stmin_pos + 1,
-                            'PWR@ExSpreadMax':spreadpow })
+                res.update({'ExSpread@MaxTemp':stmax,
+                            'ExSpread@MaxPos':stmax_pos + 1,
+                            'ExSpread@MinTemp':stmin,
+                            'ExSpread@MinPos':stmin_pos + 1,
+                            'ExSpread@Spread':spreadmax,
+                            'ExSpread@PWR':spreadpow })
 
         sno = startversuch['no']
         results['starts'][sno].update(res) 
@@ -326,14 +327,35 @@ class Oil_Start_Collector(Data_Collector):
 ####################################
 ### collect Stop Data
 ####################################
-class Stop_Collector(Data_Collector):
+class Rampdown_Collector(Data_Collector):
+    def __init__(self, results, engine):
+        self.phases = ['rampdown']
+        super().__init__(self.phases)
+        #self._e = engine
+        #self._speed_nominal = self._e.Speed_nominal
+        self._vset += ['Hyd_PressCrankCase']
+        self._content = ['CrankCasePressure']
+        # define table results:
+        results['run4_content']['stop'] = ['no'] + self._content
+
+    def collect(self, startversuch, results, data):
+        stopdata = self.cut_data(startversuch, data, self._phases) 
+        res = { k:np.nan for k in self._content } # initialize results
+        if not stopdata.empty:
+            res['CrankCasePressure'] = stopdata['Hyd_PressCrankCase'].min()
+        sno = startversuch['no']
+        results['starts'][sno].update(res)
+        return results 
+    
+class Coolrun_Collector(Data_Collector):
     def __init__(self, results, engine):
         self.phases = ['coolrun']
         super().__init__(self.phases)
-        self._e = engine
-        self._speed_nominal = self._e.Speed_nominal
-        self._vset += ['Various_Values_SpeedAct','Various_Values_PosThrottle','Aux_PreChambDifPress']
-        self._content = ['Stop_Overspeed','Stop_Throttle','Stop_PVKDifPress']
+        #self._e = engine
+        #self._speed_nominal = self._e.Speed_nominal
+        #self._vset += ['Various_Values_SpeedAct','Various_Values_PosThrottle','Aux_PreChambDifPress']
+        self._vset += ['Various_Values_SpeedAct','Hyd_PressCrankCase']
+        self._content = ['Stop_Overspeed','Idle_CrankcasePressure']
         # define table results:
         results['run4_content']['stop'] = ['no'] + self._content
 
@@ -342,8 +364,29 @@ class Stop_Collector(Data_Collector):
         res = { k:np.nan for k in self._content } # initialize results
         if not stopdata.empty:
             res['Stop_Overspeed'] = stopdata['Various_Values_SpeedAct'].max()
-            res['Stop_Throttle'] = stopdata['Various_Values_PosThrottle'].mean()
-            res['Stop_PVKDifPress'] = stopdata['Aux_PreChambDifPress'].mean()
+            res['Idle_CrankcasePressure'] = stopdata['Hyd_PressCrankCase'].max()
+        sno = startversuch['no']
+        results['starts'][sno].update(res)
+        return results  
+
+class Runout_Collector(Data_Collector):
+    def __init__(self, results, engine):
+        self.phases = ['runout']
+        super().__init__(self.phases)
+        #self._e = engine
+        #self._speed_nominal = self._e.Speed_nominal
+        #self._vset += ['Various_Values_SpeedAct','Various_Values_PosThrottle','Aux_PreChambDifPress']
+        self._vset += ['Various_Values_PosThrottle','Aux_PreChambDifPress']
+        self._content = ['Stop_Throttle','Stop_PVKDifPress']
+        # define table results:
+        results['run4_content']['stop'] = ['no'] + self._content
+
+    def collect(self, startversuch, results, data):
+        stopdata = self.cut_data(startversuch, data, self._phases) 
+        res = { k:np.nan for k in self._content } # initialize results
+        if not stopdata.empty:
+            res['Stop_Throttle'] = stopdata['Various_Values_PosThrottle'].min()
+            res['Stop_PVKDifPress'] = stopdata['Aux_PreChambDifPress'].max()
         sno = startversuch['no']
         results['starts'][sno].update(res)
         return results  
