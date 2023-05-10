@@ -156,20 +156,22 @@ class Tab():
         self.check_buttons()
         with tabs_out:
             tabs_out.clear_output()
-            print('tab2')
+            print(f'tab2 - {V.selected}')
             tabs_html.value = ''
             if V.fleet is not None:
                 if not V.fleet.empty:
-                    if V.selected != '':
+                    if V.selected is not None:
                         self.b_loadmessages.description = self.load_message_text
                         tabs_out.clear_output()
-                        print(f'tab2 - ⌛ loading Myplant Engine Data for "{V.selected}" ...')
-                        V.e=dmp2.Engine.from_fleet(mp, V.fleet.iloc[int(V.selected_number)])
+                        if V.e is None:
+                            print(f'tab2 - ⌛ loading Myplant Engine Data for "{V.selected}" ...')
+                            V.e=dmp2.Engine.from_fleet(mp, V.fleet.iloc[int(V.selected_number)])
                         self.tab2_selected_engine.value = V.selected
                         self.t1.value = pd.to_datetime(V.e['Commissioning Date'])
                         self.check_buttons()
                         tabs_out.clear_output()
-                        print('tab2')
+                        print(f'tab2 - {V.selected}')
+
                     else:
                         #self.tab2_selected_engine.value = ''
                         #self.t1.value = None
@@ -179,12 +181,13 @@ class Tab():
                     #self.tab2_selected_engine.value = ''
                     pass
             else: # engine was loaded from file
-                self.tab2_selected_engine.value = V.selected
-                self.b_loadmessages.description = 'append new messages'
-                self.b_appendfsm.layout.display = 'block'
-                self.b_runfsm.layout.display = 'none'
-                self.single_runs_chkbox.display = 'none'
-                self.check_buttons()
+                if V.e is not None:
+                    self.tab2_selected_engine.value = V.selected
+                    self.b_loadmessages.description = 'append new messages'
+                    self.b_appendfsm.layout.display = 'block'
+                    self.b_runfsm.layout.display = 'none'
+                    self.single_runs_chkbox.display = 'none'
+                    self.check_buttons()
                 
         with self.tab2_out:        
             self.tab2_out.clear_output()

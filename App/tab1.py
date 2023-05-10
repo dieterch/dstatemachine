@@ -80,6 +80,13 @@ class Tab():
             button_style='primary')
         self.b_search.on_click(self.search)
 
+        self.b_LoadEngine = widgets.Button(
+            description='Load Engine',
+            disabled=False, 
+            button_style='primary',
+            layout=widgets.Layout(display='none'))
+        self.b_LoadEngine.on_click(self.loadEngine)
+
         self.b_clear = widgets.Button(
             description='Clear',
             disabled=False, 
@@ -94,7 +101,7 @@ class Tab():
                                 self.engine_selections,
                                 widgets.HBox([self.selected_engine,self.selected_engine_number])
                             ]),
-                            widgets.VBox([self.b_search,self.b_clear])
+                            widgets.VBox([self.b_search,self.b_LoadEngine,self.b_clear])
                         ])
 
         self.accordion = widgets.Accordion(
@@ -115,13 +122,24 @@ class Tab():
                         self.tab1_out
                     ],layout=widgets.Layout(min_height=V.hh))
 
-
     def selected(self):
-        status('tab1')
+        with tabs_out:
+            tabs_out.clear_output()
+            print(f'tab1 - {V.selected}')
 
     def cleartab(self):
-        self.tab1_out.clear_output()        
-            
+        self.tab1_out.clear_output()
+
+    def loadEngine(self, but):
+        if V.selected_number is not None:
+            with tabs_out:
+                tabs_out.clear_output()
+                tabs_html.value = ''
+                print(f'tab1 - ⌛ loading Myplant Engine Data for "{V.selected}" ...')
+                V.e=dmp2.Engine.from_fleet(mp, V.fleet.iloc[int(V.selected_number)])    
+                tabs_out.clear_output()
+                print(f'tab1 - {V.selected}')
+
     def do_lookup(self,lookup):
         def sfun(x):
             #return all([ (lookup in str(x['Design Number'])),  (x['OperationalCondition'] != 'Decommissioned') ])
@@ -146,7 +164,8 @@ class Tab():
         self.selected_engine_number.value = str(list(self.engine_selections.options).index(self.engine_selections.value))
         V.selected = self.selected_engine.value
         V.selected_number = self.selected_engine_number.value
-        status('tab1',f'{len(list(self.engine_selections.options))} Engines found - please select an Engine and  move to section 2.')
+        status('tab1',f'{len(list(self.engine_selections.options))} Engines found - please select an Engine and load it.')
+        self.b_LoadEngine.layout.display = 'block' 
 
     #@self.tab1_out.capture(clear_output=True)
     def search(self,but):
@@ -188,19 +207,22 @@ class Tab():
             status('tab1','please select a *.dfsm File.')
 
     def clear(self,but):
-        tabs_out.clear_output()
-        #self.tab1_out.clear_output()
-        V.app.clear_all()
-        self.query_drop_down.value = ''
-        self.engine_selections.options = list()
-        #engine_selections.value = ''
-        self.selected_engine.value = ''
-        self.selected_engine_number.value = ''
-        tabs_html.value = ''
-        V.selected = ''
-        V.selected_number = ''
-        V.fsm = None
-        status('tab1')
+        with tabs_out:
+            tabs_out.clear_output()
+            #self.tab1_out.clear_output()
+            tabs_html.value = ''
+            self.b_LoadEngine.layout.display = 'none'
+            self.query_drop_down.value = ''
+            self.engine_selections.options = ['']
+            # engine_selections.value = ''
+            self.selected_engine.value = ''
+            self.selected_engine_number.value = ''
+            tabs_html.value = ''
+            V.selected = None
+            V.selected_number = None
+            V.fsm = None
+            V.app.clear_all()
+            status('tab1')
 
         #V.query_list = init_query_list()
         #save_query_list(V.query_list)

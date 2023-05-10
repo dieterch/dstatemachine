@@ -11,7 +11,7 @@ Installation
 
 Create and activate a virtual environment:
 :: 
-  git clone https://github.com/dieterch/dstatemachine.git
+  git clone https://github.com/DieterChvatal/dstatemachine.git
   cd dstatemachine
   python -m venv venv
   .\venv\Scripts\activate.bat (windows)
@@ -47,13 +47,13 @@ Your Name – dieter.chvatal@gmail.com
 
 Distributed under the MIT license. See ``LICENSE`` for more information.
 
-`https://github.com/dieterch/dstatemachine <https://github.com/dieterch/>`__
+`https://github.com/DieterChvatal/dstatemachine <https://github.com/DieterChvatal/>`__
 
 
 Contributing
 ------------
 
-1. Fork it (https://github.com/dieterch/dstatemachine)
+1. Fork it (https://github.com/DieterChvatal/dstatemachine)
 2. Create your feature branch (``git checkout -b feature/fooBar``)
 3. Commit your changes (``git commit -am 'Add some fooBar'``)
 4. Push to the branch (``git push origin feature/fooBar``)

@@ -1,5 +1,6 @@
 import os
 import pickle
+import arrow
 import pandas as pd; pd.options.mode.chained_assignment = None
 from datetime import datetime, date
 import ipywidgets as widgets
@@ -19,6 +20,32 @@ class Tab():
         self.title = '5. settings'
         self.tab5_out = widgets.Output()
 
+        # Selected Engine Information
+        self.txt_selectedEngine = widgets.Text(
+            value=V.selected,
+            placeholder='Selected Engine',
+            description='',
+            disabled=True,
+            layout=widgets.Layout(width='400px')
+        )
+
+        self.txt_selectedOph = widgets.Text(
+            value='0',
+            placeholder='Oph',
+            description='Oph:',
+            disabled=True,
+            layout=widgets.Layout(width='180px')
+        )
+
+        self.txt_selectedStarts = widgets.Text(
+            value='0',
+            placeholder='Starts',
+            description='Starts:',
+            disabled=True,
+            layout=widgets.Layout(width='180px')
+        )        
+
+        # find data Items
         self.txt_lookup = widgets.Text(
             value='',
             placeholder='Type id, name, unit or MyplantName of a DataItem',
@@ -85,16 +112,25 @@ class Tab():
     @property
     def tab(self):
         return VBox(
-            [HBox([self.reload_button,self.save_messages,self.b_fsm_diagrams]),
-            self.spacer,
-            HBox([self.txt_lookup, self.txt_lookup_exclude, self.lookup_button, self.txt_lookup_chbx]),
-            self.tab5_out],
-            layout=widgets.Layout(min_height=V.hh))
+                [
+                    HBox([self.txt_selectedEngine, self.txt_selectedOph, self.txt_selectedStarts]),
+                    HBox([self.reload_button,self.save_messages,self.b_fsm_diagrams]),
+                    self.spacer,
+                    HBox([self.txt_lookup, self.txt_lookup_exclude, self.lookup_button, self.txt_lookup_chbx]),
+                    self.tab5_out
+                ],
+                layout=widgets.Layout(min_height=V.hh)
+            )
 
     def selected(self):
         with tabs_out:
             tabs_out.clear_output()
-            print('tab5')
+            if V.e is not None:
+                self.txt_selectedEngine.value = V.selected
+                self.txt_selectedOph.value = str(mp.historical_dataItem(V.e.id, 161, int(arrow.now().timestamp()*1000), num_retries=0))
+                self.txt_selectedStarts.value = str(mp.historical_dataItem(V.e.id, 179, int(arrow.now().timestamp()*1000), num_retries=0))
+            print(f'tab5 - {V.selected}')
+
 
     def cleartab(self):
         self.tab5_out.clear_output() 

@@ -94,13 +94,14 @@ class Tab():
 
         ######## from tab6
 
-        self.cb_loadcap = widgets.Checkbox(
+        self.cb_powerabove = widgets.Checkbox(
             value=False,
-            description='Power above',
+            description='PowerAbove',
             disabled=False,
             indent=False,
-            layout=widgets.Layout(max_width='170px')
+            layout=widgets.Layout(max_width='110px')
         )
+        self.cb_powerabove.observe(self.manage_load_and_spread, 'value')
 
         self.t_loadcap = widgets.IntText(
             #description='%:',
@@ -112,14 +113,24 @@ class Tab():
             value="%",
             layout=widgets.Layout(min_width='50px')
         )
-        
-        self.cb_spreadcap = widgets.Checkbox(
+
+        self.cb_powerbelow = widgets.Checkbox(
             value=False,
-            description='Exhaust spread below',
+            description='PowerBelow',
             disabled=False,
             indent=False,
-            layout=widgets.Layout(max_width='170px')
+            layout=widgets.Layout(max_width='110px')
         )
+        self.cb_powerbelow.observe(self.manage_load_and_spread, 'value')
+        
+        self.cb_spreadbelow = widgets.Checkbox(
+            value=False,
+            description='SpreadBelow',
+            disabled=False,
+            indent=False,
+            layout=widgets.Layout(max_width='110px')
+        )
+        self.cb_spreadbelow.observe(self.manage_load_and_spread, 'value')
 
         self.t_spreadcap = widgets.IntText(
             #description='%:',
@@ -132,12 +143,21 @@ class Tab():
             layout=widgets.Layout(min_width='50px')
         )
 
+        self.cb_spreadabove = widgets.Checkbox(
+            value=False,
+            description='SpreadAbove',
+            disabled=False,
+            indent=False,
+            layout=widgets.Layout(max_width='110px')
+        )
+        self.cb_spreadabove.observe(self.manage_load_and_spread, 'value')
+
         self.cb_msgfilter = widgets.Checkbox(
             value=False,
             description='Filter msg No:',
             disabled=False,
             indent=False,
-            layout=widgets.Layout(max_width='170px')
+            layout=widgets.Layout(max_width='110px')
         )
 
         self.msg_no = widgets.Text(
@@ -185,8 +205,6 @@ class Tab():
         )
         self.b_stop.on_click(self.show_stop)
 
-
-
     @property
     def tab(self):
         return widgets.VBox([
@@ -200,16 +218,19 @@ class Tab():
                             self.show_startlist
                             ]),
                         widgets.VBox([
-                            widgets.HBox([self.cb_loadcap, self.t_loadcap, self.t_loadcaplabel]), 
-                            widgets.HBox([self.cb_spreadcap, self.t_spreadcap, self.t_spreadcaplabel]),
+                            widgets.HBox([self.cb_powerabove, self.t_loadcap, self.t_loadcaplabel]), 
+                            widgets.HBox([self.cb_spreadbelow, self.t_spreadcap, self.t_spreadcaplabel]),
                             widgets.HBox([self.cb_msgfilter, self.msg_no])
                             ]),
+                        widgets.VBox([
+                            self.cb_powerbelow,
+                            self.cb_spreadabove
+                            ])
                         ]),
                     widgets.HBox([self.timings_button, self.b_tecjet,self.b_exhaust,self.b_sync,self.b_oil,self.b_stop]),
                     self.tab3_out
                     ],
                     layout=widgets.Layout(min_height=V.hh))
-
 
     def mo_observe(self,*args):
         V.modes_value = self.mo.value
@@ -231,6 +252,19 @@ class Tab():
 
     def filter_msg(self, df, mnum):
         return any([m['msg']['name'] == str(mnum) for m in df['alarms']] + [m['msg']['name'] == str(mnum) for m in df['warnings']])
+    
+    def manage_load_and_spread(self, *args):
+        # print( *args)
+        # print(args[0]['name'], args[0]['new'], args[0]['owner'].description)
+        if (args[0]['owner'].description == 'PowerAbove' and args[0]['new']):
+            self.cb_powerbelow.value = False
+        if (args[0]['owner'].description == 'PowerBelow' and args[0]['new']):
+            self.cb_powerabove.value = False
+        if (args[0]['owner'].description == 'SpreadAbove' and args[0]['new']):
+            self.cb_spreadbelow.value = False
+        if (args[0]['owner'].description == 'SpreadBelow' and args[0]['new']):
+            self.cb_spreadabove.value = False
+
 
     def filter_results(self):
         self.rda = V.rdf[:].reset_index(drop='index')
@@ -244,10 +278,14 @@ class Tab():
 
         if self.cb_msgfilter.value:
             self.rda = self.rda[self.rda.apply(lambda x: self.filter_msg(x, self.msg_no.value), axis=1)] 
-        if self.cb_loadcap.value:
+        if self.cb_powerabove.value:
             self.rda = self.rda[self.rda['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
-        if self.cb_spreadcap.value:
+        if self.cb_spreadabove.value:
             self.rda = self.rda[self.rda['ExSpread@Spread'] > self.t_spreadcap.value]
+        if self.cb_powerbelow.value:
+            self.rda = self.rda[self.rda['targetload'] < self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+        if self.cb_spreadbelow.value:
+            self.rda = self.rda[self.rda['ExSpread@Spread'] < self.t_spreadcap.value]
 
         self.rda = self.rda.reset_index(drop='index')
         return self.rda
