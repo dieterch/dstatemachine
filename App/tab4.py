@@ -167,7 +167,12 @@ class Tab():
                     self.sno_slider.max = rdf.shape[0]-1
             with tabs_out:
                 tabs_out.clear_output()
-                print('tab4')
+                print(f'tab4 - {V.selected}')
+        else:
+            with tabs_out:
+                tabs_out.clear_output()
+                print(f'tab4 - {V.selected}')            
+
 
     def cleartab(self):
         self.tab4_out.clear_output() 
