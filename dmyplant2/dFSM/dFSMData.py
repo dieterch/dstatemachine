@@ -178,6 +178,7 @@ def _load_reduced_data_ccr(fsm, startversuch, ptts_from, ptts_to, pdata=None, p_
 def get_cycle_data3(fsm,startversuch, max_length=None, min_length=None, cycletime=None, silent=False, p_data=None, pre_period=5*60, post_period=21*60, t_range=(0,100), p_refresh=False):
     tns = pd.to_datetime((startversuch['starttime'].timestamp() - pre_period + t_range[0]/100.0 * ((startversuch['endtime']  - startversuch['starttime']).seconds + pre_period + post_period)), unit='s')
     tne = pd.to_datetime((startversuch['starttime'].timestamp() - pre_period + t_range[1]/100.0 * ((startversuch['endtime']  - startversuch['starttime']).seconds + pre_period + post_period)), unit='s')
+    print(tns, tne)
     t0 = tns.timestamp() * 1e3
     t1 = tne.timestamp() * 1e3
     if max_length:

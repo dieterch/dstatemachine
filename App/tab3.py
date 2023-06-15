@@ -428,13 +428,13 @@ class Tab():
                     fig2 = dmp2.dbokeh_chart(rde, dr2set2, style='both', figsize=self.dfigsize ,title=ftitle);
                     dmp2.bokeh_show(fig2)
 
+                    #print()
+                    #print('Figures below are filtered by targetload & Spread:')
                     print()
-                    print('Figures below are filtered by targetload & Spread:')
-                    print()
-                    if self.cb_loadcap.value:
-                        rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
-                    if self.cb_spreadcap.value:
-                        rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
+                    # if self.cb_loadcap.value:
+                    #     rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    # if self.cb_spreadcap.value:
+                    #     rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
 
                     rde['bmep'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['targetload'], V.fsm._e.Speed_nominal), axis=1)
                     rde['bmep2'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['maxload'], V.fsm._e.Speed_nominal), axis=1)
@@ -510,17 +510,18 @@ class Tab():
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
                     
+                    #print()
+                    #print('Figures below are filtered by targetload & Spread:')
                     print()
-                    print('Figures below are filtered by targetload & Spread:')
-                    print()
-                    if self.cb_loadcap.value:
-                        rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
-                    if self.cb_spreadcap.value:
-                        rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
+                    
+                    #if self.cb_loadcap.value:
+                    #    rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    #if self.cb_spreadcap.value:
+                    #    rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
 
                     ntitle = f"{V.fsm._e}" + ' | Exhaust Temperture at Start, Max, Min & Spread (@ Max Spread)'
-                    if self.cb_loadcap.value:
-                        rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    #if self.cb_loadcap.value:
+                    #    rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
                     dr2set4 = [
                             {'col':['ExSpread@Spread'],'_ylim': [0, 100], 'color':['dodgerblue'], 'unit':'°C'},
                             {'col':['ExSpread@MaxTemp','ExSpread@MinTemp'],'_ylim': [4200, 4800], 'color':['FireBrick','Crimson'], 'unit':'°C'},
@@ -582,12 +583,12 @@ class Tab():
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
 
                     print()
-                    print('Figures below are filtered by targetload & Spread:')
-                    print()
-                    if self.cb_loadcap.value:
-                        rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
-                    if self.cb_spreadcap.value:
-                        rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
+                    # print('Figures below are filtered by targetload & Spread:')
+                    # print()
+                    # if self.cb_loadcap.value:
+                    #     rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    # if self.cb_spreadcap.value:
+                    #     rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
                     
                     dr2set3 = [
                         {'col':['rpm_dmax'],'_ylim': [4200, 4800], 'color':'red', 'unit':'rpm'},
@@ -665,12 +666,12 @@ class Tab():
                     dmp2.bokeh_show(fig4)
 
                     print()
-                    print('Figures below are filtered by targetload & Spread:')
-                    print()
-                    if self.cb_loadcap.value:
-                        rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
-                    if self.cb_spreadcap.value:
-                        rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
+                    # print('Figures below are filtered by targetload & Spread:')
+                    # print()
+                    # if self.cb_loadcap.value:
+                    #     rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    # if self.cb_spreadcap.value:
+                    #     rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
 
                     dr2set3 = [
                         {'col':['PressOilMax'],'_ylim': [0, 20], 'color':'brown', 'unit':'bar'},
