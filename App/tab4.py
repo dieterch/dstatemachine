@@ -178,8 +178,8 @@ class Tab():
         self.tab4_out.clear_output() 
 
     def calc_time_range(self,sv):
-        tns = pd.to_datetime((sv['starttime'].timestamp() + self.time_range.value[0]/100.0 * (sv['endtime']-sv['starttime']).seconds), unit='s')
-        tne = pd.to_datetime((sv['starttime'].timestamp() + self.time_range.value[1]/100.0 * (sv['endtime']-sv['starttime']).seconds), unit='s')
+        tns = pd.to_datetime((sv['starttime'].timestamp() + self.time_range.value[0]/100.0 * (sv['endtime'].timestamp()-sv['starttime'].timestamp())), unit='s')
+        tne = pd.to_datetime((sv['starttime'].timestamp() + self.time_range.value[1]/100.0 * (sv['endtime'].timestamp()-sv['starttime'].timestamp())), unit='s')
         return tns, tne
 
 
