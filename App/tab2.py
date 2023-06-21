@@ -183,10 +183,15 @@ class Tab():
             else: # engine was loaded from file
                 if V.e is not None:
                     self.tab2_selected_engine.value = V.selected
-                    self.b_loadmessages.description = 'append new messages'
+                    #self.b_loadmessages.description = 'append new messages'
+                    self.b_loadmessages.layout.display = 'none'
                     self.b_appendfsm.layout.display = 'block'
                     self.b_runfsm.layout.display = 'none'
-                    self.single_runs_chkbox.display = 'none'
+                    self.b_savefsm.layout.display = 'none'
+                    #self.single_runs_chkbox.display = 'none'
+                    #self.run2_chkbox.display = 'none',
+                    #self.run4_chkbox.display = 'none',
+                    #self.refresh_chkbox.display = 'none',
                     self.check_buttons()
                 
         with self.tab2_out:        
@@ -206,7 +211,7 @@ class Tab():
                     V.fsm = dmp2.FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
                     tabs_out.clear_output()
                 else:
-                    print('tab2 - ⌛ appending messages.')
+                    #print('tab2 - ⌛ appending messages.')
                     #display(pd.DataFrame.from_dict(V.fsm.results['info'], orient='index').style.hide())
                     print()
                     pp(V.fsm.results['info'])
@@ -253,8 +258,10 @@ class Tab():
 
     def print_result(self):
             print()
-            print(f"First message: {V.fsm.first_message}")
-            print(f"Last message: {V.fsm.last_message}")
+            #print(f"First message: {V.fsm.first_message}")
+            print(f"First message: {V.fsm.results['first_message']}")
+            #print(f"Last message: {V.fsm.last_message}")
+            print(f"Last message: {V.fsm.results['last_message']}")
             print()
             print(f"Starts: {V.rdf.shape[0]}") 
             print(f"Runs: {V.fsm.runs_completed}")
@@ -262,6 +269,7 @@ class Tab():
                   f" Failed: {V.rdf[V.rdf['success'] == 'failed'].shape[0]}, Undefined: {V.rdf[V.rdf['success'] == 'undefined'].shape[0]}")
             print(f"Starting reliability raw: {V.rdf[V.rdf['success'] == 'success'].shape[0]/(V.rdf.shape[0])*100.0:3.1f}% ")
             print(f"Starting reliability: {V.rdf[V.rdf['success'] == 'success'].shape[0]/(V.rdf.shape[0]-V.rdf[V.rdf['success'] == 'undefined'].shape[0])*100.0:3.1f}% ")
+            print()
 
 
     def fsm_results(self,b):
@@ -335,13 +343,19 @@ class Tab():
     def fsm_append(self,b):
         if V.fsm is not None:
             with self.tab2_out:
+                self.t1.value = pd.to_datetime(V.fsm.results['starts'][-3]['starttime'])
                 V.fsmappend = dmp2.FSMOperator(V.e, p_from=self.t1.value, p_to=self.t2.value)
                 V.fsmappend.run0(enforce=True, silent=False, debug=False)
                 V.fsmappend.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
                 V.fsmappend.run2(silent = False, p_refresh=self.refresh_chkbox.value)
                 V.fsmappend.run4(silent = False, p_refresh=self.refresh_chkbox.value)
                 V.fsm.append_results(V.fsmappend)
+                V.fsm.runs_completed = V.fsmappend.runs_completed
+                self.b_savefsm.layout.display = 'block'
+                self.b_savefsm.disabled = False
                 V.rdf = V.fsm.starts
+                tabs_out.clear_output()
+                self.check_buttons()
 
     def check_buttons(self):
         #for b in [ self.b_loadmessages, self.b_runfsm, self.b_resultsfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
@@ -366,12 +380,13 @@ class Tab():
             self.b_runfsm1.disabled = True
             self.b_runfsm2.disabled = True            
             self.b_runfsm4.disabled = False            
-            #self.b_resultsfsm.disabled = False            
+            #self.b_resultsfsm.disabled = False       
             self.b_savefsm.disabled = False
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1,2])):
             self.b_runfsm2.disabled = True            
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1,2,4])):
             self.b_runfsm4.disabled = True            
+            self.b_savefsm.disabled = False
 
             
             
