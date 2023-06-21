@@ -58,6 +58,7 @@ def myfigures(e = None):
         {'col':['Hyd_PressOil'],'ylim': [0, 10], 'color':'brown', 'unit': 'bar'},
         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
         {'col':['Hyd_TempOil','Hyd_TempCoolWat','Hyd_TempWatRetPreEng'],'ylim': [0, 110], 'color':['#2171b5','orangered','hotpink'], 'unit':'°C'},
+        {'col':['Hyd_PressCoolWat'],'ylim': [0, 10], 'color':'dodgerblue', 'unit': 'bar'},
         ],
         'exh_detail' : [
         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},

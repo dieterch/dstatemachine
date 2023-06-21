@@ -28,7 +28,7 @@ class Tab():
         self.bt_load_testfile.on_click(self.load_testfile)
 
         self.fdialog = FileChooser(
-            os.getcwd(),
+            os.getcwd() + '/data',
             filename='test.dfsm',
             #title='<b>FileChooser example</b>',
             show_hidden=False,
