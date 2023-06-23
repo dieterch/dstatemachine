@@ -42,7 +42,13 @@ class Tab():
             disabled=False, 
             button_style='primary')
         self.b_plots.on_click(self.show_plots)
-        
+
+        self.b_reloadplots = widgets.Button(
+            description='Reload Plotdef',
+            disabled=False, 
+            button_style='primary')
+        self.b_reloadplots.on_click(self.reloadplots)
+
         # self.b_run2 = widgets.Button(
         #     description='FSM 2',
         #     disabled=False, 
@@ -141,7 +147,7 @@ class Tab():
         return VBox([
                     HBox([
                         VBox([
-                            HBox([self.b_plots]),
+                            HBox([self.b_plots, self.b_reloadplots]),
                             HBox([self.selected_engine]),
                             HBox([self.sno_slider, self.sno]),
                             #HBox([self.time_range]),
@@ -276,7 +282,9 @@ class Tab():
             self.update_fig(x=self.sno.value, lfigures=V.lfigures, plotselection=self.plot_selection.value, 
                             vset=V.vset, plot_range=self.time_range.value, fsm=V.fsm)
 
-            
+    def reloadplots(self, but):
+        V.lfigures = myfigures(V.e)
+
     def html_table(self, result_list):
             table = pd.DataFrame(result_list).T
             return table.style.set_table_styles([
