@@ -589,7 +589,7 @@ class FSMOperator:
                 p_from = self._p_from,
                 p_to = self._p_to,
                 run2 = all(self.starts['run2']),
-                runs_completed = self.runs_completed,
+                runs_completed = list(set(self.runs_completed)),
                 starts = len(self.starts)
             )
             self.results['info'].update(self._e.description)
@@ -893,8 +893,9 @@ class FSMOperator:
         pd.DataFrame(self.message_queue).reset_index().to_feather(self.tempfn)
         del(self._messages)
         del(self.message_queue)
-        gc.collect()                    
-        self.runs_completed.append(self.act_run)
+        gc.collect()
+        if self.act_run not in self.runs_completed:
+            self.runs_completed.append(self.act_run)
         logging.debug('0 Run completed')
 
 
@@ -951,7 +952,8 @@ class FSMOperator:
 
         del(self._messages)
         gc.collect()
-        self.runs_completed.append(self.act_run)
+        if self.act_run not in self.runs_completed:
+            self.runs_completed.append(self.act_run)
         logging.debug('1 Run completed')
 
 
@@ -1047,7 +1049,8 @@ class FSMOperator:
                         
         if not silent:
             pbar.close()
-        self.runs_completed.append(self.act_run)
+        if self.act_run not in self.runs_completed:
+            self.runs_completed.append(self.act_run)
         logging.debug('2 Run completed')
 
 ####################################
@@ -1136,5 +1139,6 @@ class FSMOperator:
                         
         if not silent:
             pbar.close()
-        self.runs_completed.append(self.act_run)
+        if self.act_run not in self.runs_completed:
+            self.runs_completed.append(self.act_run)
         logging.debug('4 Run completed')

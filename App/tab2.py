@@ -353,6 +353,7 @@ class Tab():
                 V.fsm.runs_completed = V.fsmappend.runs_completed
                 self.b_savefsm.layout.display = 'block'
                 self.b_savefsm.disabled = False
+                self.b_appendfsm.layout.display = 'none'                
                 V.rdf = V.fsm.starts
                 tabs_out.clear_output()
                 self.check_buttons()
