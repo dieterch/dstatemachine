@@ -137,7 +137,8 @@ dmypy.json
 # individual
 .DS_Store
 .vscode/
-/data
+/data/*
+!/data/*.dfsm
 ~*
 .credentials
 .salt
