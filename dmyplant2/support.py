@@ -50,7 +50,8 @@ def jetzt():
 
 
 def forceUpdate(last):
-    return jetzt() - period > last
+    return False
+    #return jetzt() - period > last
 
 
 def getCredentials():
