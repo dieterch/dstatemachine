@@ -15,6 +15,7 @@ import json
 import arrow
 import warnings
 import gc
+from pprint import pprint as pp
 warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
 
 class Engine:
@@ -809,7 +810,8 @@ class Engine:
 
         try:
             # make sure itemids have the format { int: [str,str], int: [str,str], ...}
-            itemIds = { int(k):v for (k,v) in itemIds.items() }
+            # pp(itemIds) for debugging
+            itemIds = { int(k):v for (k,v) in itemIds.items() if k is not None } # sort out None Types
             
             df = pd.DataFrame([])
             fn = self._fname + fr"_{timeCycle}_{int(slot):02d}{suffix}.hdf"

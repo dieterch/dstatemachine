@@ -65,7 +65,7 @@ def myfigures(e = None):
         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
         {'col':['Hyd_TempWatRetPreEng','Hyd_TempWatRet'],'ylim': [0, 110], 'color':['hotpink','darkred'], 'unit':'°C'},
         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-        {'col':['CtrModule_Ctr10_X','CtrModule_Ctr10_W'],'ylim': [0, 110], 'color':['indianred','lightmagenta'], 'unit':'°C'},
+        {'col':['CtrModule_Ctr10_X','CtrModule_Ctr10_W'],'ylim': [0, 110], 'color':['indianred','crimson'], 'unit':'°C'},
         {'col':['CtrModule_Ctr10_Y'],'ylim': [0, 110], 'color':'midnightblue', 'unit':'%'},
         {'col':['CtrModule_Ctr10_Error'],'_ylim': [0, 110], 'color':'darkmagenta', 'unit':'%'},
         ],

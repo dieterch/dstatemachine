@@ -138,6 +138,7 @@ class Tab():
                 print(f'tab1 - ⌛ loading Myplant Engine Data for "{V.selected}" ...')
                 V.e=dmp2.Engine.from_fleet(mp, V.fleet.iloc[int(V.selected_number)])    
                 tabs_out.clear_output()
+                V.fsm = None
                 print(f'tab1 - {V.selected}')
 
     def do_lookup(self,lookup):
