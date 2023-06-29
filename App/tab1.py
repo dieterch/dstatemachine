@@ -29,7 +29,7 @@ class Tab():
 
         self.fdialog = FileChooser(
             os.getcwd() + '/data',
-            filename='test.dfsm',
+            filename='',
             #title='<b>FileChooser example</b>',
             show_hidden=False,
             select_default=True,
@@ -110,7 +110,7 @@ class Tab():
                 self.child2
             ]
         )
-        self.accordion.set_title(0,'Work on stored FSM Results')
+        self.accordion.set_title(0,'FSM Files')
         self.accordion.set_title(1,'Start Analysis from Installed Fleet')
         self.accordion.observe(self.accordion_change_index, 'selected_index')
         self.accordion.selected_index = 1
