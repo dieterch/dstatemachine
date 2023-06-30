@@ -376,8 +376,8 @@ class Runout_Collector(Data_Collector):
         #self._e = engine
         #self._speed_nominal = self._e.Speed_nominal
         #self._vset += ['Various_Values_SpeedAct','Various_Values_PosThrottle','Aux_PreChambDifPress']
-        self._vset += ['Various_Values_PosThrottle','Aux_PreChambDifPress']
-        self._content = ['Stop_Throttle','Stop_PVKDifPress']
+        self._vset += ['Various_Values_PosThrottle','Aux_PreChambDifPress','Exhaust_TempHexIn']
+        self._content = ['Stop_Throttle','Stop_PVKDifPress','MaxHexTemp']
         # define table results:
         results['run4_content']['stop'] = ['no'] + self._content
 
@@ -387,6 +387,7 @@ class Runout_Collector(Data_Collector):
         if not stopdata.empty:
             res['Stop_Throttle'] = stopdata['Various_Values_PosThrottle'].min()
             res['Stop_PVKDifPress'] = stopdata['Aux_PreChambDifPress'].max()
+            res['MaxHexTemp'] = stopdata['Exhaust_TempHexIn'].max()
         sno = startversuch['no']
         results['starts'][sno].update(res)
         return results  

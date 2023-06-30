@@ -718,6 +718,7 @@ class Tab():
                     {'col':['Stop_Overspeed'],'ylim': [0, 2000], 'color':'blue', 'unit':'rpm'},
                     {'col':['Stop_Throttle'],'ylim': [0, 10], 'color':'gray', 'unit':'%'},
                     {'col':['Stop_PVKDifPress'],'ylim': [0, 100], 'color':'purple', 'unit':'mbar'},
+                    {'col':['MaxHexTemp'],'ylim': [0, 700], 'color':'maroon', 'unit':'°C'},
                     {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
                     ]
                 
@@ -730,8 +731,8 @@ class Tab():
                     dmp2.bokeh_show(fig2)
 
                     
-                    if self.cb_loadcap.value:
-                        rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    # if self.cb_loadcap.value:
+                    #     rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
                     rde['bmep'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['targetload'], V.fsm._e.Speed_nominal), axis=1)
                     rde['bmep2'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['maxload'], V.fsm._e.Speed_nominal), axis=1)
                     dr2set2 = [
