@@ -172,7 +172,7 @@ class Exhaust_temp_Collector(Data_Collector):
         results['run2_content'][self.name] = ['no'] + self._content
 
     def collect(self, startversuch, results, data):
-        tdata = self.cut_data(startversuch, data, self._phases)
+        tdata = self.cut_data(startversuch, data, self._phases, post_phase=300)
         res = { k:np.nan for k in self._content } # initialize results
         if not tdata.empty:
 
