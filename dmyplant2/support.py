@@ -108,6 +108,12 @@ def readCredentials():
     except Exception:
         raise
 
+def tryagain():
+    if (os.path.exists(os.getcwd() + '/data/.credentials')):
+        os.unlink(os.getcwd() + '/data/.credentials')
+    if (os.path.exists(os.getcwd() +  '/.salt')):
+        os.unlink(os.getcwd() +  '/.salt')
+        
 def cred():
     if not os.path.exists(os.getcwd() + '/data'):
         os.makedirs(os.getcwd() + '/data')

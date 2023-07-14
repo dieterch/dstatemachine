@@ -5,7 +5,7 @@ import yaml
 #import base64
 import requests
 from cryptography.fernet import Fernet
-from .support import readCredentials
+from .support import readCredentials, tryagain
 import pyotp
 import logging
 import os
@@ -255,37 +255,40 @@ class MyPlant:
 
     def login(self):
         """Login to MyPlant"""
+        try:
+            if type(self)._session is None:
+                logging.debug(f"SSO {self._cred['name']} MyPlant login")
+                type(self)._session = requests.session()
+                headers = {'Content-Type': 'application/json', }
+                body = {
+                    "username": self._cred['name'],
+                    "password": self._cred['password']
+                }
+                totp_secret = self._cred['totp_secret']
+                for i in range(3):
+                    response = type(self)._session.post(burl + "/auth", data=json.dumps(body), headers=headers)
+                    # generate OTP
+                    totp = pyotp.TOTP(totp_secret)
+                    totp_code = totp.now()
+                    body_mfa = {"username": body['username'], "challenge": response.json()['challenge'], "otp": totp_code}
+                    response = type(self)._session.post('https://api.myplant.io/auth/mfa/totp/confirmation', data=json.dumps(body_mfa), headers=headers)
 
-        if type(self)._session is None:
-            logging.debug(f"SSO {self._cred['name']} MyPlant login")
-            type(self)._session = requests.session()
-            headers = {'Content-Type': 'application/json', }
-            body = {
-                "username": self._cred['name'],
-                "password": self._cred['password']
-            }
-            totp_secret = self._cred['totp_secret']
-            for i in range(3):
-                response = type(self)._session.post(burl + "/auth", data=json.dumps(body), headers=headers)
-                # generate OTP
-                totp = pyotp.TOTP(totp_secret)
-                totp_code = totp.now()
-                body_mfa = {"username": body['username'], "challenge": response.json()['challenge'], "otp": totp_code}
-                response = type(self)._session.post('https://api.myplant.io/auth/mfa/totp/confirmation', data=json.dumps(body_mfa), headers=headers)
-
-                if response.status_code == 200:
-                    logging.debug(f"login {self._cred['name']} successful.")
-                    self._token = response.json()['token']
-                    self._appuser_token = self._token
-                    break
+                    if response.status_code == 200:
+                        logging.debug(f"login {self._cred['name']} successful.")
+                        self._token = response.json()['token']
+                        self._appuser_token = self._token
+                        break
+                    else:
+                        logging.error(f'Myplant login attempt #{i + 1} failed with response code {response.status_code}')
+                        time.sleep(1)
                 else:
-                    logging.error(f'Myplant login attempt #{i + 1} failed with response code {response.status_code}')
-                    time.sleep(1)
-            else:
-                logging.error(f"Login {self._cred['name']} failed after 3 attempts.")
-                self.del_Credentials()
-                raise Exception(f"Login Failed, invalid Credentials ?")
-
+                    logging.error(f"Login {self._cred['name']} failed after 3 attempts.")
+                    self.del_Credentials()
+                    raise Exception(f"Login Failed, invalid Credentials ?")
+        except Exception as e:
+            tryagain()
+            print(f"\n{e} Error, please try again.")
+            raise(e)
 
     def logout(self):
         """Logout from Myplant and release self._session"""
