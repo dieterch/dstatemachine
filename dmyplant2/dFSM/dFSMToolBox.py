@@ -154,65 +154,107 @@ class Exhaust_temp_Collector(Data_Collector):
         # what ?
         self._e = engine
         self.tcyl = self._e.dataItemsCyl('Exhaust_TempCyl*')
-        self._vset += ['Power_PowerAct','Exhaust_TempCylMin','Exhaust_TempCylMax'] + self.tcyl
+        self._vset += ['Power_PowerAct','Exhaust_TempCylMin','Exhaust_TempCylMax', 'Exhaust_TempCylAvg'] + self.tcyl
 
         # results to collect:
-        self._content = ['ExTCylMax@MaxTemp', # Collect Exh Data at Max Exhaust Temperature position
-                        'ExTCylMax@MaxPos',
-                        'ExTCylMax@MinTemp',
-                        'ExTCylMax@MinPos',
-                        'ExTCylMax@Spread',
-                        'ExTCylMax@PWR',
-                        'ExSpread@MaxTemp', # Collect Exh Data at Max Exhaust Temperature Spread position
-                        'ExSpread@MaxPos',
-                        'ExSpread@MinTemp',
-                        'ExSpread@MinPos',
-                        'ExSpread@Spread',
-                        'ExSpread@PWR']
+        self._content = ['ExhTCylMaxTemp', # Collect Exh Data at Max Exhaust Temperature position
+                         'ExhTCylDevFromAvgPos',
+                         'ExhTCylDevFromAvgNeg',
+                         'ExTCylMaxTempPos',
+                         'ExTCylMaxSpread']
+        # self._content = ['ExTCylMax@MaxTemp', # Collect Exh Data at Max Exhaust Temperature position
+        #                 'ExTCylMax@MaxPos',
+        #                 'ExTCylMax@MinTemp',
+        #                 'ExTCylMax@MinPos',
+        #                 'ExTCylMax@Spread',
+        #                 'ExTCylMax@PWR',
+        #                 'ExSpread@MaxTemp', # Collect Exh Data at Max Exhaust Temperature Spread position
+        #                 'ExSpread@MaxPos',
+        #                 'ExSpread@MinTemp',
+        #                 'ExSpread@MinPos',
+        #                 'ExSpread@Spread',
+        #                 'ExSpread@PWR']
         results['run2_content'][self.name] = ['no'] + self._content
 
     def collect(self, startversuch, results, data):
         tdata = self.cut_data(startversuch, data, self._phases, post_phase=300)
         res = { k:np.nan for k in self._content } # initialize results
         if not tdata.empty:
-
-            # Collect Exh Data at Max Exhaust Temperature position
+            # Max Exhaust Temperature position            
             point = tdata['Exhaust_TempCylMax'].idxmax()
             if point == point: # test for not NaN
-                datapoint = tdata.loc[point]
-                te = list(datapoint[self.tcyl])
-                tmax = max(te); tmax_pos = te.index(tmax)
-                tmin = min(te); tmin_pos = te.index(tmin)
-                #tmax_org = tdata.at[datapoint.name,'Exhaust_TempCylMax']
-                tmin_org = tdata.at[datapoint.name,'Exhaust_TempCylMin']
-                tspread = tmax - tmin_org
-                #tspread = tmax - tmin
-                tpow  = tdata.at[datapoint.name,'Power_PowerAct']
-                res.update({'ExTCylMax@MaxTemp':tmax,
-                            #'ExhTempCylMaxOrg':tmax_org,
-                            'ExTCylMax@MaxPos':tmax_pos + 1,
-                            'ExTCylMax@MinTemp':tmin_org,
-                            #'ExhTempCylMin_at_Max_org':tmin_org,
-                            'ExTCylMax@MinPos':tmin_pos +1 ,
-                            'ExTCylMax@Spread':tspread,  
-                            'ExTCylMax@PWR':tpow })
+                 datapoint = tdata.loc[point]
+                 te = list(datapoint[self.tcyl])
+                 tmax = max(te); tmax_pos = te.index(tmax)
+            
+            posdeviation = tdata['Exhaust_TempCylMax'] - tdata['Exhaust_TempCylAvg']
+            # Max Pos Temperature Deviation            
+            point = posdeviation.idxmax()
+            if point == point: # test for not NaN
+                 datapoint = tdata.loc[point]
+                 te = list(datapoint[self.tcyl])
+                 devmax = max(te); devmax_pos = te.index(devmax)
+
+            negdeviation = tdata['Exhaust_TempCylAvg'] - tdata['Exhaust_TempCylMin']
+            # Max Neg Temperature Deviation            
+            point = negdeviation.idxmax()
+            if point == point: # test for not NaN
+                 datapoint = tdata.loc[point]
+                 te = list(datapoint[self.tcyl])
+                 devnegmax = min(te); devnegmax_pos = te.index(devnegmax)
+
+            spread = tdata['Exhaust_TempCylMax'] - tdata['Exhaust_TempCylMin']
+            # Max Temperature Spread            
+            point = spread.idxmax()
+            if point == point: # test for not NaN
+                 datapoint = tdata.loc[point]
+                 te = list(datapoint[self.tcyl])
+                 spreadmax = max(te) - min(te);
+
+            res.update({'ExhTCylMaxTemp':tmax,
+                        'ExTCylMaxTempPos':tmax_pos + 1,
+                        'ExhTCylDevFromAvgPos':devmax,
+                        'ExhTCylDevFromAvgNeg':devnegmax,
+                        'ExTCylMaxSpread':spreadmax
+             })
+
+            # # Collect Exh Data at Max Exhaust Temperature position
+            # point = tdata['Exhaust_TempCylMax'].idxmax()
+            # if point == point: # test for not NaN
+            #     datapoint = tdata.loc[point]
+            #     te = list(datapoint[self.tcyl])
+            #     tmax = max(te); tmax_pos = te.index(tmax)
+            #     tmin = min(te); tmin_pos = te.index(tmin)
+            #     #tmax_org = tdata.at[datapoint.name,'Exhaust_TempCylMax']
+            #     tmin_org = tdata.at[datapoint.name,'Exhaust_TempCylMin']
+            #     tspread = tmax - tmin_org
+            #     #tspread = tmax - tmin
+            #     tpow  = tdata.at[datapoint.name,'Power_PowerAct']
+            #     res.update({'ExTCylMax@MaxTemp':tmax,
+            #                 #'ExhTempCylMaxOrg':tmax_org,
+            #                 'ExTCylMax@MaxPos':tmax_pos + 1,
+            #                 'ExTCylMax@MinTemp':tmin_org,
+            #                 #'ExhTempCylMin_at_Max_org':tmin_org,
+            #                 'ExTCylMax@MinPos':tmin_pos +1 ,
+            #                 'ExTCylMax@Spread':tspread,  
+            #                 'ExTCylMax@PWR':tpow })
 
             # Collect Exh Data at Max Exhaust Temperature Spread position            
-            tdata['spread'] = tdata['Exhaust_TempCylMax'] - tdata['Exhaust_TempCylMin']
-            point = tdata['spread'].idxmax()
-            if point == point:
-                sdatapoint = tdata.loc[point]
-                ste = list(sdatapoint[self.tcyl])
-                stmax = max(ste); stmax_pos = ste.index(stmax)
-                stmin = min(ste); stmin_pos = ste.index(stmin)
-                spreadmax = tdata.at[sdatapoint.name,'spread']
-                spreadpow = tdata.at[sdatapoint.name,'Power_PowerAct']
-                res.update({'ExSpread@MaxTemp':stmax,
-                            'ExSpread@MaxPos':stmax_pos + 1,
-                            'ExSpread@MinTemp':stmin,
-                            'ExSpread@MinPos':stmin_pos + 1,
-                            'ExSpread@Spread':spreadmax,
-                            'ExSpread@PWR':spreadpow })
+            # tdata['spread'] = tdata['Exhaust_TempCylMax'] - tdata['Exhaust_TempCylMin']
+            # point = tdata['spread'].idxmax()
+            # if point == point:
+            #     sdatapoint = tdata.loc[point]
+            #     ste = list(sdatapoint[self.tcyl])
+            #     stmax = max(ste); stmax_pos = ste.index(stmax)
+            #     stmin = min(ste); stmin_pos = ste.index(stmin)
+            #     spreadmax = tdata.at[sdatapoint.name,'spread']
+            #     spreadpow = tdata.at[sdatapoint.name,'Power_PowerAct']
+            #     res.update({'ExSpread@MaxTemp':stmax,
+            #                 'ExSpread@MaxPos':stmax_pos + 1,
+            #                 'ExSpread@MinTemp':stmin,
+            #                 'ExSpread@MinPos':stmin_pos + 1,
+            #                 'ExSpread@Spread':spreadmax,
+            #                 'ExSpread@PWR':spreadpow })
 
         sno = startversuch['no']
         results['starts'][sno].update(res) 

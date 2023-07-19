@@ -507,45 +507,25 @@ class Tab():
                 # #rdb = rda
                 # rde = rda #.fillna('')
                 rde = self.filter_results()
+                sdict ={'success':1, 'failed':0, 'undefined':0.5}
+                rde['isuccess'] = rde.apply(lambda x: sdict[x['success']], axis=1)
                 if not rde.empty:
-                    rde['datetime'] = pd.to_datetime(rde['starttime'])
-                    
-                    #print()
-                    #print('Figures below are filtered by targetload & Spread:')
+                    rde['datetime'] = pd.to_datetime(rde['starttime'])                    
                     print()
-                    
-                    #if self.cb_loadcap.value:
-                    #    rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
-                    #if self.cb_spreadcap.value:
-                    #    rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
 
-                    ntitle = f"{V.fsm._e}" + ' | Exhaust Temperture at Start, Max, Min & Spread (@ Max Spread)'
-                    #if self.cb_loadcap.value:
-                    #    rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
-                    dr2set4 = [
-                            {'col':['ExSpread@Spread'],'_ylim': [0, 100], 'color':['dodgerblue'], 'unit':'°C'},
-                            {'col':['ExSpread@MaxTemp','ExSpread@MinTemp'],'_ylim': [4200, 4800], 'color':['FireBrick','Crimson'], 'unit':'°C'},
-                            {'col':['ExSpread@MaxPos','ExSpread@MinPos'],'_ylim': [1, 24], 'color':['Thistle','Plum'], 'unit':'-'},
-                            {'col':['ExSpread@PWR'],'_ylim': [0, 100], 'color':['red'], 'unit':'kW'},
-                            {'col':['synchronize'],'_ylim':(-20,400), 'color':'brown', 'unit':'sec'},
-                            {'col':['W','A','isuccess'],'_ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
-                            #{'col':['startpreparation'],'_ylim':(-1000,800), 'unit':'sec'},
-                            {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
-                            ]
-                    dr2set4 = dmp2.equal_adjust(dr2set4, rde, do_not_adjust=[5], minfactor=0.95, maxfactor=1.2)
-                    fig5 = dmp2.dbokeh_chart(rde, dr2set4, style='both', figsize=self.dfigsize ,title=ntitle);
-                    dmp2.bokeh_show(fig5)
+                    # self._content = ['ExhTCylMaxTemp', # Collect Exh Data at Max Exhaust Temperature position
+                    #                 'ExhTCylDevFromAvgPos'
+                    #                 'ExhTCylDevFromAvgNeg'
+                    #                 'ExTCylMaxTempPos',
+                    #                 'ExTCylMaxSpread']
 
-                    print()
-                    ntitle = f"{V.fsm._e}" + ' | Exhaust Temperture at Start, Max, Min & Spread (@ Max Temp)'
+                    ntitle = f"{V.fsm._e}" + ' | Exhaust Tempertures at Start'
                     dr2set3 = [
-                            {'col':['ExTCylMax@Spread'],'_ylim': [0, 100], 'color':['dodgerblue'], 'unit':'°C'},
-                            {'col':['ExTCylMax@MaxTemp','ExTCylMax@MinTemp'],'_ylim': [4200, 4800], 'color':['FireBrick','Crimson'], 'unit':'°C'},
-                            {'col':['ExTCylMax@MaxPos','ExTCylMax@MinPos'],'_ylim': [1, 24], 'color':['Thistle','Plum'], 'unit':'-'},
-                            {'col':['ExTCylMax@PWR'],'_ylim': [0, 100], 'color':['red'], 'unit':'kW'},
-                            {'col':['synchronize'],'_ylim':(-20,400), 'color':'brown', 'unit':'sec'},
+                            {'col':['ExTCylMaxSpread'],'_ylim': [0, 100], 'color':['dodgerblue'], 'unit':'°C'},
+                            {'col':['ExhTCylMaxTemp'],'_ylim': [4200, 4800], 'color':['FireBrick'], 'unit':'°C'},
+                            {'col':['ExTCylMaxTempPos'],'_ylim': [1, 24], 'color':['Plum'], 'unit':'-'},
+                            {'col':['ExhTCylDevFromAvgNeg','ExhTCylDevFromAvgPos'],'ylim': [0, 1000], 'color':['Thistle','Crimson'], 'unit':'°C'},
                             {'col':['W','A','isuccess'],'_ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
-                            #{'col':['startpreparation'],'_ylim':(-1000,800), 'unit':'sec'},
                             {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
                             ]
                     dr2set3 = dmp2.equal_adjust(dr2set3, rde, do_not_adjust=[5], minfactor=0.95, maxfactor=1.2)
