@@ -37,6 +37,7 @@ def myfigures(e = None):
         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
         {'col':['Various_Values_PressBoost'],'_ylim': [0, 3], 'color':'dodgerblue', 'unit':'bar'},
         {'col':['Various_Values_TempMixture'],'ylim': [0, 200], 'color':'orange', 'unit':'°C'},
+        {'col':['Aux_RoomTemp'],'ylim': [-50, 100], 'color':'hotpink', 'unit':'°C'},
         {'col':['Various_Values_PosThrottle','Various_Values_PosTurboBypass'],'ylim': [-10, 110], 'color':['rgba(105,105,105,0.6)','rgba(165,42,42,0.4)'], 'unit':'%'},
         ],
         'tecjet' : [
@@ -49,6 +50,13 @@ def myfigures(e = None):
         {'col':['TecJet_GasTemp1'],'_ylim': [0, 3], 'color':'rgba(255,0,255,0.4)', 'unit':'°C'},
         {'col':['TecJet_GasDiffPress'],'_ylim': [0, 3], 'color':'olive', 'unit':'mbar'},
         {'col':['TecJet_ValvePos1'],'ylim': [0, 200], 'color':'purple', 'unit':'%'},
+        ],
+        'various' : [
+        {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
+        {'col':['Hyd_OilCount_Trend_OilConsumption','RMD_ListBuffMAvgOilConsume_OilConsumption'],'ylim': [0, 1], 'color':['orange','rgba(255, 224, 130,0.8)'], 'unit':'g/kWh'},
+        {'col':['Aux_RoomTemp'],'ylim': [-50, 100], 'color':'hotpink', 'unit':'°C'},
+        {'col':['CMU_rDPr_Ch_AirFilt','CMU_rDPr_BbFilt'],'ylim': [-50, 50], 'color':['blue','dodgerblue'], 'unit':'mbar'},
+        {'col':['Aux_rPr_Baro'],'ylim': [900, 1100], 'color':'gray', 'unit': 'mbar'},
         ],
         'hydraulics' : [
         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
@@ -82,14 +90,14 @@ def myfigures(e = None):
         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-        {'col':func_cyl('Exhaust_TempCyl*'),'ylim': [300, 700], 'unit':'°C'},
+        {'col':func_cyl('Exhaust_TempCyl*')+['Exhaust_TempCylMax','Exhaust_TempCylMin'],'ylim': [300, 700], 'unit':'°C'},
         ],
         'exhaust' : [
         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
         {'col':['Exhaust_TempHexIn'], 'ylim': [0,700], 'color': 'purple', 'unit':'°C'},
-        {'col':func_cyl('Exhaust_TempCyl*'),'ylim': [0, 700], 'unit':'°C'},
+        {'col':func_cyl('Exhaust_TempCyl*')+['Exhaust_TempCylMax','Exhaust_TempCylMin'],'ylim': [0, 700], 'unit':'°C'},
         ],
         'valvenoise' : [
         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
@@ -136,10 +144,11 @@ def overview_figure():
         #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
         ],
         'basic2': [
-        {'col':['targetload'],'ylim':(-4000,26000), 'unit':'kW' },
+        {'col':['targetload','maxload'],'ylim':(-4000,26000), 'unit':'kW' },
         {'col':['idle'],'ylim':(-100,1000), 'color':'dodgerblue', 'unit':'sec' },
         {'col':['PCDifPress_min'],'ylim':(-3500,500), 'color':'red', 'unit':'mbar' },
         {'col':['PressBoost_max'],'ylim':(0,10), 'color':'blue', 'unit':'bar' },
+        {'col':['CrankCasePressure'],'ylim': (-100, 100), 'color':'orange', 'unit':'mbar'},
         {'col':['W','A','isuccess'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
         {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.1)'] , 'unit':'-' },
         #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }

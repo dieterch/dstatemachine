@@ -281,11 +281,11 @@ class Tab():
         if self.cb_powerabove.value:
             self.rda = self.rda[self.rda['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
         if self.cb_spreadabove.value:
-            self.rda = self.rda[self.rda['ExSpread@Spread'] > self.t_spreadcap.value]
+            self.rda = self.rda[self.rda['ExTCylMaxSpread'] > self.t_spreadcap.value]
         if self.cb_powerbelow.value:
             self.rda = self.rda[self.rda['targetload'] < self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
         if self.cb_spreadbelow.value:
-            self.rda = self.rda[self.rda['ExSpread@Spread'] < self.t_spreadcap.value]
+            self.rda = self.rda[self.rda['ExTCylMaxSpread'] < self.t_spreadcap.value]
 
         self.rda = self.rda.reset_index(drop='index')
         return self.rda
@@ -319,7 +319,7 @@ class Tab():
                     #dset2 = equal_adjust(dset2, self.rde, do_not_adjust=[-1])
                     ftitle = f"{V.fsm._e}"
                     try:
-                        fig2 = dmp2.dbokeh_chart(self.rde, dset2, style='both', figsize=V.dfigsize ,title=ftitle);
+                        fig2 = dmp2.dbokeh_chart(self.rde, dset2, x='oph', style='both', figsize=V.dfigsize ,title=ftitle);
                         print()
                         dmp2.bokeh_show(fig2)
                     except Exception as err:
@@ -397,16 +397,7 @@ class Tab():
         with self.tab3_out:
             self.tab3_out.clear_output()
             if ((V.fsm is not None) and V.fsm.starts.iloc[0]['run2']):
-                # rda = V.fsm.starts.reset_index(drop='index')
-                # thefilter = (
-                #     (rda['mode'].isin(V.modes_value)) & 
-                #     (rda['success'].isin(V.succ_value)) & 
-                #     ((rda['W'] > 0) | ('Warnings' not in V.alarm_warning_value)) & 
-                #     ((rda['A'] > 0) | ('Alarms' not in V.alarm_warning_value))
-                # )
-                # rda = rda[thefilter].reset_index(drop='index')
-                # #rdb = rda
-                # rde = rda #.fillna('')
+
                 rde = self.filter_results()
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
@@ -496,39 +487,26 @@ class Tab():
         with self.tab3_out:
             self.tab3_out.clear_output()
             if ((V.fsm is not None) and V.fsm.starts.iloc[0]['run2']):
-                # rda = V.fsm.starts.reset_index(drop='index')
-                # thefilter = (
-                #     (rda['mode'].isin(V.modes_value)) & 
-                #     (rda['success'].isin(V.succ_value)) & 
-                #     ((rda['W'] > 0) | ('Warnings' not in V.alarm_warning_value)) & 
-                #     ((rda['A'] > 0) | ('Alarms' not in V.alarm_warning_value))
-                # )
-                # rda = rda[thefilter].reset_index(drop='index')
-                # #rdb = rda
-                # rde = rda #.fillna('')
                 rde = self.filter_results()
                 sdict ={'success':1, 'failed':0, 'undefined':0.5}
                 rde['isuccess'] = rde.apply(lambda x: sdict[x['success']], axis=1)
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])                    
                     print()
-
-                    # self._content = ['ExhTCylMaxTemp', # Collect Exh Data at Max Exhaust Temperature position
-                    #                 'ExhTCylDevFromAvgPos'
-                    #                 'ExhTCylDevFromAvgNeg'
-                    #                 'ExTCylMaxTempPos',
-                    #                 'ExTCylMaxSpread']
-
                     ntitle = f"{V.fsm._e}" + ' | Exhaust Tempertures at Start'
                     dr2set3 = [
                             {'col':['ExTCylMaxSpread'],'_ylim': [0, 100], 'color':['dodgerblue'], 'unit':'°C'},
                             {'col':['ExhTCylMaxTemp'],'_ylim': [4200, 4800], 'color':['FireBrick'], 'unit':'°C'},
-                            {'col':['ExTCylMaxTempPos'],'_ylim': [1, 24], 'color':['Plum'], 'unit':'-'},
+                            {'col':['ExTCylMaxTempPos','ExhTCylDevFromAvgNeg_Pos'],'ylim': [1, 24], 'color':['Plum','Crimson'], 'unit':'-'},
                             {'col':['ExhTCylDevFromAvgNeg','ExhTCylDevFromAvgPos'],'ylim': [0, 1000], 'color':['Thistle','Crimson'], 'unit':'°C'},
                             {'col':['W','A','isuccess'],'_ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
                             {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
                             ]
-                    dr2set3 = dmp2.equal_adjust(dr2set3, rde, do_not_adjust=[5], minfactor=0.95, maxfactor=1.2)
+                    
+                    #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
+                    dr2set3_c = [r for r in dr2set3 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
+
+                    dr2set3 = dmp2.equal_adjust(dr2set3_c, rde, do_not_adjust=[5], minfactor=0.95, maxfactor=1.2)
                     fig4 = dmp2.dbokeh_chart(rde, dr2set3, style='both', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig4)
 
@@ -546,30 +524,11 @@ class Tab():
         with self.tab3_out:
             self.tab3_out.clear_output()
             if ((V.fsm is not None) and V.fsm.starts.iloc[0]['run2']):
-                # rda = V.fsm.starts.reset_index(drop='index')
-                # thefilter = (
-                #     (rda['mode'].isin(V.modes_value)) & 
-                #     (rda['success'].isin(V.succ_value)) & 
-                #     ((rda['W'] > 0) | ('Warnings' not in V.alarm_warning_value)) & 
-                #     ((rda['A'] > 0) | ('Alarms' not in V.alarm_warning_value))
-                # )
-                # rda = rda[thefilter].reset_index(drop='index')
-                # global rdb
-                # rdb = rda
-                # rde = rda #.fillna('')
-                # # ['rpm_dmax','rpm_dmin','rpm_spread', 'Lambda_rpm_max', 'TempOil_rpm_max', 'TempCoolWat_rpm_max']
                 rde = self.filter_results()
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
 
-                    print()
-                    # print('Figures below are filtered by targetload & Spread:')
-                    # print()
-                    # if self.cb_loadcap.value:
-                    #     rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
-                    # if self.cb_spreadcap.value:
-                    #     rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
-                    
+                    print()                    
                     dr2set3 = [
                         {'col':['rpm_dmax'],'_ylim': [4200, 4800], 'color':'red', 'unit':'rpm'},
                         {'col':['rpm_dmin'],'_ylim': [0, 100], 'color':'blue', 'unit':'rpm'},
@@ -618,18 +577,6 @@ class Tab():
         with self.tab3_out:
             self.tab3_out.clear_output()
             if ((V.fsm is not None) and V.fsm.starts.iloc[0]['run2']):
-                # rda = V.fsm.starts.reset_index(drop='index')
-                # thefilter = (
-                #     (rda['mode'].isin(V.modes_value)) & 
-                #     (rda['success'].isin(V.succ_value)) & 
-                #     ((rda['W'] > 0) | ('Warnings' not in V.alarm_warning_value)) & 
-                #     ((rda['A'] > 0) | ('Alarms' not in V.alarm_warning_value))
-                # )
-                # rda = rda[thefilter].reset_index(drop='index')
-                # global rdb
-                # rdb = rda
-                # rde = rda #.fillna('')
-                # # ['PressOilMax','PressOilDifMax','TempOil_min']
                 rde = self.filter_results()                
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
@@ -646,13 +593,6 @@ class Tab():
                     dmp2.bokeh_show(fig4)
 
                     print()
-                    # print('Figures below are filtered by targetload & Spread:')
-                    # print()
-                    # if self.cb_loadcap.value:
-                    #     rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
-                    # if self.cb_spreadcap.value:
-                    #     rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
-
                     dr2set3 = [
                         {'col':['PressOilMax'],'_ylim': [0, 20], 'color':'brown', 'unit':'bar'},
                         {'col':['PressOilDifMax'],'_ylim': [0, 20], 'color':'black', 'unit':'bar'},
@@ -678,27 +618,18 @@ class Tab():
         with self.tab3_out:
             self.tab3_out.clear_output()
             if ((V.fsm is not None) and V.fsm.starts.iloc[0]['run4']):
-            #     rda = V.fsm.starts.reset_index(drop='index')
-            #     thefilter = (
-            #         (rda['mode'].isin(V.modes_value)) & 
-            #         (rda['success'].isin(V.succ_value)) & 
-            #         ((rda['W'] > 0) | ('Warnings' not in V.alarm_warning_value)) & 
-            #         ((rda['A'] > 0) | ('Alarms' not in V.alarm_warning_value))
-            #     )
-            #     rda = rda[thefilter].reset_index(drop='index')
-            #     #rdb = rda
-            #     rde = rda #.fillna('')
+                ftitle = f"{V.fsm._e}"
                 rde = self.filter_results()            
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
                     dr2set2 = [
-                    {'col':['maxload','targetload'],'ylim': [4200, 5000], 'color':['FireBrick','red'], 'unit':'kW'},
-                    {'col':['coolrun'],'ylim':[0,100], 'color': 'black', 'unit':'sec' },
-                    {'col':['runout'],'ylim':[0,100], 'color': 'orange', 'unit':'sec' },
+                    {'col':['StopPower'],'ylim': [4200, 5000], 'color':['red'], 'unit':'kW'},
                     {'col':['Stop_Overspeed'],'ylim': [0, 2000], 'color':'blue', 'unit':'rpm'},
                     {'col':['Stop_Throttle'],'ylim': [0, 10], 'color':'gray', 'unit':'%'},
+                    {'col':['Idle_CrankcasePressure','StopCrankCasePressure'],'ylim': [-100, 100], 'color':['blue','dodgerblue'], 'unit':'mbar'},
                     {'col':['Stop_PVKDifPress'],'ylim': [0, 100], 'color':'purple', 'unit':'mbar'},
-                    {'col':['MaxHexTemp'],'ylim': [0, 700], 'color':'maroon', 'unit':'°C'},
+                    {'col':['MaxHexTemp','HexTemp@Power'],'ylim': [0, 700], 'color':['maroon','FireBrick'], 'unit':'°C'},
+                    {'col':['oph'],'_ylim': [0, 100], 'color':'black', 'unit':'h'},
                     {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
                     ]
                 
@@ -706,13 +637,14 @@ class Tab():
                     dr2set2_c = [r for r in dr2set2 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
  
                     dr2set2 = dmp2.equal_adjust(dr2set2_c, rde, do_not_adjust=['no'], minfactor=0.95, maxfactor=1.2)
-                    ftitle = f"{V.fsm._e}"
-                    fig2 = dmp2.dbokeh_chart(rde, dr2set2, style='both', figsize=self.dfigsize ,title=ftitle);
+                    ntitle = ftitle + ' | Mix Values at Engine Stop vs. Datetime'
+                    fig1 = dmp2.dbokeh_chart(rde, dr2set2, style='circle', figsize=self.dfigsize ,title=ntitle);
+                    dmp2.bokeh_show(fig1)
+
+                    ntitle = ftitle + ' | Mix Values at Engine Stop vs. oph'
+                    fig2 = dmp2.dbokeh_chart(rde, dr2set2,  x='oph', style='circle', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig2)
 
-                    
-                    # if self.cb_loadcap.value:
-                    #     rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
                     rde['bmep'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['targetload'], V.fsm._e.Speed_nominal), axis=1)
                     rde['bmep2'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['maxload'], V.fsm._e.Speed_nominal), axis=1)
                     dr2set2 = [
@@ -729,7 +661,8 @@ class Tab():
                         dr2set2 = dmp2.equal_adjust(dr2set2, rde, do_not_adjust=['no'], minfactor=1.0, maxfactor=1.1)
                     except Exception as err:
                         print(f'Error: {str(err)}')
-                    ntitle = ftitle + ' | BMEP at Start & Stop Data vs TJ Gas Temperature in °C '
+
+                    ntitle = ftitle + ' |  Mix Values at Engine Stop vs TJ Gas Temperature in °C '
                     fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasTemp1_at_Min', style='circle', figsize=self.dfigsize ,title=ntitle);
                     fig3.add_layout(Span(location=V.fsm._e.BMEP,
                             dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
@@ -744,6 +677,7 @@ class Tab():
                             {'col':['coolrun'],'ylim':[0,100], 'color': 'black', 'unit':'sec' },
                             {'col':['runout'],'ylim':[0,100], 'color': 'orange', 'unit':'sec' },
                             {'col':['Stop_Overspeed'],'ylim': [0, 2000], 'color':'blue', 'unit':'rpm'},
+                            {'col':['Idle_CrankcasePressure'],'ylim': [-100, 100], 'color':'blue', 'unit':'mbar'},
                             {'col':['Stop_Throttle'],'ylim': [0, 10], 'color':'gray', 'unit':'%'},
                             {'col':['Stop_PVKDifPress'],'ylim': [0, 100], 'color':'purple', 'unit':'mbar'},
                             {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
