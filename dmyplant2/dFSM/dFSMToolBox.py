@@ -85,14 +85,14 @@ class Target_load_Collector(Data_Collector):
         # what ?
         self._e = engine
         self.ratedload = self._e['Power_PowerNominal']
-        self._vset += ['Power_PowerAct','Aux_PreChambDifPress','Various_Values_PressBoost']
+        self._vset += ['Power_PowerAct','Aux_PreChambDifPress','Various_Values_PressBoost','Hyd_PressCrankCase']
         self.period_factor=period_factor
         self.helplinefactor=helplinefactor
 
         # results to collect:
         # timings under 'startstop' are already collected in previous runs.
         # run2 changes or additions are added here
-        self._content = ['targetload','PCDifPress_min','PressBoost_max','ramprate','maxload']
+        self._content = ['targetload','PCDifPress_min','PressBoost_max','ramprate','maxload','StartCrankCasePressure']
         results['run2_content']['startstop'] += self._content #add run2 results
 
     def collect(self, startversuch ,results, data):
@@ -108,6 +108,7 @@ class Target_load_Collector(Data_Collector):
                     maxload = data['Power_PowerAct'].max()
                     xmax, ymax = self.left_upper_edge('Power_PowerAct', data, self.helplinefactor, xmax, ymax)
                     PreChambDifPress_min = data['Aux_PreChambDifPress'].min()
+                    CrankCasePressure = data['Hyd_PressCrankCase'].min()
                     PressBoost_max = data['Various_Values_PressBoost'].max()
                 except Exception as err:
                     # Berechnung sAbbrechen
@@ -130,6 +131,7 @@ class Target_load_Collector(Data_Collector):
             results['starts'][sno]['ramprate'] = ramprate / self.ratedload * 100.0
             results['starts'][sno]['maxload'] = maxload            
             results['starts'][sno]['PCDifPress_min'] = PreChambDifPress_min
+            results['starts'][sno]['StartCrankCasePressure'] = CrankCasePressure
             results['starts'][sno]['PressBoost_max'] = PressBoost_max
         return results
 
@@ -160,6 +162,7 @@ class Exhaust_temp_Collector(Data_Collector):
         self._content = ['ExhTCylMaxTemp', # Collect Exh Data at Max Exhaust Temperature position
                          'ExhTCylDevFromAvgPos',
                          'ExhTCylDevFromAvgNeg',
+                         'ExhTCylDevFromAvgNeg_Pos',
                          'ExTCylMaxTempPos',
                          'ExTCylMaxSpread']
         # self._content = ['ExTCylMax@MaxTemp', # Collect Exh Data at Max Exhaust Temperature position
@@ -193,7 +196,7 @@ class Exhaust_temp_Collector(Data_Collector):
             if point == point: # test for not NaN
                  datapoint = tdata.loc[point]
                  te = list(datapoint[self.tcyl])
-                 devmax = max(te); devmax_pos = te.index(devmax)
+                 devmax = max(te) - sum(te)/len(te); 
 
             negdeviation = tdata['Exhaust_TempCylAvg'] - tdata['Exhaust_TempCylMin']
             # Max Neg Temperature Deviation            
@@ -201,7 +204,8 @@ class Exhaust_temp_Collector(Data_Collector):
             if point == point: # test for not NaN
                  datapoint = tdata.loc[point]
                  te = list(datapoint[self.tcyl])
-                 devnegmax = min(te); devnegmax_pos = te.index(devnegmax)
+                 devnegmax = sum(te)/len(te) - min(te);
+                 devnegmax_pos = te.index(min(te))
 
             spread = tdata['Exhaust_TempCylMax'] - tdata['Exhaust_TempCylMin']
             # Max Temperature Spread            
@@ -214,6 +218,7 @@ class Exhaust_temp_Collector(Data_Collector):
             res.update({'ExhTCylMaxTemp':tmax,
                         'ExTCylMaxTempPos':tmax_pos + 1,
                         'ExhTCylDevFromAvgPos':devmax,
+                        'ExhTCylDevFromAvgNeg_Pos':devnegmax_pos + 1,
                         'ExhTCylDevFromAvgNeg':devnegmax,
                         'ExTCylMaxSpread':spreadmax
              })
@@ -373,10 +378,8 @@ class Rampdown_Collector(Data_Collector):
     def __init__(self, results, engine):
         self.phases = ['rampdown']
         super().__init__(self.phases)
-        #self._e = engine
-        #self._speed_nominal = self._e.Speed_nominal
-        self._vset += ['Hyd_PressCrankCase']
-        self._content = ['CrankCasePressure']
+        self._vset += ['Power_PowerAct','Hyd_PressCrankCase','Exhaust_TempHexIn','Count_OpHour']
+        self._content = ['Stop_Power','StopCrankCasePressure','HexTemp@Power','oph']
         # define table results:
         results['run4_content']['stop'] = ['no'] + self._content
 
@@ -384,7 +387,10 @@ class Rampdown_Collector(Data_Collector):
         stopdata = self.cut_data(startversuch, data, self._phases) 
         res = { k:np.nan for k in self._content } # initialize results
         if not stopdata.empty:
-            res['CrankCasePressure'] = stopdata['Hyd_PressCrankCase'].min()
+            res['StopPower'] = stopdata['Power_PowerAct'].max()
+            res['StopCrankCasePressure'] = stopdata['Hyd_PressCrankCase'].min()
+            res['HexTemp@Power'] = stopdata['Exhaust_TempHexIn'].min()
+            res['oph'] = stopdata['Count_OpHour'].min()
         sno = startversuch['no']
         results['starts'][sno].update(res)
         return results 
@@ -393,9 +399,6 @@ class Coolrun_Collector(Data_Collector):
     def __init__(self, results, engine):
         self.phases = ['coolrun']
         super().__init__(self.phases)
-        #self._e = engine
-        #self._speed_nominal = self._e.Speed_nominal
-        #self._vset += ['Various_Values_SpeedAct','Various_Values_PosThrottle','Aux_PreChambDifPress']
         self._vset += ['Various_Values_SpeedAct','Hyd_PressCrankCase']
         self._content = ['Stop_Overspeed','Idle_CrankcasePressure']
         # define table results:
@@ -415,9 +418,6 @@ class Runout_Collector(Data_Collector):
     def __init__(self, results, engine):
         self.phases = ['runout']
         super().__init__(self.phases)
-        #self._e = engine
-        #self._speed_nominal = self._e.Speed_nominal
-        #self._vset += ['Various_Values_SpeedAct','Various_Values_PosThrottle','Aux_PreChambDifPress']
         self._vset += ['Various_Values_PosThrottle','Aux_PreChambDifPress','Exhaust_TempHexIn']
         self._content = ['Stop_Throttle','Stop_PVKDifPress','MaxHexTemp']
         # define table results:
