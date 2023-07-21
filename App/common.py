@@ -15,48 +15,35 @@ from pprint import pprint as pp
 try:
     dmp2.cred()
     mp = dmp2.MyPlant(0)
-    #mp._fetch_installed_base(); # refresh local installed fleet database
 except Exception as err:
     print(str(err))
     sys.exit(1)
 
-def _dfigures(e = None):
+def dfigures(e = None):
     def fake_cyl(dataItem):
         return [dataItem[:-1] + '01']
     func_cyl = fake_cyl if e is None else e.dataItemsCyl
-
     func_power = 5000 if e is None else math.ceil(e['Power_PowerNominal'] / 1000.0) * 1000.0 * 1.2
-    
     f_figure = os.getcwd() + '/App/figures.json'
     figures = dmp2.load_json(f_figure)
-    #print(f"{f_figure}, existiert ? {os.path.exists(f_figure)}")
-    #pp(figures['exhaust'][-1])
     lfigures = figures.copy()
     for key in lfigures.keys():
         for i,r in enumerate(lfigures[key]):
             if 'ylim' in r:
-                if r['ylim'] == "$func_power$":
-                    #print(key)
-                    #print(r)
+                if r['ylim'] == "func_power":
                     figures[key][i]['ylim'] = [0,func_power]
             for j , dataitem in enumerate(r['col']):
                 if 'func_cyl|' in dataitem:
-                    #print(f"in {key}, row {i}, dataitem {j}, {dataitem} => func_cyl('{dataitem[len('func_cyl|'):]}')")
-                    #print(func_cyl(f"{dataitem[len('func_cyl|'):]}"))
                     lcol = figures[key][i]['col'].copy()
                     rlcol = func_cyl(f"{dataitem[len('func_cyl|'):]}")
-                    #print(rlcol)
-                    #remove the "symbol"
                     lcol.remove(dataitem)
                     for item in rlcol[::-1]:
                         lcol.insert(j, item)
                     figures[key][i]['col'] = lcol
-
-    #pp(figures['exhaust'][-1])
     return figures
 
 # DEFINITION OF PLOTS & OVERVIEW
-def dfigures(e = None):
+def _dfigures(e = None):
     def fake_cyl(dataItem):
         return [dataItem[:-1] + '01']
     func_cyl = fake_cyl if e is None else e.dataItemsCyl
@@ -184,7 +171,9 @@ def overview_figure():
         {'col':['idle'],'ylim':(-100,1000), 'color':'dodgerblue', 'unit':'sec' },
         {'col':['PCDifPress_min'],'ylim':(-3500,500), 'color':'red', 'unit':'mbar' },
         {'col':['PressBoost_max'],'ylim':(0,10), 'color':'blue', 'unit':'bar' },
-        {'col':['CrankCasePressure'],'ylim': (-100, 100), 'color':'orange', 'unit':'mbar'},
+        {'col':['StartCrankCasePressure','StopCrankCasePressure'],'ylim': (-100, 100), 'unit':'mbar'},
+        {'col':['StartRoomTemp','StopRoomTemp'],'ylim': [-20, 60], 'color':['dodgerblue','lightblue'], 'unit':'°C'},
+        {'col':['LOC'],'ylim': [0, 0.3], 'color':'green', 'unit':'g/kWh'},
         {'col':['W','A','isuccess'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
         {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.1)'] , 'unit':'-' },
         #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }

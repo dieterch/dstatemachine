@@ -304,8 +304,23 @@ class Tab():
                     #vec = ['startpreparation','speedup','idle','synchronize','loadramp','targetload','ramprate','cumstarttime','targetoperation','rampdown','coolrun','runout','isuccess']
                     
                     #dfigsize = (20,10)
-                    dset = overview_figure()['basic']
-                    dset = dmp2.equal_adjust(dset, self.rde, do_not_adjust=[-1])
+                    dset = [
+                        {'col':['cumstarttime'],'_ylim':(-600,800), 'color':'darkblue', 'unit':'sec' },
+                        {'col':['runout'],'_ylim':(0,100) , 'unit':'sec' },
+                        {'col':['targetload'],'_ylim':(-4000,26000) , 'unit':'kW' },
+                        {'col':['ramprate'],'_ylim':(-5,7), 'unit':'-' },
+                        {'col':['loadramp'],'_ylim':(-150,900), 'color':'red', 'unit':'sec' },
+                        {'col':['speedup'],'_ylim':(-100,200), 'color':'orange', 'unit':'sec' },
+                        {'col':['synchronize'],'_ylim':(-20,400), 'unit':'sec' },
+                        {'col':['oilfilling'],'_ylim':(-1000,800), 'unit':'sec' },
+                        {'col':['degasing'],'_ylim':(-1000,800), 'unit':'sec' },
+                        {'col':['W','A','isuccess'],'_ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
+                        {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.1)'] , 'unit':'-' },
+                        #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
+                    ]
+                     #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
+                    dset_c = [r for r in dset if all(res in list(V.fsm.starts.columns) for res in r['col'])]
+                    dset = dmp2.equal_adjust(dset_c, self.rde, do_not_adjust=[-1])
                     ftitle = f"{V.fsm._e}"
                     try:
                         fig = dmp2.dbokeh_chart(self.rde, dset, style='both', figsize=V.dfigsize ,title=ftitle);
@@ -316,8 +331,21 @@ class Tab():
 
                     if 'oph' in self.rde:            
                         print
-                        dset2 = overview_figure()['basic2']
-                        #dset2 = equal_adjust(dset2, self.rde, do_not_adjust=[-1])
+                        dset2 = [
+                            {'col':['targetload','maxload'],'ylim':(-4000,26000), 'unit':'kW' },
+                            {'col':['idle'],'ylim':(-100,1000), 'color':'dodgerblue', 'unit':'sec' },
+                            {'col':['PCDifPress_min'],'ylim':(-3500,500), 'color':'red', 'unit':'mbar' },
+                            {'col':['PressBoost_max'],'ylim':(0,10), 'color':'blue', 'unit':'bar' },
+                            {'col':['StartCrankCasePressure','StopCrankCasePressure'],'ylim': (-100, 100), 'unit':'mbar'},
+                            {'col':['StartRoomTemp','StopRoomTemp'],'ylim': [-20, 60], 'color':['dodgerblue','lightblue'], 'unit':'°C'},
+                            {'col':['LOC'],'ylim': [0, 0.3], 'color':'green', 'unit':'g/kWh'},
+                            {'col':['W','A','isuccess'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
+                            {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.1)'] , 'unit':'-' },
+                            #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
+                        ]      
+                         #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
+                        dset2_c = [r for r in dset2 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
+                        dset2 = dmp2.equal_adjust(dset2_c, self.rde, do_not_adjust=[-1])
                         ftitle = f"{V.fsm._e}"
                         try:
                             fig2 = dmp2.dbokeh_chart(self.rde, dset2, x='oph', style='both', figsize=V.dfigsize ,title=ftitle);
@@ -437,8 +465,6 @@ class Tab():
                             {'col':['bmep2','bmep'],'ylim': [20, 30], 'color':['FireBrick','red'], 'unit':'bar'},
                             {'col':['TJ_GasDiffPressMin'],'ylim': [-20, 80], 'color':'blue', 'unit':'mbar'},
                             {'col':['TJ_Pos_at_Min'],'ylim': [0, 600], 'color':'purple', 'unit':'%'},
-                            #{'col':['TJ_GasPress1_at_Min'],'ylim': [800, 1300], 'color':'dodgerblue', 'unit':'mbar'},
-                            #{'col':['TJ_GasTemp1_at_Min'],'ylim': [0, 100], 'color':'red', 'unit':'°C'},
                             {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
                             ]
                     try:
@@ -471,13 +497,13 @@ class Tab():
                         print(f'Error: {str(err)}')
                         
                     ntitle = ftitle + ' | BMEP at Start vs TJ TJ_GasDiffPressMin in mbar '
-                    fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle);
-                    fig3.add_layout(Span(location=V.fsm._e.BMEP,
+                    fig4 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle);
+                    fig4.add_layout(Span(location=V.fsm._e.BMEP,
                             dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
                     #fig3.add_layout(Span(location=20.0,
                     #        dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
 
-                    dmp2.bokeh_show(fig3)            
+                    dmp2.bokeh_show(fig4)            
                     
                 print()
                 display(rde[V.fsm.results['run2_content']['tecjet']].describe().style.format(precision=2, na_rep='-'))                

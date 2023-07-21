@@ -310,8 +310,8 @@ class Sync_Current_Collector(Data_Collector):
         super().__init__(self.phases)
         self._e = engine
         self._speed_nominal = self._e.Speed_nominal
-        self._vset += ['Various_Values_SpeedAct','TecJet_Lambda1', 'Hyd_TempOil', 'Hyd_TempCoolWat']
-        self._content = ['rpm_dmax','rpm_dmin','rpm_spread', 'Lambda_rpm_max', 'TempOil_rpm_max', 'TempCoolWat_rpm_max']
+        self._vset += ['Various_Values_SpeedAct','TecJet_Lambda1', 'Hyd_TempOil', 'Hyd_TempCoolWat','Aux_RoomTemp']
+        self._content = ['rpm_dmax','rpm_dmin','rpm_spread', 'Lambda_rpm_max', 'TempOil_rpm_max', 'TempCoolWat_rpm_max','StartRoomTemp']
         # define table results:
         results['run2_content']['synchronisation'] = ['no'] + self._content
 
@@ -340,6 +340,7 @@ class Sync_Current_Collector(Data_Collector):
                         # calcultae speed spread during synchronization
                         res['rpm_dmin'] = sydata2.at[datapoint2.name,'Various_Values_SpeedAct'] # - self._speed_nominal
                         res['rpm_spread'] = res['rpm_dmax'] - res['rpm_dmin']
+            res['StartRoomTemp'] = sydata['Aux_RoomTemp'].mean()
         sno = startversuch['no']
         results['starts'][sno].update(res)
         return results  
@@ -378,8 +379,8 @@ class Rampdown_Collector(Data_Collector):
     def __init__(self, results, engine):
         self.phases = ['rampdown']
         super().__init__(self.phases)
-        self._vset += ['Power_PowerAct','Hyd_PressCrankCase','Exhaust_TempHexIn','Count_OpHour']
-        self._content = ['Stop_Power','StopCrankCasePressure','HexTemp@Power','oph']
+        self._vset += ['Power_PowerAct','Hyd_PressCrankCase','Exhaust_TempHexIn','Count_OpHour','Count_Start','RMD_ListBuffMAvgOilConsume_OilConsumption','Aux_RoomTemp']
+        self._content = ['Stop_Power','StopCrankCasePressure','HexTemp@Power','oph','starts','LOC','StopRoomTemp']
         # define table results:
         results['run4_content']['stop'] = ['no'] + self._content
 
@@ -391,6 +392,9 @@ class Rampdown_Collector(Data_Collector):
             res['StopCrankCasePressure'] = stopdata['Hyd_PressCrankCase'].min()
             res['HexTemp@Power'] = stopdata['Exhaust_TempHexIn'].min()
             res['oph'] = stopdata['Count_OpHour'].min()
+            res['starts'] = stopdata['Count_Start'].max()
+            res['LOC'] = stopdata['RMD_ListBuffMAvgOilConsume_OilConsumption'].max()
+            res['StopRoomTemp'] = stopdata['Aux_RoomTemp'].mean()
         sno = startversuch['no']
         results['starts'][sno].update(res)
         return results 

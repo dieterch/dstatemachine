@@ -58,9 +58,10 @@ class Tab():
         # self.b_run2.on_click(self.start_run2)
 
         self.plot_selection = widgets.SelectMultiple( 
-            options=list(cm.dfigures().keys()), 
-            value=list(cm.dfigures().keys())[:], 
-            rows=min(len(cm.dfigures()),4), 
+            options=list(cm.dfigures(cm.V.e).keys()), 
+            value=list(cm.dfigures(cm.V.e).keys())[:], 
+            rows = 4,
+            #rows=min(len(cm.dfigures()),4), 
             disabled=False,
             #description=''
             layout=widgets.Layout(width='100px')
@@ -190,7 +191,7 @@ class Tab():
         return tns, tne
 
 
-    def update_fig(self, x=0, lfigures=cm.dfigures(cm.V.e), plotselection=cm.V.plotdef, vset=cm.V.vset, plot_range=(0,100), debug=False, fsm=cm.V.fsm, VSC=False):
+    def update_fig(self, x=0, lfigures=cm.V.lfigures, plotselection=cm.V.plotdef, vset=cm.V.vset, plot_range=(0,100), debug=False, fsm=cm.V.fsm, VSC=False):
         if cm.V.fsm is None:
             return
         rdfs = cm.V.rdf[cm.V.rdf.no == x]
@@ -285,6 +286,10 @@ class Tab():
 
     def reloadplots(self, but):
         cm.V.lfigures = cm.dfigures(cm.V.e)
+        cm.V.plotdef, cm.V.vset = dmp2.cplotdef(cm.mp, cm.V.lfigures)
+        self.plot_selection.options=list(cm.dfigures(cm.V.e).keys())
+        self.plot_selection.value=list(cm.dfigures(cm.V.e).keys())[:]
+        self.refresh_chkbox.value=True
 
     def html_table(self, result_list):
             table = pd.DataFrame(result_list).T
