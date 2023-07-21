@@ -29,8 +29,8 @@ from bokeh.layouts import column, row, gridplot, layout
 from bokeh.models import ColumnDataSource, Div, Span, CustomJS
 
 # Load Application imports
-from dmyplant2.dReliability import demonstrated_reliability_sr
-import dmyplant2
+# from dmyplant2.dReliability import demonstrated_reliability_sr
+import dmyplant2 as dmp2
 
 def cvset(mp, dset):
     vset = [d for col in [rec['col'] for rec in dset] for d in col]
@@ -39,14 +39,17 @@ def cvset(mp, dset):
     return vset
 
 def cplotdef(mp, lfigures):
-    for f in lfigures:
-        #print(f, end=', ')
-        plotdef = list(lfigures.keys())
-        vset = []
-        for p in plotdef:
-            dset = lfigures[p]
-            vset += cvset(mp, dset)
-        vset = list(set(vset))
+    plotdef = [] 
+    vset = []
+    if lfigures is not None:
+        for f in lfigures:
+            #print(f, end=', ')
+            plotdef = list(lfigures.keys())
+            vset = []
+            for p in plotdef:
+                dset = lfigures[p]
+                vset += cvset(mp, dset)
+            vset = list(set(vset))
     return plotdef, vset
 
 def equal_adjust(dset, ddata, do_not_adjust=[], debug=False, qmin=0.02, qmax=0.95, minfactor=0.9, maxfactor=1.1):
@@ -242,7 +245,7 @@ def bokeh_chart(source, pltcfg, x_ax='datetime', x_ax_unit=None, title=None, gri
     mheight = figsize[1] * dpi
 
     #dataitems=pd.read_csv('data/dataitems.csv', sep=';')
-    dataitems=dmyplant2.MyPlant.get_dataitems()
+    dataitems=dmp2.MyPlant.get_dataitems()
 
     TOOLS = 'pan, box_zoom, xwheel_zoom, box_select, undo, reset, save' #select Tools to display
     colors = cycle(matplotlib.rcParams['axes.prop_cycle']) #colors to use for plot
@@ -602,7 +605,7 @@ def expand_cylinder (y, rel_cyl=all, engi=0):
     Args:
         y (dict): one line of a single pltcfg
         rel_cyl (list, optional): Defines relevant cylinders, defaults to all
-        engi (dmyplant2.engine, optional): Engine instance to get number of cylinders from
+        engi (dmp2.engine, optional): Engine instance to get number of cylinders from
 
     Returns:
         y (dict): line of a single pltcfg with expanded parameters
@@ -743,7 +746,7 @@ def show_val_stats (vl, df_loadrange=None, df_starts_oph=None):
     The rest is loaded beforehand for shorter overall loading time
 
     Args:
-        vl (dmyplant2.Validation): Validation Objekt
+        vl (dmp2.Validation): Validation Objekt
         df_loadrange (pd.DataFrame) (optional): Dataframe with load information 
         df_starts_oph (pd-DatFrame) (optional): DataFrame with information about oph per start
 
@@ -877,14 +880,14 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
     failures = pd.read_csv("failures.csv",sep=';', encoding='utf-8')
     failures['date'] = pd.to_datetime(failures['date'], format='%d.%m.%Y')
 
-    dmyplant2.demonstrated_Reliabillity_Plot(vl,
+    dmp2.demonstrated_Reliabillity_Plot(vl,
             beta=1.21, T=30000, s=1000, ft=failures, cl=[10,50,90], factor=1.3);
 
     ...
 
 
     Args:
-        vl ([dmyplant2.Validation class]): [Class with several function around the validation fleet]
+        vl ([dmp2.Validation class]): [Class with several function around the validation fleet]
         beta (float, optional): [Weibull beta parameter]. Defaults to 1.21.
         T (int, optional): [Runtime for Assessment of Reliabiliy, calculated with LIPSON Method]. Defaults to 30000.
         s (int, optional): [number of points to plot]. Defaults to 1000.
@@ -917,7 +920,7 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
     fcol = 'grey'
 
     # calculate the x axis timerange first
-    tr = demonstrated_reliability_sr(vl,
+    tr = dmp2.demonstrated_reliability_sr(vl,
                                      start_ts, last_ts, beta=beta, size=s, ft=ft)[0]  # timestamp x axis start .. end
 
     # determine the array - index of 'now'
@@ -930,7 +933,7 @@ def demonstrated_Reliabillity_Plot(vl, beta=1.21, T=30000, s=1000, ft=pd.DataFra
     dtr = [datetime.fromtimestamp(t) for t in tr]
     # calculate demonstrated reliability curves for the complete period,
     # confidence intervals CL :
-    rel = {c: demonstrated_reliability_sr(vl, start_ts, last_ts,
+    rel = {c: dmp2.demonstrated_reliability_sr(vl, start_ts, last_ts,
                                           CL=c/100.0, beta=beta, size=s, ft=ft, T=T)[1] for c in cl}
 
     # convert to datetime dates - start .. now
@@ -1059,7 +1062,7 @@ def chart(d, ys, x='datetime', title=None, grid=True, legend=True, notebook=True
         timeCycle=1)
 
 
-    dmyplant2.chart(df, [
+    dmp2.chart(df, [
     {'col': ['PowerAct'],'ylim': [0, 5000]},
     {'col': ['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'darkblue'},
     {'col': ['CountOph'],'ylim': [0, 500]},
@@ -1204,7 +1207,7 @@ def scatter_chart(d, ys, x='datetime', title=None, grid=True, legend=True, noteb
         timeCycle=1)
 
 
-    dmyplant2.chart(df, [
+    dmp2.chart(df, [
     {'col': ['PowerAct'],'ylim': [0, 5000]},
     {'col': ['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'darkblue'},
     {'col': ['CountOph'],'ylim': [0, 500]},
