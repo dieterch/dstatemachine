@@ -313,17 +313,20 @@ class Tab():
                         dmp2.bokeh_show(fig)
                     except Exception as err:
                         print('\n','no figure to display, Error: ', str(err))
-            
-                    print
-                    dset2 = overview_figure()['basic2']
-                    #dset2 = equal_adjust(dset2, self.rde, do_not_adjust=[-1])
-                    ftitle = f"{V.fsm._e}"
-                    try:
-                        fig2 = dmp2.dbokeh_chart(self.rde, dset2, x='oph', style='both', figsize=V.dfigsize ,title=ftitle);
-                        print()
-                        dmp2.bokeh_show(fig2)
-                    except Exception as err:
-                        print('\n','no figure to display, Error: ', str(err))
+
+                    if 'oph' in self.rde:            
+                        print
+                        dset2 = overview_figure()['basic2']
+                        #dset2 = equal_adjust(dset2, self.rde, do_not_adjust=[-1])
+                        ftitle = f"{V.fsm._e}"
+                        try:
+                            fig2 = dmp2.dbokeh_chart(self.rde, dset2, x='oph', style='both', figsize=V.dfigsize ,title=ftitle);
+                            print()
+                            dmp2.bokeh_show(fig2)
+                        except Exception as err:
+                            print('\n','no figure to display, Error: ', str(err))
+                    else:
+                        print("'oph' not found.")
                         
                     vec = V.fsm.results['run2_content']['startstop']
                     print()

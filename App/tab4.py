@@ -10,7 +10,8 @@ from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox,
 from IPython.display import display, HTML
 import dmyplant2 as dmp2
 from bokeh.io import push_notebook #, show, output_notebook
-from App.common import loading_bar, V, myfigures, mp, tabs_out, status
+#from App.common import loading_bar, V, myfigures, mp, tabs_out, status
+import App.common as cm
 #from App import tab2
 
 #########################################
@@ -21,7 +22,7 @@ class Tab():
 
         self.title = '4. Start Plots'
         self.tab4_out = widgets.Output()
-        self.pfigsize=V.dfigsize
+        self.pfigsize=cm.V.dfigsize
 
         self.selected_engine = widgets.Text(
             value='-', description='Selected:', disabled=True, 
@@ -57,9 +58,9 @@ class Tab():
         # self.b_run2.on_click(self.start_run2)
 
         self.plot_selection = widgets.SelectMultiple( 
-            options=list(myfigures().keys()), 
-            value=list(myfigures().keys())[:], 
-            rows=min(len(myfigures()),4), 
+            options=list(cm.dfigures().keys()), 
+            value=list(cm.dfigures().keys())[:], 
+            rows=min(len(cm.dfigures()),4), 
             disabled=False,
             #description=''
             layout=widgets.Layout(width='100px')
@@ -160,24 +161,24 @@ class Tab():
                     ]),
                     self.start_table,
                     self.tab4_out
-                ],layout=widgets.Layout(min_height=V.hh));
+                ],layout=widgets.Layout(min_height=cm.V.hh));
 
     def selected(self):
-        if V.fsm is not None: 
-            self.selected_engine.value = V.selected
-            V.lfigures = myfigures(V.e)
-            V.plotdef, V.vset = dmp2.cplotdef(mp, V.lfigures)
-            rdf = V.fsm.starts
+        if cm.V.fsm is not None: 
+            self.selected_engine.value = cm.V.selected
+            cm.V.lfigures = cm.dfigures(cm.V.e)
+            cm.V.plotdef, cm.V.vset = dmp2.cplotdef(cm.mp, cm.V.lfigures)
+            rdf = cm.V.fsm.starts
             if not rdf.empty:
                 if self.sno_slider.max != (rdf.shape[0]-1):
                     self.sno_slider.max = rdf.shape[0]-1
-            with tabs_out:
-                tabs_out.clear_output()
-                print(f'tab4 - {V.selected}')
+            with cm.tabs_out:
+                cm.tabs_out.clear_output()
+                print(f'tab4 - {cm.V.selected}')
         else:
-            with tabs_out:
-                tabs_out.clear_output()
-                print(f'tab4 - {V.selected}')            
+            with cm.tabs_out:
+                cm.tabs_out.clear_output()
+                print(f'tab4 - {cm.V.selected}')            
 
 
     def cleartab(self):
@@ -189,18 +190,18 @@ class Tab():
         return tns, tne
 
 
-    def update_fig(self, x=0, lfigures=V.lfigures, plotselection=V.plotdef, vset=V.vset, plot_range=(0,100), debug=False, fsm=V.fsm, VSC=False):
-        if V.fsm is None:
+    def update_fig(self, x=0, lfigures=cm.dfigures(cm.V.e), plotselection=cm.V.plotdef, vset=cm.V.vset, plot_range=(0,100), debug=False, fsm=cm.V.fsm, VSC=False):
+        if cm.V.fsm is None:
             return
-        rdfs = V.rdf[V.rdf.no == x]
+        rdfs = cm.V.rdf[cm.V.rdf.no == x]
         if not rdfs.empty:
             if not VSC:
-                with tabs_out:
-                    tabs_out.clear_output()
+                with cm.tabs_out:
+                    cm.tabs_out.clear_output()
                     print(f'tab4 - ⌛ loading data ...')
 
         startversuch = rdfs.iloc[0]
-        status('tab4',f'⌛ Please Wait, loading data for Start No. {startversuch.no}')
+        cm.status('tab4',f'⌛ Please Wait, loading data for Start No. {startversuch.no}')
         try:
             if self.par_data_chkbox.value:
                 # load data using concurrent.futures
@@ -208,17 +209,17 @@ class Tab():
             else:
                 data = dmp2.get_cycle_data2(fsm, startversuch, cycletime=1, silent=True, p_data=vset, t_range=plot_range, p_refresh=self.refresh_chkbox.value)
 
-            data['bmep'] = data.apply(lambda x: V.fsm._e._calc_BMEP(x['Power_PowerAct'], V.fsm._e.Speed_nominal), axis=1)
+            data['bmep'] = data.apply(lambda x: cm.V.fsm._e._calc_BMEP(x['Power_PowerAct'], cm.V.fsm._e.Speed_nominal), axis=1)
             data['power_diff'] = pd.Series(np.gradient(data['Power_PowerAct']))
             if not VSC:
-                tabs_out.clear_output()
+                cm.tabs_out.clear_output()
             # PLotter
             ftitle = f"{fsm._e} ----- Start {startversuch['no']} {startversuch['mode']} | {startversuch['success']} | {startversuch['starttime'].round('S')}"
             fig_handles = []
             if self.plotsize_chkbox.value:
-                self.pfigsize = V.dfigsize_big
+                self.pfigsize = cm.V.dfigsize_big
             else:
-                self.pfigsize = V.dfigsize                
+                self.pfigsize = cm.V.dfigsize                
             for doplot in plotselection:
 
                 res2_dict = {
@@ -227,8 +228,8 @@ class Tab():
                     'exhaust':'exhaust'
                 }
 
-                if res2_dict.get(doplot, '') in V.fsm.results['run2_content']:
-                    display(HTML(self.html_table(startversuch[V.fsm.results['run2_content'][res2_dict[doplot]]])))
+                if res2_dict.get(doplot, '') in cm.V.fsm.results['run2_content']:
+                    display(HTML(self.html_table(startversuch[cm.V.fsm.results['run2_content'][res2_dict[doplot]]])))
                 dset = lfigures[doplot]
                 ltitle = f"{ftitle} | {doplot}"
                 if dmp2.count_columns(dset) > 12: # no legend, if too many lines.
@@ -238,8 +239,8 @@ class Tab():
 
                 if self.export_chkbox.value:
                     ndata = data[['time','Various_Values_SpeedAct']]
-                    fn = V.e._fname + '_' + doplot +'_export.xls'
-                    fn2 = V.e._fname + '_all_' + doplot +'_export.xls'
+                    fn = cm.V.e._fname + '_' + doplot +'_export.xls'
+                    fn2 = cm.V.e._fname + '_all_' + doplot +'_export.xls'
                     print(f'saving messages to {fn}')
                     ndata.to_excel(fn)
                     data.to_excel(fn2)
@@ -270,7 +271,7 @@ class Tab():
                 print(f"{i:3} {v}")
                 
         except Exception as err:
-            tabs_out.clear_output()
+            cm.tabs_out.clear_output()
             print('Error: ', str(err))
             if debug:
                 print(traceback.format_exc())
@@ -279,11 +280,11 @@ class Tab():
     def show_plots(self, but):
         with self.tab4_out:
             self.tab4_out.clear_output()
-            self.update_fig(x=self.sno.value, lfigures=V.lfigures, plotselection=self.plot_selection.value, 
-                            vset=V.vset, plot_range=self.time_range.value, fsm=V.fsm)
+            self.update_fig(x=self.sno.value, lfigures=cm.V.lfigures, plotselection=self.plot_selection.value, 
+                            vset=cm.V.vset, plot_range=self.time_range.value, fsm=cm.V.fsm)
 
     def reloadplots(self, but):
-        V.lfigures = myfigures(V.e)
+        cm.V.lfigures = cm.dfigures(cm.V.e)
 
     def html_table(self, result_list):
             table = pd.DataFrame(result_list).T
@@ -303,17 +304,17 @@ class Tab():
             ).hide().to_html()        
 
     def start_info(self,*args):
-        if V.fsm is not None:
-            rdf = V.fsm.starts
+        if cm.V.fsm is not None:
+            rdf = cm.V.fsm.starts
             if not rdf.empty:
                 sv = rdf.iloc[self.sno.value]
                 ltitle = f" Start No {sv['no']} from: {sv['starttime'].round('S')} to: {sv['endtime'].round('S')}"
                 #r = self.html_table(sv[startstopFSM.run2filter_content])
-                r = self.html_table(sv[V.fsm.results['run2_content']['startstop']])
+                r = self.html_table(sv[cm.V.fsm.results['run2_content']['startstop']])
                 links = 'links to Myplant: | '
                 time_new_start, time_new_end = self.calc_time_range(sv)
                 for doplot in self.plot_selection.options:
-                    ll = V.e.myplant_workbench_link(time_new_start, time_new_end, V.e.get_dataItems(dat=dmp2.cvset(mp,V.lfigures[doplot])),doplot)
+                    ll = cm.V.e.myplant_workbench_link(time_new_start, time_new_end, cm.V.e.get_dataItems(dat=dmp2.cvset(cm.mp,cm.V.lfigures[doplot])),doplot)
                     links += f'{ll} | '
                 #self.start_table.value = links + ltitle + '<br>' + r
                 with self.start_table:
