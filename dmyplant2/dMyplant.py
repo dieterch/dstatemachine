@@ -296,21 +296,6 @@ class MyPlant:
             type(self)._session.close()
             type(self)._session = None
 
-    # def fetchdata(self, url):
-    #     """login and return data based on url"""
-    #     self.login()
-    #     logging.debug(f'url: {url}')
-    #     response = type(self)._session.get(burl + url)
-
-    #     if response.status_code == 200:
-    #         logging.debug(f'fetchdata: download successful')
-    #         res = response.json()
-    #         return res
-    #     else:
-    #         logging.error(
-    #             f"Code: {url}, {response.status_code}, {errortext.get(response.status_code,'no HTTP Error text available.')}")
-
-
 ############# CHATGPT variante
     def fetchdata(self, url, num_retries=3):
         """login and return data based on url"""
@@ -482,19 +467,6 @@ class MyPlant:
         res = self.fetchdata(url=fr"/asset/{id}/dataitem/{itemId}?timestamp={timestamp}", num_retries=num_retries)
         if res is not None:
             return res['value']
-
-    # def history_dataItem(self, id, itemId, p_from, p_to, timeCycle=3600):
-    #     """
-    #     url: /asset/{assetId}/dataitem/{dataItemId}
-    #     Parameters:
-    #     Name	    type    Description
-    #     assetId     int64   Id of the Asset to query the DateItem for.
-    #     dataItemId  int64   Id of the DataItem to query.
-    #     p_from      int64   timestamp start timestamp.
-    #     p_to        int64   timestamp stop timestamp.
-    #     timeCycle   int64   interval in seconds.
-    #     """
-    #     return self.fetchdata(url=fr"/asset/{id}/history/data?from={p_from}&to={p_to}&assetType=J-Engine&dataItemId={itemId}&timeCycle={timeCycle}&includeMinMax=false&forceDownSampling=false")
 
     def _history_batchdata(self, id, itemIds, lp_from, lp_to, timeCycle=3600):
         # make sure itemids have the format { int: [str,str], int: [str,str], ...}
