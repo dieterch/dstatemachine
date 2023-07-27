@@ -383,6 +383,7 @@ class Rampdown_Collector(Data_Collector):
         self._content = ['Stop_Power','StopCrankCasePressure','HexTemp@Power','oph','starts','LOC','StopRoomTemp']
         # define table results:
         results['run4_content']['stop'] = ['no'] + self._content
+        results['run2_content']['startstop'] += ['oph','starts','LOC']
 
     def collect(self, startversuch, results, data):
         stopdata = self.cut_data(startversuch, data, self._phases) 
