@@ -283,6 +283,7 @@ class Tab():
             self.tab4_out.clear_output()
             self.update_fig(x=self.sno.value, lfigures=cm.V.lfigures, plotselection=self.plot_selection.value, 
                             vset=cm.V.vset, plot_range=self.time_range.value, fsm=cm.V.fsm)
+            self.refresh_chkbox.value=False            
 
     def reloadplots(self, but):
         cm.V.lfigures = cm.dfigures(cm.V.e)

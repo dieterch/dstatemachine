@@ -3,11 +3,12 @@ import pickle
 import pandas as pd; pd.options.mode.chained_assignment = None
 from datetime import datetime, date
 import ipywidgets as widgets
-#from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 from bokeh.models import Span
 from IPython.display import display, HTML
 import dmyplant2 as dmp2
-from App.common import loading_bar, V, overview_figure, tabs_out, disp_alwr, display_fmt
+import App.common as cm
+#from App.common import loading_bar, V, tabs_out, disp_alwr, display_fmt
+#from App.common import loading_bar, V, overview_figure, tabs_out, disp_alwr, display_fmt
 #from App import tab2
 
 #########################################
@@ -17,7 +18,7 @@ class Tab():
     def __init__(self):
 
         self.title = '3. Results'
-        self.dfigsize = V.dfigsize
+        self.dfigsize = cm.V.dfigsize
         self.tab3_out = widgets.Output()
         self.el = widgets.Text(
             value='-', 
@@ -28,7 +29,7 @@ class Tab():
         
         self.mo = widgets.SelectMultiple( 
             options=['undefined','OFF','MAN','AUTO'], 
-            value=V.modes_value, 
+            value=cm.V.modes_value, 
             rows=4, 
             description='modes: ', 
             disabled=False,
@@ -37,7 +38,7 @@ class Tab():
 
         self.succ = widgets.SelectMultiple( 
             options=['success','failed','undefined'], 
-            value=V.succ_value, 
+            value=cm.V.succ_value, 
             rows=4, 
             description='success: ', 
             disabled=False,
@@ -230,22 +231,22 @@ class Tab():
                     widgets.HBox([self.timings_button, self.b_tecjet,self.b_exhaust,self.b_sync,self.b_oil,self.b_stop]),
                     self.tab3_out
                     ],
-                    layout=widgets.Layout(min_height=V.hh))
+                    layout=widgets.Layout(min_height=cm.V.hh))
 
     def mo_observe(self,*args):
-        V.modes_value = self.mo.value
+        cm.V.modes_value = self.mo.value
 
     def succ_observe(self,*args):
-        V.succ_value = self.succ.value
+        cm.V.succ_value = self.succ.value
 
     def alarm_warning_observe(self,*args):
-        V.alarm_warning_value = self.alarm_warning.value
+        cm.V.alarm_warning_value = self.alarm_warning.value
 
     def selected(self):
-        #self.selected_engine.value = V.selected
-        with tabs_out:
-            tabs_out.clear_output()
-            print(f'tab3 - {V.selected}')
+        #self.selected_engine.value = cm.V.selected
+        with  cm.tabs_out:
+            cm.tabs_out.clear_output()
+            print(f'tab3 - {cm.V.selected}')
 
     def cleartab(self):
         self.tab3_out.clear_output() 
@@ -267,7 +268,7 @@ class Tab():
 
 
     def filter_results(self):
-        self.rda = V.rdf[:].reset_index(drop='index')
+        self.rda = cm.V.rdf[:].reset_index(drop='index')
         thefilter = (
             (self.rda['mode'].isin(self.mo.value)) & 
             (self.rda['success'].isin(self.succ.value)) & 
@@ -279,11 +280,11 @@ class Tab():
         if self.cb_msgfilter.value:
             self.rda = self.rda[self.rda.apply(lambda x: self.filter_msg(x, self.msg_no.value), axis=1)] 
         if self.cb_powerabove.value:
-            self.rda = self.rda[self.rda['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+            self.rda = self.rda[self.rda['targetload'] > self.t_loadcap.value / 100 * cm.V.fsm._e['Power_PowerNominal']]
         if self.cb_spreadabove.value:
             self.rda = self.rda[self.rda['ExTCylMaxSpread'] > self.t_spreadcap.value]
         if self.cb_powerbelow.value:
-            self.rda = self.rda[self.rda['targetload'] < self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+            self.rda = self.rda[self.rda['targetload'] < self.t_loadcap.value / 100 * cm.V.fsm._e['Power_PowerNominal']]
         if self.cb_spreadbelow.value:
             self.rda = self.rda[self.rda['ExTCylMaxSpread'] < self.t_spreadcap.value]
 
@@ -293,7 +294,7 @@ class Tab():
     #@tab3_out.capture(clear_output=True)
     def show_timings(self,b):
         with self.tab3_out:
-            if V.fsm is not None:
+            if cm.V.fsm is not None:
                 self.tab3_out.clear_output()
                 self.filter_results()
                 self.rde = self.rda #.fillna('')
@@ -319,11 +320,11 @@ class Tab():
                         #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
                     ]
                      #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
-                    dset_c = [r for r in dset if all(res in list(V.fsm.starts.columns) for res in r['col'])]
+                    dset_c = [r for r in dset if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
                     dset = dmp2.equal_adjust(dset_c, self.rde, do_not_adjust=[-1])
-                    ftitle = f"{V.fsm._e}"
+                    ftitle = f"{cm.V.fsm._e}"
                     try:
-                        fig = dmp2.dbokeh_chart(self.rde, dset, style='both', figsize=V.dfigsize ,title=ftitle);
+                        fig = dmp2.dbokeh_chart(self.rde, dset, style='both', figsize=cm.V.dfigsize ,title=ftitle);
                         print()
                         dmp2.bokeh_show(fig)
                     except Exception as err:
@@ -338,17 +339,17 @@ class Tab():
                             {'col':['PressBoost_max'],'ylim':(0,10), 'color':'blue', 'unit':'bar' },
                             {'col':['StartCrankCasePressure','StopCrankCasePressure'],'ylim': (-100, 100), 'unit':'mbar'},
                             {'col':['StartRoomTemp','StopRoomTemp'],'ylim': [-20, 60], 'color':['dodgerblue','lightblue'], 'unit':'°C'},
-                            {'col':['LOC'],'ylim': [0, 0.3], 'color':'green', 'unit':'g/kWh'},
                             {'col':['W','A','isuccess'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
+                            {'col':['LOC'],'ylim': [0, 1], 'color':'green', 'unit':'g/kWh'},
                             {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.1)'] , 'unit':'-' },
                             #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
                         ]      
                          #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
-                        dset2_c = [r for r in dset2 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
-                        dset2 = dmp2.equal_adjust(dset2_c, self.rde, do_not_adjust=[-1])
-                        ftitle = f"{V.fsm._e}"
+                        dset2_c = [r for r in dset2 if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
+                        dset2 = dmp2.equal_adjust(dset2_c, self.rde, do_not_adjust=[-1,-2])
+                        ftitle = f"{cm.V.fsm._e}"
                         try:
-                            fig2 = dmp2.dbokeh_chart(self.rde, dset2, x='oph', style='both', figsize=V.dfigsize ,title=ftitle);
+                            fig2 = dmp2.dbokeh_chart(self.rde, dset2, x='oph', style='both', figsize=cm.V.dfigsize ,title=ftitle);
                             print()
                             dmp2.bokeh_show(fig2)
                         except Exception as err:
@@ -356,7 +357,7 @@ class Tab():
                     else:
                         print("'oph' not found.")
                         
-                    vec = V.fsm.results['run2_content']['startstop']
+                    vec = cm.V.fsm.results['run2_content']['startstop']
                     print()
                     display(_=self.rde[vec].hist(bins=30,figsize=(20,20)))
                     print()
@@ -378,7 +379,7 @@ class Tab():
                         ))
                     print()
                     if self.show_startlist.value:
-                        display(self.rde[['starttime'] + V.fsm.results['run2_content']['startstop']][::-1]
+                        display(self.rde[['starttime'] + cm.V.fsm.results['run2_content']['startstop']][::-1]
                                 .style
                                 .hide()
                                 .format(
@@ -413,9 +414,9 @@ class Tab():
                                     #    print('--------------')
                                     #display(HTML("<hr>"))
                                     if self.list_alarms.value:
-                                        disp_alwr(row,'alarms')
+                                        cm.disp_alwr(row,'alarms')
                                     if self.list_warnings.value:
-                                        disp_alwr(row,'warnings')
+                                        cm.disp_alwr(row,'warnings')
                                     k = i + 1
                         except StopIteration:
                             pass
@@ -427,7 +428,7 @@ class Tab():
     def show_tecjet(self,b): # tecjet callback
         with self.tab3_out:
             self.tab3_out.clear_output()
-            if ((V.fsm is not None) and V.fsm.starts.iloc[0]['run2']):
+            if ((cm.V.fsm is not None) and cm.V.fsm.starts.iloc[0]['run2']):
 
                 rde = self.filter_results()
                 if not rde.empty:
@@ -443,10 +444,10 @@ class Tab():
                     ]
                     
                     #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
-                    dr2set2_c = [r for r in dr2set2 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
+                    dr2set2_c = [r for r in dr2set2 if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
  
                     dr2set2 = dmp2.equal_adjust(dr2set2_c, rde, do_not_adjust=['no'], minfactor=0.95, maxfactor=1.2)
-                    ftitle = f"{V.fsm._e}"
+                    ftitle = f"{cm.V.fsm._e}"
                     fig2 = dmp2.dbokeh_chart(rde, dr2set2, style='both', figsize=self.dfigsize ,title=ftitle);
                     dmp2.bokeh_show(fig2)
 
@@ -454,12 +455,12 @@ class Tab():
                     #print('Figures below are filtered by targetload & Spread:')
                     print()
                     # if self.cb_loadcap.value:
-                    #     rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * V.fsm._e['Power_PowerNominal']]
+                    #     rde = rde[rde['targetload'] > self.t_loadcap.value / 100 * cm.V.fsm._e['Power_PowerNominal']]
                     # if self.cb_spreadcap.value:
                     #     rde = rde[rde['ExSpread@Spread'] > self.t_spreadcap.value]
 
-                    rde['bmep'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['targetload'], V.fsm._e.Speed_nominal), axis=1)
-                    rde['bmep2'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['maxload'], V.fsm._e.Speed_nominal), axis=1)
+                    rde['bmep'] = rde.apply(lambda x: cm.V.fsm._e._calc_BMEP(x['targetload'], cm.V.fsm._e.Speed_nominal), axis=1)
+                    rde['bmep2'] = rde.apply(lambda x: cm.V.fsm._e._calc_BMEP(x['maxload'], cm.V.fsm._e.Speed_nominal), axis=1)
                     dr2set2 = [
                             #{'col':['targetload'],'ylim': [4100, 4700], 'color':'red', 'unit':'kW'},
                             {'col':['bmep2','bmep'],'ylim': [20, 30], 'color':['FireBrick','red'], 'unit':'bar'},
@@ -473,7 +474,7 @@ class Tab():
                         print(f'Error: {str(err)}')
                     ntitle = ftitle + ' | BMEP at Start vs TJ Gas Temperature in °C '
                     fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasTemp1_at_Min', style='circle', figsize=self.dfigsize ,title=ntitle);
-                    fig3.add_layout(Span(location=V.fsm._e.BMEP,
+                    fig3.add_layout(Span(location=cm.V.fsm._e.BMEP,
                             dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
                     fig3.add_layout(Span(location=20.0,
                             dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
@@ -491,14 +492,14 @@ class Tab():
                             ]
                     try:
                         #Check, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
-                        dr2set2_c = [r for r in dr2set2 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
+                        dr2set2_c = [r for r in dr2set2 if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
                         dr2set2 = dmp2.equal_adjust(dr2set2_c, rde, do_not_adjust=['no'], minfactor=1.0, maxfactor=1.1)
                     except Exception as err:
                         print(f'Error: {str(err)}')
                         
                     ntitle = ftitle + ' | BMEP at Start vs TJ TJ_GasDiffPressMin in mbar '
                     fig4 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle);
-                    fig4.add_layout(Span(location=V.fsm._e.BMEP,
+                    fig4.add_layout(Span(location=cm.V.fsm._e.BMEP,
                             dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
                     #fig3.add_layout(Span(location=20.0,
                     #        dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
@@ -506,23 +507,23 @@ class Tab():
                     dmp2.bokeh_show(fig4)            
                     
                 print()
-                display(rde[V.fsm.results['run2_content']['tecjet']].describe().style.format(precision=2, na_rep='-'))                
+                display(rde[cm.V.fsm.results['run2_content']['tecjet']].describe().style.format(precision=2, na_rep='-'))                
                 print()
-                display(rde[V.fsm.results['run2_content']['tecjet']][::-1].style.format(precision=2,na_rep='-').hide())
+                display(rde[cm.V.fsm.results['run2_content']['tecjet']][::-1].style.format(precision=2,na_rep='-').hide())
             else:
                 print('No Data available.')
     
     def show_temp(self,b): # exhaust callback
         with self.tab3_out:
             self.tab3_out.clear_output()
-            if ((V.fsm is not None) and V.fsm.starts.iloc[0]['run2']):
+            if ((cm.V.fsm is not None) and cm.V.fsm.starts.iloc[0]['run2']):
                 rde = self.filter_results()
                 sdict ={'success':1, 'failed':0, 'undefined':0.5}
                 rde['isuccess'] = rde.apply(lambda x: sdict[x['success']], axis=1)
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])                    
                     print()
-                    ntitle = f"{V.fsm._e}" + ' | Exhaust Tempertures at Start'
+                    ntitle = f"{cm.V.fsm._e}" + ' | Exhaust Tempertures at Start'
                     dr2set3 = [
                             {'col':['ExTCylMaxSpread'],'_ylim': [0, 100], 'color':['dodgerblue'], 'unit':'°C'},
                             {'col':['ExhTCylMaxTemp'],'_ylim': [4200, 4800], 'color':['FireBrick'], 'unit':'°C'},
@@ -533,18 +534,18 @@ class Tab():
                             ]
                     
                     #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
-                    dr2set3_c = [r for r in dr2set3 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
+                    dr2set3_c = [r for r in dr2set3 if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
 
                     dr2set3 = dmp2.equal_adjust(dr2set3_c, rde, do_not_adjust=[5], minfactor=0.95, maxfactor=1.2)
                     fig4 = dmp2.dbokeh_chart(rde, dr2set3, style='both', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig4)
 
                     print()
-                    display(rde[V.fsm.results['run2_content']['exhaust']].describe()
+                    display(rde[cm.V.fsm.results['run2_content']['exhaust']].describe()
                                 .style.format(precision=2, na_rep='-'))            
 
                     print()
-                    display(rde[V.fsm.results['run2_content']['exhaust']]
+                    display(rde[cm.V.fsm.results['run2_content']['exhaust']]
                                 .style.format(precision=2,na_rep='-').hide())
             else:
                 print('No Data available.')
@@ -552,7 +553,7 @@ class Tab():
     def show_sync(self,b): # synch callback
         with self.tab3_out:
             self.tab3_out.clear_output()
-            if ((V.fsm is not None) and V.fsm.starts.iloc[0]['run2']):
+            if ((cm.V.fsm is not None) and cm.V.fsm.starts.iloc[0]['run2']):
                 rde = self.filter_results()
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
@@ -571,7 +572,7 @@ class Tab():
                         {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] }
                     ]
                     dr2set3 = dmp2.equal_adjust(dr2set3, rde, do_not_adjust=['no'], minfactor=0.95, maxfactor=1.2)
-                    ntitle = f"{V.fsm._e}" + ' | Speed Max, Min & Spread between Speedmax and GC On'
+                    ntitle = f"{cm.V.fsm._e}" + ' | Speed Max, Min & Spread between Speedmax and GC On'
                     fig4 = dmp2.dbokeh_chart(rde, dr2set3, style='both', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig4)
 
@@ -588,16 +589,16 @@ class Tab():
                         {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
                     ]
                     dr2set3 = dmp2.equal_adjust(dr2set3, rde, do_not_adjust=['no'], minfactor=0.95, maxfactor=1.2)
-                    ntitle = f"{V.fsm._e}" + ' | Speed Max, Min & Spread between Speedmax and GC On'
+                    ntitle = f"{cm.V.fsm._e}" + ' | Speed Max, Min & Spread between Speedmax and GC On'
                     fig4 = dmp2.dbokeh_chart(rde, dr2set3, x='TempOil_rpm_max', style='circle', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig4)
 
 
                     print()
-                    display(rde[V.fsm.results['run2_content']['synchronisation']].describe()
+                    display(rde[cm.V.fsm.results['run2_content']['synchronisation']].describe()
                                 .style.format(precision=2, na_rep='-'))
                     print()
-                    display(rde[V.fsm.results['run2_content']['synchronisation']]
+                    display(rde[cm.V.fsm.results['run2_content']['synchronisation']]
                                 .style.format(precision=2,na_rep='-').hide())
             else:
                 print('No Data available.')
@@ -605,7 +606,7 @@ class Tab():
     def show_oil(self,b): # oil callback
         with self.tab3_out:
             self.tab3_out.clear_output()
-            if ((V.fsm is not None) and V.fsm.starts.iloc[0]['run2']):
+            if ((cm.V.fsm is not None) and cm.V.fsm.starts.iloc[0]['run2']):
                 rde = self.filter_results()                
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
@@ -617,7 +618,7 @@ class Tab():
                         {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] }
                     ]
                     dr2set3 = dmp2.equal_adjust(dr2set3, rde, do_not_adjust=['no'], minfactor=0.95, maxfactor=1.2)
-                    ntitle = f"{V.fsm._e}" + ' | Oil Pressure Max, Oil Filter DP max & Oil Temp vs Starts'
+                    ntitle = f"{cm.V.fsm._e}" + ' | Oil Pressure Max, Oil Filter DP max & Oil Temp vs Starts'
                     fig4 = dmp2.dbokeh_chart(rde, dr2set3, style='both', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig4)
 
@@ -629,16 +630,16 @@ class Tab():
                         {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] }
                     ]
                     dr2set3 = dmp2.equal_adjust(dr2set3, rde, do_not_adjust=['no'], minfactor=0.95, maxfactor=1.2)
-                    ntitle = f"{V.fsm._e}" + ' | Speed Max, Min & Spread between Speedmax and GC On'
+                    ntitle = f"{cm.V.fsm._e}" + ' | Speed Max, Min & Spread between Speedmax and GC On'
                     fig4 = dmp2.dbokeh_chart(rde, dr2set3, x='TempOil_min', style='circle', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig4)
 
 
                     print()
-                    display(rde[V.fsm.results['run2_content']['lubrication']].describe()
+                    display(rde[cm.V.fsm.results['run2_content']['lubrication']].describe()
                                 .style.format(precision=2, na_rep='-'))
                     print()
-                    display(rde[V.fsm.results['run2_content']['lubrication']]
+                    display(rde[cm.V.fsm.results['run2_content']['lubrication']]
                                 .style.format(precision=2,na_rep='-').hide())
             else:
                 print('No Data available.')
@@ -646,8 +647,8 @@ class Tab():
     def show_stop(self,b): # stop callback
         with self.tab3_out:
             self.tab3_out.clear_output()
-            if ((V.fsm is not None) and V.fsm.starts.iloc[0]['run4']):
-                ftitle = f"{V.fsm._e}"
+            if ((cm.V.fsm is not None) and cm.V.fsm.starts.iloc[0]['run4']):
+                ftitle = f"{cm.V.fsm._e}"
                 rde = self.filter_results()            
                 if not rde.empty:
                     rde['datetime'] = pd.to_datetime(rde['starttime'])
@@ -658,12 +659,13 @@ class Tab():
                     {'col':['Idle_CrankcasePressure','StopCrankCasePressure'],'ylim': [-100, 100], 'color':['blue','dodgerblue'], 'unit':'mbar'},
                     {'col':['Stop_PVKDifPress'],'ylim': [0, 100], 'color':'purple', 'unit':'mbar'},
                     {'col':['MaxHexTemp','HexTemp@Power'],'ylim': [0, 700], 'color':['maroon','FireBrick'], 'unit':'°C'},
-                    {'col':['oph'],'_ylim': [0, 100], 'color':'black', 'unit':'h'},
+                    {'col':['oph','starts'],'_ylim': [0, 100], '_color':'black', 'unit':'h'},
+                    {'col':['LOC'],'ylim': [0, 0.3], 'color':'green', 'unit':'g/kWh'},
                     {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)'] },
                     ]
                 
                     #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
-                    dr2set2_c = [r for r in dr2set2 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
+                    dr2set2_c = [r for r in dr2set2 if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
  
                     dr2set2 = dmp2.equal_adjust(dr2set2_c, rde, do_not_adjust=['no'], minfactor=0.95, maxfactor=1.2)
                     ntitle = ftitle + ' | Mix Values at Engine Stop vs. Datetime'
@@ -674,8 +676,8 @@ class Tab():
                     fig2 = dmp2.dbokeh_chart(rde, dr2set2,  x='oph', style='circle', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig2)
 
-                    rde['bmep'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['targetload'], V.fsm._e.Speed_nominal), axis=1)
-                    rde['bmep2'] = rde.apply(lambda x: V.fsm._e._calc_BMEP(x['maxload'], V.fsm._e.Speed_nominal), axis=1)
+                    rde['bmep'] = rde.apply(lambda x: cm.V.fsm._e._calc_BMEP(x['targetload'], cm.V.fsm._e.Speed_nominal), axis=1)
+                    rde['bmep2'] = rde.apply(lambda x: cm.V.fsm._e._calc_BMEP(x['maxload'], cm.V.fsm._e.Speed_nominal), axis=1)
                     dr2set2 = [
                             #{'col':['targetload'],'ylim': [4100, 4700], 'color':'red', 'unit':'kW'},
                             {'col':['bmep2','bmep'],'ylim': [20, 30], 'color':['FireBrick','red'], 'unit':'bar'},
@@ -693,7 +695,7 @@ class Tab():
 
                     ntitle = ftitle + ' |  Mix Values at Engine Stop vs TJ Gas Temperature in °C '
                     fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasTemp1_at_Min', style='circle', figsize=self.dfigsize ,title=ntitle);
-                    fig3.add_layout(Span(location=V.fsm._e.BMEP,
+                    fig3.add_layout(Span(location=cm.V.fsm._e.BMEP,
                             dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
                     #fig3.add_layout(Span(location=20.0,
                     #        dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
@@ -713,14 +715,14 @@ class Tab():
                             ]
                     try:
                         #Check, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
-                        dr2set2_c = [r for r in dr2set2 if all(res in list(V.fsm.starts.columns) for res in r['col'])]
+                        dr2set2_c = [r for r in dr2set2 if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
                         dr2set2 = dmp2.equal_adjust(dr2set2_c, rde, do_not_adjust=['no'], minfactor=1.0, maxfactor=1.1)
                     except Exception as err:
                         print(f'Error: {str(err)}')
                         
                     ntitle = ftitle + ' | BMEP at Start & Stop Data vs TJ TJ_GasDiffPressMin in mbar '
                     fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle);
-                    fig3.add_layout(Span(location=V.fsm._e.BMEP,
+                    fig3.add_layout(Span(location=cm.V.fsm._e.BMEP,
                             dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
                     #fig3.add_layout(Span(location=20.0,
                     #        dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
@@ -728,8 +730,8 @@ class Tab():
                     dmp2.bokeh_show(fig3)            
                     
                 print()
-                display(rde[V.fsm.results['run4_content']['stop']].describe().style.format(precision=2, na_rep='-'))                
+                display(rde[cm.V.fsm.results['run4_content']['stop']].describe().style.format(precision=2, na_rep='-'))                
                 print()
-                display(rde[V.fsm.results['run4_content']['stop']][::-1].style.format(precision=2,na_rep='-').hide())
+                display(rde[cm.V.fsm.results['run4_content']['stop']][::-1].style.format(precision=2,na_rep='-').hide())
             else:
                 print('No Data available.')
