@@ -217,16 +217,11 @@ class Engine:
         # load info json & lastfetchdate
         try:
             with open(self._infofile) as f:
-                #self._info = json.load(f)
                 _info = json.load(f)
-                #if 'last_fetch_date' in self._info:
                 if 'last_fetch_date' in _info:
                     self._last_fetch_date = _info['last_fetch_date']
-                    #self._last_fetch_date = self._info['last_fetch_date']
-                #self._info = {**self._info, **self._eng}
-                #self._info['val start'] = arrow.get(
-                #    self._eng['val start']).timestamp()
         except FileNotFoundError:
+            logging.debug(f"dmyplant2.dEngine: {name}, ") 
             pass
 
         # except: # gefährlicher, uspezifischer Code ?!
@@ -239,6 +234,7 @@ class Engine:
                 local_asset = self._mp._asset_data(self._sn)
                 if local_asset is None:
                     print(f"dmyplant2.dEngine: {name}, No Data on Myplant available.")
+                    logging.debug(f"dmyplant2.dEngine: {name}, No Data on Myplant available.")                    
                     return 
                 #local_asset = self._mp._asset_data_graphQL(self._id)
 
@@ -251,6 +247,7 @@ class Engine:
                     'oph@start': int(oph_start),
                     'starts@start': int(start_start)
                 })
+                logging.debug(f"dmyplant2.dEngine: {name}, local_val: {local_val}")
                 local_asset['validation'] = local_val
                 self.assetdata = self._restructure(local_asset)
 
@@ -285,14 +282,11 @@ class Engine:
         #     logging.debug(
         #         f"{__name__}: in cache mode, load data from {self._sn}.pkl")
         finally:
-            logging.debug(
-                f"Initialize Engine Object, SerialNumber: {self._sn}")
-            #for k,v in self.lookup_Installed_Fleet(self._mp,self._sn).items():
-            #    self[k] = v
-            #self._engine_data(temp.eng)
             self._engine_data()
             self._set_oph_parameter()
             self._save()
+            logging.debug(
+                f"Initialize Engine Object, SerialNumber: {self._sn}")
 
     @property
     def _fname(self):

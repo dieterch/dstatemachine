@@ -335,6 +335,7 @@ class MyPlant:
         ----------------------------------------------
         url: /asset?assetType=J-Engine&serialNumber=sn
         """
+        logging.debug(r"/asset?assetType=J-Engine&serialNumber=" + str(serialNumber) + " in _asset_data")
         return self.fetchdata(url=r"/asset?assetType=J-Engine&serialNumber=" + str(serialNumber))
 
     def application_user_login(self):
