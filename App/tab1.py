@@ -4,11 +4,11 @@ import pickle
 import pandas as pd; pd.options.mode.chained_assignment = None
 from pprint import pformat as pf
 import ipywidgets as widgets
-import solara
+#import solara
 from IPython.display import display
 from ipyfilechooser import FileChooser
 import dmyplant2 as dmp2
-from .common import V, init_query_list, get_query_list, save_query_list,mp, tabs_out, tabs_html, status
+import App.common as cm
 
 #cred()
 #mp = MyPlant(3600)
@@ -40,7 +40,7 @@ class Tab():
         self.query_drop_down = widgets.Combobox(
             value='',
             # placeholder='Choose Someone',
-            options=V.query_list,
+            options=cm.V.query_list,
             description='Site Name:',
             #ensure_option=True,
             disabled=False,
@@ -120,26 +120,26 @@ class Tab():
         return widgets.VBox([
                         self.accordion,
                         self.tab1_out
-                    ],layout=widgets.Layout(min_height=V.hh))
+                    ],layout=widgets.Layout(min_height=cm.V.hh))
 
     def selected(self):
-        with tabs_out:
-            tabs_out.clear_output()
-            print(f'tab1 - {V.selected}')
+        with cm.tabs_out:
+            cm.tabs_out.clear_output()
+            print(f'tab1 - {cm.V.selected}')
 
     def cleartab(self):
         self.tab1_out.clear_output()
 
     def loadEngine(self, but):
-        if V.selected_number is not None:
-            with tabs_out:
-                tabs_out.clear_output()
-                tabs_html.value = ''
-                print(f'tab1 - ⌛ loading Myplant Engine Data for "{V.selected}" ...')
-                V.e=dmp2.Engine.from_fleet(mp, V.fleet.iloc[int(V.selected_number)])    
-                tabs_out.clear_output()
-                V.fsm = None
-                print(f'tab1 - {V.selected}')
+        if cm.V.selected_number is not None:
+            with cm.tabs_out:
+                cm.tabs_out.clear_output()
+                cm.tabs_html.value = ''
+                print(f'tab1 - ⌛ loading Myplant Engine Data for "{cm.V.selected}" ...')
+                cm.V.e=dmp2.Engine.from_fleet(cm.mp, cm.V.fleet.iloc[int(cm.V.selected_number)])    
+                cm.tabs_out.clear_output()
+                cm.V.fsm = None
+                print(f'tab1 - {cm.V.selected}')
 
     def do_lookup(self,lookup):
         def sfun(x):
@@ -153,9 +153,9 @@ class Tab():
                 (str(lookup) == str(x['id']))) and \
                 (x['OperationalCondition'] != 'Decommissioned')
 
-        V.fleet = mp.search_installed_fleet(sfun).drop('index', axis=1)
-        V.fleet = V.fleet.sort_values(by = "Engine ID",ascending=True).reset_index(drop='index')
-        ddl = [f"{x['serialNumber']}  J{x['Engine Type']} {x['Engine Version']:<4} {x['Engine ID']} {x['IB Site Name']}" for i, x in V.fleet.iterrows()]
+        cm.V.fleet = cm.mp.search_installed_fleet(sfun).drop('index', axis=1)
+        cm.V.fleet = cm.V.fleet.sort_values(by = "Engine ID",ascending=True).reset_index(drop='index')
+        ddl = [f"{x['serialNumber']}  J{x['Engine Type']} {x['Engine Version']:<4} {x['Engine ID']} {x['IB Site Name']}" for i, x in cm.V.fleet.iterrows()]
         ddl = [m for m in ddl]
         return ddl
 
@@ -163,9 +163,9 @@ class Tab():
     def do_selection(self,*args):
         self.selected_engine.value = self.engine_selections.value
         self.selected_engine_number.value = str(list(self.engine_selections.options).index(self.engine_selections.value))
-        V.selected = self.selected_engine.value
-        V.selected_number = self.selected_engine_number.value
-        status('tab1',f'{len(list(self.engine_selections.options))} Engines found - please select an Engine and load it.')
+        cm.V.selected = self.selected_engine.value
+        cm.V.selected_number = self.selected_engine_number.value
+        cm.status('tab1',f'{len(list(self.engine_selections.options))} Engines found - please select an Engine and load it.')
         self.b_LoadEngine.layout.display = 'block' 
 
     #@self.tab1_out.capture(clear_output=True)
@@ -174,8 +174,8 @@ class Tab():
         if self.query_drop_down.value != '':
             self.engine_selections.options = self.do_lookup(self.query_drop_down.value)
             #display(HTML(pd.DataFrame.from_dict(e.dash, orient='index').T.to_html(escape=False, index=False)))
-            with tabs_out:
-                tabs_html.value = V.fleet[:].T \
+            with cm.tabs_out:
+                cm.tabs_html.value = cm.V.fleet[:].T \
                     .style \
                     .set_table_styles([
                             {'selector':'th,td','props':'font-size:0.7rem; min-width: 70px; margin: 0px; padding: 0px;'}]
@@ -184,57 +184,57 @@ class Tab():
                         precision=0,
                         na_rep='-'
                         ).to_html(escape=False, index=False)
-            if ((not self.query_drop_down.value in V.query_list) and (len(self.engine_selections.options) > 0)):
-                V.query_list.append(self.query_drop_down.value)
-            save_query_list(V.query_list)
+            if ((not self.query_drop_down.value in cm.V.query_list) and (len(self.engine_selections.options) > 0)):
+                cm.V.query_list.append(self.query_drop_down.value)
+            cm.save_query_list(cm.V.query_list)
         else: 
-            status('tab1','please provide a query string.')
+            cm.status('tab1','please provide a query string.')
 
     #@tab1_out.capture(clear_output=True)
     def load_testfile(self,but):
         self.tab1_out.clear_output()
         if self.fdialog.selected.endswith('.dfsm'):
-            status('tab1', f'⌛ loading {self.fdialog.selected}')
-            V.fsm = dmp2.FSMOperator.load_results(mp, self.fdialog.selected)
-            V.e = V.fsm._e
-            V.rdf = V.fsm.starts
-            self.selected_engine.value = V.selected = V.fsm.results['info']['Name']
-            self.selected_engine_number.value = V.selected_number = '0'
-            with tabs_out:
-                status('tab1')
-                display(pd.DataFrame.from_dict(V.fsm.results['info'], orient='index').T.style.hide())
-                V.app.clear_all()
+            cm.status('tab1', f'⌛ loading {self.fdialog.selected}')
+            cm.V.fsm = dmp2.FSMOperator.load_results(cm.mp, self.fdialog.selected)
+            cm.V.e = cm.V.fsm._e
+            cm.V.rdf = cm.V.fsm.starts
+            self.selected_engine.value = cm.V.selected = cm.V.fsm.results['info']['Name']
+            self.selected_engine_number.value = cm.V.selected_number = '0'
+            with cm.tabs_out:
+                cm.status('tab1')
+                display(pd.DataFrame.from_dict(cm.V.fsm.results['info'], orient='index').T.style.hide())
+                cm.V.app.clear_all()
         else:
-            status('tab1','please select a *.dfsm File.')
+            cm.status('tab1','please select a *.dfsm File.')
 
     def clear(self,but):
-        with tabs_out:
-            tabs_out.clear_output()
+        with cm.tabs_out:
+            cm.tabs_out.clear_output()
             #self.tab1_out.clear_output()
-            tabs_html.value = ''
+            cm.tabs_html.value = ''
             self.b_LoadEngine.layout.display = 'none'
             self.query_drop_down.value = ''
             self.engine_selections.options = ['']
             # engine_selections.value = ''
             self.selected_engine.value = ''
             self.selected_engine_number.value = ''
-            tabs_html.value = ''
-            V.selected = None
-            V.selected_number = None
-            V.fsm = None
-            V.app.clear_all()
-            status('tab1')
+            cm.tabs_html.value = ''
+            cm.V.selected = None
+            cm.V.selected_number = None
+            cm.V.fsm = None
+            cm.V.app.clear_all()
+            cm.status('tab1')
 
-        #V.query_list = init_query_list()
-        #save_query_list(V.query_list)
+        #cm.V.query_list = init_query_list()
+        #save_query_list(cm.V.query_list)
 
 #    def status(self,text=''):
-#        with tabs_out:
-#            tabs_out.clear_output()
+#        with cm.tabs_out:
+#            cm.tabs_out.clear_output()
 #            print(f'tab1{" - " if text != "" else ""}{text}')
 
     def accordion_change_index(self,*args):
         if self.accordion.selected_index == 0:
-            status('tab1','please select a *.dfsm File.')
+            cm.status('tab1','please select a *.dfsm File.')
         elif self.accordion.selected_index == 1:
-            status('tab1','please provide a query string.')
+            cm.status('tab1','please provide a query string.')
