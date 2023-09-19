@@ -320,6 +320,7 @@ class MyPlant:
                 if retries <= num_retries:
                     time.sleep(5)
         logging.error(f'Failed to fetch data from {url} after {num_retries} attempts')
+        #raise ValueError(f'Failed to fetch data from {url} after {num_retries} attempts')
         return None
 #############
 

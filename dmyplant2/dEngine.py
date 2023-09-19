@@ -1,7 +1,7 @@
 ﻿from datetime import datetime, timedelta
 import math
 from multiprocessing.sharedctypes import Value
-from pprint import pprint as pp
+from pprint import pprint as pp, pformat as pf
 import pandas as pd
 import numpy as np
 from dmyplant2 import _validationsfile
@@ -72,42 +72,60 @@ class Engine:
         Old_Parts_first_replaced_OPH=None, Old_Parts_replaced_before_upgrade=None):
         id = int(edf['id'])
         sn = str(edf['serialNumber'])
+        logging.debug(f"Engine.from_fleet: got id {id} and SerialNumber {sn}.")
         validations = cls._get_cached_validations(sn)
+        logging.debug(f"Engine.from_fleet: in validations ? \n{pf(validations)}.")
         if str(sn) in validations:
             valrec = validations[str(sn)]
             valstart = pd.to_datetime(valrec['val start'],infer_datetime_format=True)
             oph_start = valrec['oph@start']
             start_start = valrec['starts@start']
             name = valrec['Validation Engine']
+            logging.debug(f"Engine.from_fleet: Engine was in validations: \n{pf(valrec)}.")
         else:
+            logging.debug(f"Engine.from_fleet: Engine not in Validations: need to estimate some of the values.:")
             if pd.isnull(valstart): # try options to estimate a valstart date.
                 valstart = pd.to_datetime(edf['Commissioning Date'],infer_datetime_format=True)
                 if pd.isnull(valstart):
                     valstart = pd.to_datetime(edf['IB Unit Commissioning Date'],infer_datetime_format=True)
                     if pd.isnull(valstart):
                         print('no Commissioning Date available, guessing by Product program + 1 year.')
+                        logging.debug(f"Engine.from_fleet: no Commissioning Date available, guessing by Product program + 1 year.")
                         valstart = pd.to_datetime(edf['Product Program'],infer_datetime_format=True) + timedelta(weeks=52)
                         if pd.isnull(valstart):
+                            logging.debug(f"Engine.from_fleet: SN {sn} => failed to estimate a valid commissioning date.")
                             raise ValueError(f"SN {sn} => no valid commissioning date found / estimated.")
             valstart = pd.to_datetime(valstart,infer_datetime_format=True)
             ts = int(valstart.timestamp()*1e3)
-            if not oph_start:
+            logging.debug(f"Engine.from_fleet: oph_start, is it None ? {oph_start is None}, valu: {oph_start} ")
+            if oph_start is None:
                 try:
                     oph_help = mp.historical_dataItem(id, 161, ts)
                 except:
                     print('no valid data for engine ophs @ commissioning time found. setting oph to 0')
                     oph_help = 0
-                oph_start = oph_help
-            if not start_start:
+                finally:
+                    oph_start = oph_help
+            logging.debug(f"Engine.from_fleet: start_start, is it None ? {start_start is None}, valu: {start_start} ")
+            if start_start is None:
                 try:
                     start_help = mp.historical_dataItem(id, 179, ts)
                 except:
                     print('no valid data for engine starts @ commissioning time found. setting starts to 0')
                     start_help = 0
-                start_start = start_help
-            if not name:
-                name = edf['IB Site Name'] + ' ' + edf['Engine ID']            
+                finally:
+                    start_start = start_help
+                    
+            # workaround, the code above seems not to help to avoid None values here.
+            if oph_start is None:
+                oph_start = 0
+            if start_start is None:
+                start_start = 0
+            # workaround, the code above seems not to help to avoid None values here.
 
+            if name is None:
+                name = edf['IB Site Name'] + ' ' + edf['Engine ID']            
+            logging.debug(f"Engine.from_fleet: finaly values for start_start: {start_start}, oph_start: {oph_start} ")
             valrec = {
                     'Asset ID': id,
                     'Validation Engine': name,
@@ -118,7 +136,7 @@ class Engine:
                     'val start': valstart,
                     'source':'from_MyPlant'
                 }
-
+            logging.debug(f"Engine.from_fleet: Final Valrec with estimated values: {pf(valrec)}.")
             validations[sn] = valrec
             cls._save_cached_validations(validations)
 
