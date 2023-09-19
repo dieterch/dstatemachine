@@ -7,9 +7,8 @@ from bokeh.models import Span
 from IPython.display import display, HTML
 import dmyplant2 as dmp2
 import App.common as cm
-#from App.common import loading_bar, V, tabs_out, disp_alwr, display_fmt
-#from App.common import loading_bar, V, overview_figure, tabs_out, disp_alwr, display_fmt
-#from App import tab2
+from pprint import pformat as pf
+import logging
 
 #########################################
 # tab3
@@ -155,7 +154,7 @@ class Tab():
 
         self.cb_msgfilter = widgets.Checkbox(
             value=False,
-            description='Filter msg No:',
+            description='Filter msg Nos',
             disabled=False,
             indent=False,
             layout=widgets.Layout(max_width='110px')
@@ -164,7 +163,8 @@ class Tab():
         self.msg_no = widgets.Text(
             value='',
             description='',
-            layout=widgets.Layout(max_width='60px'))
+            layout=widgets.Layout(max_width='200px'))
+            #layout=widgets.Layout(max_width='60px'))
 
         self.b_tecjet = widgets.Button(
             description='TecJet Results',
@@ -252,7 +252,8 @@ class Tab():
         self.tab3_out.clear_output() 
 
     def filter_msg(self, df, mnum):
-        return any([m['msg']['name'] == str(mnum) for m in df['alarms']] + [m['msg']['name'] == str(mnum) for m in df['warnings']])
+        mnums = str(mnum).strip().split(',')
+        return any([m['msg']['name'] in mnums for m in df['alarms']] + [m['msg']['name'] in mnums for m in df['warnings']])
     
     def manage_load_and_spread(self, *args):
         # print( *args)
@@ -414,9 +415,9 @@ class Tab():
                                     #    print('--------------')
                                     #display(HTML("<hr>"))
                                     if self.list_alarms.value:
-                                        cm.disp_alwr(row,'alarms')
+                                        cm.disp_alwr(row,'alarms',self.cb_msgfilter,self.msg_no.value)
                                     if self.list_warnings.value:
-                                        cm.disp_alwr(row,'warnings')
+                                        cm.disp_alwr(row,'warnings',self.cb_msgfilter,self.msg_no.value)
                                     k = i + 1
                         except StopIteration:
                             pass

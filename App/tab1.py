@@ -9,6 +9,7 @@ from IPython.display import display
 from ipyfilechooser import FileChooser
 import dmyplant2 as dmp2
 import App.common as cm
+import logging
 
 #cred()
 #mp = MyPlant(3600)
@@ -136,7 +137,10 @@ class Tab():
                 cm.tabs_out.clear_output()
                 cm.tabs_html.value = ''
                 print(f'tab1 - ⌛ loading Myplant Engine Data for "{cm.V.selected}" ...')
-                cm.V.e=dmp2.Engine.from_fleet(cm.mp, cm.V.fleet.iloc[int(cm.V.selected_number)])    
+                logging.debug(f"loadEngine: cm.V.e = {cm.V.e}.")
+                logging.debug(f"fleet info: {cm.V.fleet.iloc[int(cm.V.selected_number)]}")            
+                cm.V.e=dmp2.Engine.from_fleet(cm.mp, cm.V.fleet.iloc[int(cm.V.selected_number)])
+                logging.debug(f"got this engine back: {cm.V.e}")    
                 cm.tabs_out.clear_output()
                 cm.V.fsm = None
                 print(f'tab1 - {cm.V.selected}')

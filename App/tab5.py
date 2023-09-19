@@ -127,8 +127,11 @@ class Tab():
             tabs_out.clear_output()
             if V.e is not None:
                 self.txt_selectedEngine.value = V.selected
-                self.txt_selectedOph.value = str(mp.historical_dataItem(V.e.id, 161, int(arrow.now().timestamp()*1000), num_retries=0))
-                self.txt_selectedStarts.value = str(mp.historical_dataItem(V.e.id, 179, int(arrow.now().timestamp()*1000), num_retries=0))
+                try:
+                    self.txt_selectedOph.value = str(mp.historical_dataItem(V.e.id, 161, int(arrow.now().timestamp()*1000), num_retries=0))
+                    self.txt_selectedStarts.value = str(mp.historical_dataItem(V.e.id, 179, int(arrow.now().timestamp()*1000), num_retries=0))
+                except Exception as e:
+                    print(str(e))
             print(f'tab5 - {V.selected}')
 
 

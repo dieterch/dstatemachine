@@ -12,6 +12,7 @@ from IPython.display import display, HTML
 from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 import dmyplant2 as dmp2
 from pprint import pprint as pp
+import logging
 
 try:
     dmp2.cred()
@@ -46,168 +47,6 @@ def dfigures(e = None):
                     lcol[j] = func_cyl(f"{dataitem[len('func_cyl|'):]}")
                     figures[key][i]['col'] = flatten_list(lcol)
     return figures
-
-# def dfigures(e = None):
-#     def fake_cyl(dataItem):
-#         return [dataItem[:-1] + '01']
-#     func_cyl = fake_cyl if e is None else e.dataItemsCyl
-#     func_power = 5000 if e is None else math.ceil(e['Power_PowerNominal'] / 1000.0) * 1000.0 * 1.2
-#     f_figure = os.getcwd() + '/App/figures.json'
-#     figures = dmp2.load_json(f_figure)
-#     lfigures = figures.copy()
-#     for key in lfigures.keys():
-#         for i,r in enumerate(lfigures[key]):
-#             if 'ylim' in r:
-#                 if r['ylim'] == "func_power":
-#                     figures[key][i]['ylim'] = [0,func_power]
-#             for j , dataitem in enumerate(r['col']):
-#                 if 'func_cyl|' in dataitem:
-#                     # nicht elegant :-)
-#                     lcol = figures[key][i]['col'].copy()
-#                     rlcol = func_cyl(f"{dataitem[len('func_cyl|'):]}")
-#                     lcol.remove(dataitem)
-#                     for item in rlcol[::-1]:
-#                         lcol.insert(j, item)
-#                     figures[key][i]['col'] = lcol
-#     return figures
-
-# # DEFINITION OF PLOTS & OVERVIEW
-# def _dfigures(e = None):
-#     def fake_cyl(dataItem):
-#         return [dataItem[:-1] + '01']
-#     func_cyl = fake_cyl if e is None else e.dataItemsCyl
-#     def fake_power():
-#         return 5000
-#     func_power = fake_power if e is None else math.ceil(e['Power_PowerNominal'] / 1000.0) * 1000.0 * 1.2
-#     return {
-#         'actuators' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['Ignition_ITPAvg'],'ylim': [-10, 30], 'color':'rgba(255,0,255,0.4)', 'unit':'°KW'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':['Aux_PreChambDifPress'],'_ylim': [0, 3], 'color':'purple', 'unit':'-'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':['Various_Values_PressBoost'],'_ylim': [0, 3], 'color':'dodgerblue', 'unit':'bar'},
-#         {'col':['Various_Values_TempMixture'],'ylim': [0, 200], 'color':'orange', 'unit':'°C'},
-#         {'col':['Aux_RoomTemp'],'ylim': [-50, 100], 'color':'hotpink', 'unit':'°C'},
-#         {'col':['Various_Values_PosThrottle','Various_Values_PosTurboBypass'],'ylim': [-10, 110], 'color':['rgba(105,105,105,0.6)','rgba(165,42,42,0.4)'], 'unit':'%'},
-#         ],
-#         'tecjet' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['bmep'], 'ylim':(-10,40), 'color':'orange', 'unit':'bar'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['Ignition_ITPAvg'],'ylim': [-10, 30], 'color':'limegreen', 'unit':'°KW'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':['TecJet_GasPress1'],'_ylim': [0, 3], 'color':'rgba(255,0,0,0.4)', 'unit':'mbar'},
-#         {'col':['TecJet_GasTemp1'],'_ylim': [0, 3], 'color':'rgba(255,0,255,0.4)', 'unit':'°C'},
-#         {'col':['TecJet_GasDiffPress'],'_ylim': [0, 3], 'color':'olive', 'unit':'mbar'},
-#         {'col':['TecJet_ValvePos1'],'ylim': [0, 200], 'color':'purple', 'unit':'%'},
-#         ],
-#         'various' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Hyd_OilCount_Trend_OilConsumption','RMD_ListBuffMAvgOilConsume_OilConsumption'],'ylim': [0, 1], 'color':['orange','rgba(255, 224, 130,0.8)'], 'unit':'g/kWh'},
-#         {'col':['Aux_RoomTemp'],'ylim': [-50, 100], 'color':'hotpink', 'unit':'°C'},
-#         {'col':['CMU_rDPr_Ch_AirFilt','CMU_rDPr_BbFilt'],'ylim': [-50, 50], 'color':['blue','dodgerblue'], 'unit':'mbar'},
-#         {'col':['Aux_rPr_Baro'],'ylim': [900, 1100], 'color':'gray', 'unit': 'mbar'},
-#         ],
-#         'hydraulics' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['Hyd_PressCrankCase'],'ylim': [-100, 100], 'color':'orange', 'unit':'mbar'},
-#         {'col':['Hyd_PressOilDif'],'ylim': [0, 3], 'color':'black', 'unit': 'bar'},
-#         {'col':['Hyd_PressOil'],'ylim': [0, 10], 'color':'brown', 'unit': 'bar'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':['Hyd_TempOil','Hyd_TempCoolWat','Hyd_TempWatRetPreEng','Hyd_TempWatRet'],'ylim': [0, 110], 'color':['#2171b5','orangered','hotpink','darkred'], 'unit':'°C'},
-#         {'col':['Hyd_PressCoolWat'],'ylim': [0, 10], 'color':'dodgerblue', 'unit': 'bar'},
-#         ],
-#         'ctr_10' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['Hyd_TempWatRetPreEng','Hyd_TempWatRet'],'ylim': [0, 110], 'color':['hotpink','darkred'], 'unit':'°C'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':['CtrModule_Ctr10_X','CtrModule_Ctr10_W'],'ylim': [0, 110], 'color':['indianred','crimson'], 'unit':'°C'},
-#         {'col':['CtrModule_Ctr10_Y'],'ylim': [0, 110], 'color':'midnightblue', 'unit':'%'},
-#         {'col':['CtrModule_Ctr10_Error'],'ylim': [-100, 100], 'color':'darkmagenta', 'unit':'%'},
-#         ],
-#         'ctr_14' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['Hyd_TempWatRetPreEng','Hyd_TempWatRet'],'ylim': [0, 110], 'color':['hotpink','darkred'], 'unit':'°C'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':['CtrModule_Ctr14_X','CtrModule_Ctr14_W'],'ylim': [0, 110], 'color':['brown','lightpink'], 'unit':'°C'},
-#         {'col':['CtrModule_Ctr14_Y'],'ylim': [0, 110], 'color':'gray', 'unit':'%'},
-#         {'col':['CtrModule_Ctr14_Error'],'ylim': [-100, 100], 'color':'darkmagenta', 'unit':'%'},
-#         ],
-#         'exh_detail' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':func_cyl('Exhaust_TempCyl*')+['Exhaust_TempCylMax','Exhaust_TempCylMin'],'ylim': [300, 700], 'unit':'°C'},
-#         ],
-#         'exhaust' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':['Exhaust_TempHexIn'], 'ylim': [0,700], 'color': 'purple', 'unit':'°C'},
-#         {'col':func_cyl('Exhaust_TempCyl*')+['Exhaust_TempCylMax','Exhaust_TempCylMin'],'ylim': [0, 700], 'unit':'°C'},
-#         ],
-#         'valvenoise' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':['Exhaust_TempHexIn'], 'ylim': [0,700], 'color': 'purple', 'unit':'°C'},
-#         {'col':func_cyl('Knock_Valve_Noise_Cyl*'),'ylim': [0, 12000], 'unit':'mV'},
-#         ],
-#         'knocking' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':func_cyl('Knock_KLS98_Knock_Cyl*'),'ylim': [0, 1000], 'unit':'mv'},
-#         {'col':func_cyl('Knock_KLS98_IntKnock_Cyl*'),'ylim': [-80, 10], 'unit':'%'},
-#         ],
-#         'ignition1' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':func_cyl('Monic_VoltCyl*'),'ylim': [0, 100], 'unit':'kV'},
-#         ],
-#         'ignition2' : [
-#         {'col':['Power_SetPower','Power_PowerAct'], 'ylim':(0,func_power), 'color':['lightblue','red'], 'unit':'kW'},
-#         {'col':['Various_Values_SpeedAct'],'ylim': [0, 2500], 'color':'blue', 'unit':'rpm'},
-#         {'col':['TecJet_Lambda1'],'ylim': [0, 3], 'color':'rgba(255,165,0,0.4)', 'unit':'-'},
-#         {'col':func_cyl('Ignition_ITPCyl*'),'ylim': [0, 40], 'unit':'°KW'},
-#         ],   
-#     }
-
-# def overview_figure():
-#     return {
-#         'basic': [
-#         {'col':['cumstarttime'],'_ylim':(-600,800), 'color':'darkblue', 'unit':'sec' },
-#         {'col':['runout'],'_ylim':(0,100) , 'unit':'sec' },
-#         {'col':['targetload'],'_ylim':(-4000,26000) , 'unit':'kW' },
-#         {'col':['ramprate'],'_ylim':(-5,7), 'unit':'-' },
-#         {'col':['loadramp'],'_ylim':(-150,900), 'color':'red', 'unit':'sec' },
-#         {'col':['speedup'],'_ylim':(-100,200), 'color':'orange', 'unit':'sec' },
-#         {'col':['synchronize'],'_ylim':(-20,400), 'unit':'sec' },
-#         {'col':['oilfilling'],'_ylim':(-1000,800), 'unit':'sec' },
-#         {'col':['degasing'],'_ylim':(-1000,800), 'unit':'sec' },
-#         {'col':['W','A','isuccess'],'_ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
-#         {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.1)'] , 'unit':'-' },
-#         #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
-#         ],
-#         'basic2': [
-#         {'col':['targetload','maxload'],'ylim':(-4000,26000), 'unit':'kW' },
-#         {'col':['idle'],'ylim':(-100,1000), 'color':'dodgerblue', 'unit':'sec' },
-#         {'col':['PCDifPress_min'],'ylim':(-3500,500), 'color':'red', 'unit':'mbar' },
-#         {'col':['PressBoost_max'],'ylim':(0,10), 'color':'blue', 'unit':'bar' },
-#         {'col':['StartCrankCasePressure','StopCrankCasePressure'],'ylim': (-100, 100), 'unit':'mbar'},
-#         {'col':['StartRoomTemp','StopRoomTemp'],'ylim': [-20, 60], 'color':['dodgerblue','lightblue'], 'unit':'°C'},
-#         {'col':['LOC'],'ylim': [0, 0.3], 'color':'green', 'unit':'g/kWh'},
-#         {'col':['W','A','isuccess'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
-#         {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.1)'] , 'unit':'-' },
-#         #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
-#         ],        
-#     }
 
 with open('./assets/Misterious_mist.gif', 'rb') as f:
     img = f.read()    
@@ -292,7 +131,8 @@ def status(tbname ,text=''):
         tabs_out.clear_output()
         print(f'{tbname}{" - " if text != "" else ""}{text}')
 
-def disp_alwr(row, key):
+def disp_alwr(row, key, filterit, filtermsgs):
+    mnums = str(filtermsgs).strip().split(',')
     rec = row[key]
     style = '''<style>
         table, 
@@ -309,15 +149,16 @@ def disp_alwr(row, key):
     </style>'''
     ll = []
     for m in rec:
-        ll.append({
-            'sno': row['no'],
-            'datetime':pd.to_datetime(int(m['msg']['timestamp'])*1e6).strftime('%Y-%m-%d %H:%M:%S'),
-            'state': m['state'],
-            'number': m['msg']['name'],
-            'type': 'Alarm' if m['msg']['severity'] == 800 else 'Warning',
-            'severity': m['msg']['severity'],
-            'message': m['msg']['message']
-        })
+        if m['msg']['name'] in mnums or not filterit.value:
+            ll.append({
+                'sno': row['no'],
+                'datetime':pd.to_datetime(int(m['msg']['timestamp'])*1e6).strftime('%Y-%m-%d %H:%M:%S'),
+                'state': m['state'],
+                'number': m['msg']['name'],
+                'type': 'Alarm' if m['msg']['severity'] == 800 else 'Warning',
+                'severity': m['msg']['severity'],
+                'message': m['msg']['message']
+            })
     if len(rec) > 0:
         display(HTML(style + pd.DataFrame(ll).to_html(index=False, header=False)))
 
