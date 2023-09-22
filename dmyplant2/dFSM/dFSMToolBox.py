@@ -402,7 +402,7 @@ class Rampdown_Collector(Data_Collector):
     
 class Coolrun_Collector(Data_Collector):
     def __init__(self, results, engine):
-        self.phases = ['coolrun']
+        self.phases = ['coolrun','runout']
         super().__init__(self.phases)
         self._vset += ['Various_Values_SpeedAct','Hyd_PressCrankCase']
         self._content = ['Stop_Overspeed','Idle_CrankcasePressure']
