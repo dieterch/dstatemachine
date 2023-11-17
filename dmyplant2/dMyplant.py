@@ -99,6 +99,7 @@ class MyPlant:
     _caching = 0
 
     _dfn = 'data/dataitems.pkl'
+    _dfn2 = 'data/dataitems.csv'
     _dataitems = pd.DataFrame([])
 
     def __init__(self, caching=0):
@@ -120,7 +121,10 @@ class MyPlant:
         self._token = None
         #self.login()
         
-        #if not os.path.isfile('data/dataitems.csv'):
+        # workaround
+        if not os.path.isfile(type(self)._dfn2):
+            self.create_request_csv()
+
         if not os.path.isfile(type(self)._dfn):
             self.create_request_csv()
 

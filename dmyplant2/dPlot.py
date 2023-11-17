@@ -846,7 +846,7 @@ def show_val_stats (vl, df_loadrange=None, df_starts_oph=None):
     dtripped = dft[dft.Various_Bits_CollAlarm == 1]
     for eng in dtripped.values:
         le = eng[0] 
-        trip_div.append(Div(text='<h4>'+le._info.get('Validation Engine')+'</h4>'))
+        trip_div.append(Div(text='<h4>'+le._info.get('Validation Engine','Unknown')+'</h4>'))
         dtrips = le.batch_hist_alarms(p_severities=[800], p_offset=0, p_limit=5)
         dtrips['datetime'] = pd.to_datetime(dtrips['timestamp'] * 1000000.0).dt.strftime("%m-%d-%Y %H:%m")
         df_print=dtrips[['datetime', 'message', 'name','severity']]
