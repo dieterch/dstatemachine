@@ -590,7 +590,8 @@ def datastr_to_dict (datastr):
         if not data_id.empty:
             new=Request_Ids.loc[Request_Ids.myPlantName==da]['name'].values[0]
             rename [new]=da
-            rel_data=rel_data.append(data_id)
+            #rel_data=rel_data.append(data_id)
+            rel_data=pd.concat([rel_data, data_id])
 
         #else: #uncommented for less output messages
             #print(da+' not available! Please check spelling.')
@@ -704,7 +705,7 @@ def load_pltcfg_from_excel ():
         except ValueError:
             return False
 
-    df_cfg=pd.read_excel('Input_validation_dashboard.xlsx', sheet_name='Pltcfg', usecols=['Plot_Nr', 'Axis_Nr', 'Name', 'Unit', 'y-lim min', 'y-lim max'])
+    df_cfg=pd.read_excel('./Validation Dashboard/Input_validation_dashboard.xlsx', sheet_name='Pltcfg', usecols=['Plot_Nr', 'Axis_Nr', 'Name', 'Unit', 'y-lim min', 'y-lim max'])
     df_cfg.sort_values(by=['Plot_Nr','Axis_Nr'], inplace=True)
     df_cfg.dropna(subset=['Plot_Nr', 'Axis_Nr', 'Name'], inplace=True)
     df_cfg['p_equal'] = df_cfg.Plot_Nr.eq(df_cfg.Plot_Nr.shift())
@@ -793,14 +794,19 @@ def show_val_stats (vl, df_loadrange=None, df_starts_oph=None):
 
     #Display OPH characteristics
     oph_info_tit=Div(text="<h3>Validation progress</h3>")
+    # 2023_11_17: Workaround to use '_append' instead of 'append' because append is deprecated since Pandas 2.0
+    # dont know how long this will be supported. official documentation recommends to use
+    # df = pd.concat([df1,df2,df3 ...]) instead. But this would need some more chganges to this code, so i leave it
+    # with '_append' for now
+    # Dieter Chvatal
     df_oph=pd.DataFrame(columns=['Characteristic','OPH'])
-    df_oph=df_oph.append({'Characteristic':'Fleet leader', 'OPH': f"{max(d['OPH Validation']):.0f}"}, ignore_index=True)
-    #df_oph=df_oph.append({'Characteristic':'75% quantile', 'OPH': f"{np.quantile(d['oph parts'],q=0.75):.0f}"}, ignore_index=True)
-    #df_oph=df_oph.append({'Characteristic':'Median', 'OPH': f"{np.median(d['oph parts']):.0f}"}, ignore_index=True)
-    #df_oph=df_oph.append({'Characteristic':'50% quantile', 'OPH': f"{np.quantile(d['oph parts'],q=0.5):.0f}"}, ignore_index=True)
-    #df_oph=df_oph.append({'Characteristic':'25% quantile', 'OPH': f"{np.quantile(d['oph parts'],q=0.25):.0f}"}, ignore_index=True)
-    df_oph=df_oph.append({'Characteristic':'Average', 'OPH': f"{np.average(d['OPH Validation']):.0f}"}, ignore_index=True)
-    df_oph=df_oph.append({'Characteristic':'Cumulated', 'OPH': f"{sum(d['OPH Validation']):.0f}"}, ignore_index=True)
+    df_oph=df_oph._append({'Characteristic':'Fleet leader', 'OPH': f"{max(d['OPH Validation']):.0f}"}, ignore_index=True)
+    #df_oph=df_oph._append({'Characteristic':'75% quantile', 'OPH': f"{np.quantile(d['oph parts'],q=0.75):.0f}"}, ignore_index=True)
+    #df_oph=df_oph._append({'Characteristic':'Median', 'OPH': f"{np.median(d['oph parts']):.0f}"}, ignore_index=True)
+    #df_oph=df_oph._append({'Characteristic':'50% quantile', 'OPH': f"{np.quantile(d['oph parts'],q=0.5):.0f}"}, ignore_index=True)
+    #df_oph=df_oph._append({'Characteristic':'25% quantile', 'OPH': f"{np.quantile(d['oph parts'],q=0.25):.0f}"}, ignore_index=True)
+    df_oph=df_oph._append({'Characteristic':'Average', 'OPH': f"{np.average(d['OPH Validation']):.0f}"}, ignore_index=True)
+    df_oph=df_oph._append({'Characteristic':'Cumulated', 'OPH': f"{sum(d['OPH Validation']):.0f}"}, ignore_index=True)
 
     Columns = [TableColumn(field=Ci, title=Ci) for Ci in df_oph.columns] # bokeh columns
     oph_info = DataTable(columns=Columns, source=ColumnDataSource(df_oph), autosize_mode='fit_columns', height=30*(len(df_oph.index)+1),index_position=None) # bokeh table
@@ -840,7 +846,7 @@ def show_val_stats (vl, df_loadrange=None, df_starts_oph=None):
     dtripped = dft[dft.Various_Bits_CollAlarm == 1]
     for eng in dtripped.values:
         le = eng[0] 
-        trip_div.append(Div(text='<h4>'+le._info.get('Validation Engine')+'</h4>'))
+        trip_div.append(Div(text='<h4>'+le._info.get('Validation Engine','Unknown')+'</h4>'))
         dtrips = le.batch_hist_alarms(p_severities=[800], p_offset=0, p_limit=5)
         dtrips['datetime'] = pd.to_datetime(dtrips['timestamp'] * 1000000.0).dt.strftime("%m-%d-%Y %H:%m")
         df_print=dtrips[['datetime', 'message', 'name','severity']]

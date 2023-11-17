@@ -99,6 +99,7 @@ class MyPlant:
     _caching = 0
 
     _dfn = 'data/dataitems.pkl'
+    _dfn2 = 'data/dataitems.csv'
     _dataitems = pd.DataFrame([])
 
     def __init__(self, caching=0):
@@ -120,7 +121,10 @@ class MyPlant:
         self._token = None
         #self.login()
         
-        #if not os.path.isfile('data/dataitems.csv'):
+        # workaround
+        if not os.path.isfile(type(self)._dfn2):
+            self.create_request_csv()
+
         if not os.path.isfile(type(self)._dfn):
             self.create_request_csv()
 
@@ -580,7 +584,8 @@ class MyPlant:
         dataitems_df['dataitem']=dataitems_df.dataitem.apply(remove_jen)
         model=model.merge(dataitems_df[dataitems_df.lan=='en'], how='inner', left_on='name', right_on='dataitem')
         model=model.loc[:,['id', 'name', 'unit', 'myPlantName']]
-        #model.to_csv('data/dataitems.csv', sep=';', index=False)
+        # workaround to enable Johannes Fischers Code that needs the dataitems as dataitems.csv
+        model.to_csv('data/dataitems.csv', sep=';', index=False)
         model.to_pickle(type(self)._dfn)
 
     def _reshape_asset(self, rec):
