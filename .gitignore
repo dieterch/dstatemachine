@@ -145,5 +145,6 @@ dmypy.json
 Examples/data
 Installed_base.pkl
 
-Validation dashboard(*
+Validation dashboard*.html
+
 

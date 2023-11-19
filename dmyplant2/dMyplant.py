@@ -121,11 +121,8 @@ class MyPlant:
         self._token = None
         #self.login()
         
-        # workaround
-        if not os.path.isfile(type(self)._dfn2):
-            self.create_request_csv()
-
-        if not os.path.isfile(type(self)._dfn):
+        # workaround for Johannes Fischers code, download dataitems and store as csv additionally
+        if (not os.path.isfile(type(self)._dfn2)) or (not os.path.isfile(type(self)._dfn)):
             self.create_request_csv()
 
         # store dataitems in class variable at start

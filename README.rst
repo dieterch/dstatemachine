@@ -19,6 +19,15 @@ Create and activate a virtual environment:
   pip install -r requirements.txt
 ::
 
+get Updates from github:
+:: 
+  cd dstatemachine
+  .\venv\Scripts\activate.bat (windows)
+  source ./venv/bin/activate (OSX, Linux)
+  git pull
+  pip install -r requirements.txt
+::
+
 Start
 ------
 >  jupyter lab

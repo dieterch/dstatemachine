@@ -1066,7 +1066,7 @@ class Engine:
 #            dloc = self.hist_data(
             dloc = self.hist_data2(
                 itemIds=locdef, p_from=starttime,
-                p_to=endtime, timeCycle=3600, slot=1)
+                p_to=endtime, timeCycle=3600, slot=1, silent=True)
             dloc.rename(columns = ans1[1], inplace = True)
 
             dloc.drop(['time'], axis=1, inplace=True)
