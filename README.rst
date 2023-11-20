@@ -21,7 +21,7 @@ Create and activate a virtual environment:
 
 get Updates from github:
 :: 
-  cd dstatemachine
+  cd "%USERPROFILE%/Documents\Scripts\dstatemachine
   .\venv\Scripts\activate.bat (windows)
   source ./venv/bin/activate (OSX, Linux)
   git pull
