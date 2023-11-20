@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import pytz
 import arrow
+import os
 
 import dmyplant2
 from dmyplant2.dPlot import bokeh_chart, datastr_to_dict, expand_cylinder, shrink_cylinder, load_pltcfg_from_excel,show_val_stats
@@ -13,8 +14,8 @@ from bokeh.layouts import column, row, gridplot, layout
 from bokeh.plotting import figure, output_file, show
 
 class ValidationDashboard:
-    def __init__(self, definition_file='Input_validation_dashboard.xlsx'):
-        self.df_var=pd.read_excel(definition_file, sheet_name='Variables', usecols=['Variable', 'Value']) #loading of relevant excel sheet in DataFrame
+    def __init__(self, definition_file='/Validation Dashboard/Input_validation_dashboard.xlsx'):
+        self.df_var=pd.read_excel(os.getcwd() + definition_file, sheet_name='Variables', usecols=['Variable', 'Value']) #loading of relevant excel sheet in DataFrame
         self.df_var.dropna(inplace=True) #drop NaN Variable & Values
         self.df_var.set_index('Variable',inplace=True)
         self.rel_cyl = [1,2]
@@ -105,23 +106,26 @@ class ValidationDashboard:
             starttime=arrow.get(starttime).to('Europe/Vienna')
             endtime=endtime.to('Europe/Vienna')
 
-            print ('Downloading data for '+title)
+            #print ('Downloading data for '+title)
+            print(f"{(eng_count+1):02d}/{len(enginelist):02d}: Downloading data for {str(eng):<60}, Validation Start OPH: {(eng['oph_start'] or 0):>6}, Validation Start Starts Counter: {(eng['starts_start'] or 0):>6}")
+
             #df = eng.hist_data(
             df = eng.hist_data2(     # changed 8.3.2022 - Dieter
                     itemIds=dat,
                     p_from=starttime,
                     p_to=endtime,
-                    timeCycle=self.v('timecycle'))#, slot=eng_count)
+                    timeCycle=self.v('timecycle'),
+                    silent=True)#, slot=eng_count)
 
             ##Change Dataframe - make calculations
             df.rename(columns = ans[1], inplace = True)
             df = df.set_index('datetime')
 
             #Add Column 'Operating hours validation'
-            df['Operating hours validation'] = df['Operating hours engine'] - eng.oph_start
+            df['Operating hours validation'] = df['Operating hours engine'] - (eng['oph_start'] or 0)
 
             #Add Column 'Starts validation'
-            df['Starts validation'] = df['Starts'] - eng.starts_start
+            df['Starts validation'] = df['Starts'] - (eng['starts_start'] or 0)
 
             #Add BMEP 
             if 'BMEP' in '\#'.join(datastr):
@@ -267,7 +271,7 @@ class ValidationDashboard:
                 output_file(f'{title} ({starttime_string} - {endtime_string}).html', title=title) #Output in browser
                 save(lay) #save(layout) for saving only
             
-            print('')
+            #print('')
 
         #Generate tab-layout and out
         if self.v('make_tabs'):

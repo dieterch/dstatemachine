@@ -237,7 +237,7 @@ class MyPlant:
                     itemIds={161: ['CountOph', 'h'], 179: ['Starts', '']}
                     p_from=arrow.get(dval['val start'].iloc[i]).to('Europe/Vienna')
                     p_to=p_from.shift(days=1)
-                    add_data=mp.hist_data(assetId, itemIds, p_from, p_to, timeCycle=3600)
+                    add_data=mp.hist_data(assetId, itemIds, p_from, p_to, timeCycle=3600, silent=True)
                     if add_data.empty:
                         raise ValueError('Error! No setup data available for engine '+dval['Validation Engine'].iloc[i]+' for specified val start. Please change the val start date or insert the oph@start and starts@start manually in the excel file and run the program again.')
                     if np.isnan(dval['oph@start'].iloc[i]): dval['oph@start'].iloc[i]=add_data['CountOph'].iloc[-1]
