@@ -147,7 +147,7 @@ class ValidationDashboard:
             #Add LOC_average, LOC_raw
             if 'LOC' in '\#'.join(datastr):
                 dfres=eng.timestamp_LOC(starttime, endtime, windowsize=self.v('average_hours_LOC'), return_OPH=True)
-                
+                dfres.index = pd.to_datetime(dfres.index)                
                 df.sort_index(inplace=True) #additional sorting of index
                 df=pd.merge_asof(df, dfres, left_index=True, right_index=True)
 
