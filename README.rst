@@ -24,6 +24,7 @@ get Updates from github:
   cd "%USERPROFILE%/Documents\Scripts\dstatemachine
   .\venv\Scripts\activate.bat (windows)
   source ./venv/bin/activate (OSX, Linux)
+  git stash
   git pull
   pip install -r requirements.txt
 ::
