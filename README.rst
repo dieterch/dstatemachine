@@ -49,13 +49,13 @@ Please create a file e.g. 'go_venv.bat'
 in your "%USERPROFILE%/Documents" Folder.
 Copy the following into it:
 ::
-@echo off
-@echo ==============================================
-@echo Statemachine (c) Dieter.Chvatal@innio.com 2023
-@echo ==============================================
-cd "%USERPROFILE%/Documents\Scripts\dstatemachine"
-call %USERPROFILE%/Documents/Scripts/dstatemachine/venv/Scripts/jupyter lab
-REM pause
+  @echo off
+  @echo ==============================================
+  @echo Statemachine (c) Dieter.Chvatal@innio.com 2023
+  @echo ==============================================
+  cd "%USERPROFILE%/Documents\Scripts\dstatemachine"
+  call %USERPROFILE%/Documents/Scripts/dstatemachine/venv/Scripts/jupyter lab
+  REM pause
 ::
 
 Create a link on the desktop. You can now start dstatemachine by
