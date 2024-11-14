@@ -1,7 +1,7 @@
 dStatemachine
 ========
 
-Python INNIO Myplant Statemchine based Field debugger software. Download data on each engine Start and extract
+Python INNIO Myplant Statemachine based Field debugger software. Download data on each engine Start and extract
 Data based on Engine states. Find Anomalies and analyse them in depth.
 
 Installation
