@@ -2,7 +2,6 @@ import os
 import sys
 import pickle
 from pprint import pprint as pp
-from turtle import width
 import pandas as pd; pd.options.mode.chained_assignment = None
 from datetime import datetime, date, timedelta
 import ipywidgets as widgets
@@ -52,15 +51,17 @@ class Tab():
 
         self.tab2_selected_engine = widgets.Text(
             value='-', description='selected:', disabled=True, 
-            layout=Layout(width='603px'))
+            layout=Layout(width='100%', max_width='620px'))
 
         self.t1 = widgets.DatePicker( 
             value=pd.to_datetime('2022-01-01'), 
-            description='From: ',disabled=False)
+            description='From: ',disabled=False,
+            layout=Layout(width='220px'))
         
         self.t2 = widgets.DatePicker( 
             value = date.today(), 
-            description='To:',disabled=False)
+            description='To:',disabled=False,
+            layout=Layout(width='220px'))
 
         self.load_message_text = 'load Messages'
         self.b_loadmessages = Button(
@@ -124,32 +125,38 @@ class Tab():
 
     @property
     def tab(self):
+        run_options = VBox([
+            self.run2_chkbox,
+            self.run4_chkbox,
+            self.refresh_chkbox,
+            self.single_runs_chkbox
+        ], layout=Layout(width='130px'))
+
+        actions = VBox([
+            self.b_loadmessages,
+            self.b_runfsm,
+            self.b_resultsfsm,
+            self.b_runfsm0,
+            self.b_runfsm1,
+            self.b_runfsm2,
+            self.b_runfsm4,
+            self.b_savefsm,
+            self.b_appendfsm
+        ], layout=Layout(width='150px'))
+
         return VBox([
-            HBox([
-                VBox([
-                    self.tab2_selected_engine,
-                    HBox([self.t1,self.t2]),
-                    self.tab2_out
-                ]),
-                VBox([
-                    self.run2_chkbox,
-                    self.run4_chkbox,
-                    self.refresh_chkbox,
-                    self.single_runs_chkbox
-                ]),
-                VBox([
-                    self.b_loadmessages,
-                    self.b_runfsm,
-                    self.b_resultsfsm,
-                    self.b_runfsm0,
-                    self.b_runfsm1,
-                    self.b_runfsm2,
-                    self.b_runfsm4,
-                    self.b_savefsm,
-                    self.b_appendfsm
-                ])
-            ])
-        ],layout=widgets.Layout(min_height=V.hh))
+            self.tab2_selected_engine,
+            HBox([self.t1, self.t2], layout=Layout(flex_flow='row wrap')),
+            HBox(
+                [run_options, actions],
+                layout=Layout(
+                    width='100%',
+                    flex_flow='row wrap',
+                    align_items='flex-start'
+                )
+            ),
+            self.tab2_out
+        ], layout=widgets.Layout(min_height=V.hh, width='100%'))
         
 
     def selected(self):

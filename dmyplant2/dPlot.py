@@ -14,6 +14,9 @@ import warnings
 import logging
 warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
 
+if not hasattr(np, "bool8"):
+    np.bool8 = np.bool_
+
 # Third party imports
 import matplotlib
 import matplotlib.pyplot as plt
@@ -22,11 +25,18 @@ import matplotlib.dates as dates
 
 #Bokeh imports
 from bokeh.io import push_notebook, show, output_notebook
+import bokeh.io.notebook as _bokeh_notebook
 from bokeh.plotting import figure, output_file, show as bokeh_show
 from bokeh.models import LinearAxis, Range1d, DataRange1d, HoverTool
 from bokeh.core.validation import check_integrity
 from bokeh.layouts import column, row, gridplot, layout
 from bokeh.models import ColumnDataSource, Div, Span, CustomJS
+
+def _publish_display_data_compat(data, metadata=None, source=None, *, transient=None, **kwargs):
+    from IPython.display import publish_display_data
+    publish_display_data(data, metadata, transient=transient, **kwargs)
+
+_bokeh_notebook.publish_display_data = _publish_display_data_compat
 
 # Load Application imports
 # from dmyplant2.dReliability import demonstrated_reliability_sr

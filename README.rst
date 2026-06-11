@@ -44,6 +44,29 @@ login and credentials:
 
 go to the settings tab and update the installed fleet data
 
+Webserver start
+---------------
+
+Create credentials first. This replaces the old ``tresor`` workflow and writes
+the encrypted credential store used by the app:
+::
+
+  .venv/bin/python scripts/init_credentials.py
+
+Start JupyterLab on localhost:
+::
+
+  .venv/bin/python scripts/serve.py lab --host 127.0.0.1 --port 8888 --no-browser
+
+Start the Voila app on localhost:
+::
+
+  .venv/bin/python scripts/serve.py voila --host 127.0.0.1 --port 8866 --no-browser
+
+For access from another machine, bind to ``0.0.0.0`` only behind trusted network
+controls such as VPN, SSH tunnel, reverse proxy authentication, or firewall
+rules.
+
 Icon on Desktop
 ---------------
 Please create a file e.g. 'go_venv.bat' 
@@ -90,4 +113,3 @@ Contributing
 hint, if pip fails
 ------------------
 >   pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r requirements.txt (alternativ)
-

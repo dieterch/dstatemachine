@@ -77,7 +77,7 @@ class Engine:
         logging.debug(f"Engine.from_fleet: in validations ? \n{pf(validations)}.")
         if str(sn) in validations:
             valrec = validations[str(sn)]
-            valstart = pd.to_datetime(valrec['val start'],infer_datetime_format=True)
+            valstart = pd.to_datetime(valrec['val start'])
             oph_start = valrec['oph@start']
             start_start = valrec['starts@start']
             name = valrec['Validation Engine']
@@ -85,17 +85,17 @@ class Engine:
         else:
             logging.debug(f"Engine.from_fleet: Engine not in Validations: need to estimate some of the values.:")
             if pd.isnull(valstart): # try options to estimate a valstart date.
-                valstart = pd.to_datetime(edf['Commissioning Date'],infer_datetime_format=True)
+                valstart = pd.to_datetime(edf['Commissioning Date'])
                 if pd.isnull(valstart):
-                    valstart = pd.to_datetime(edf['IB Unit Commissioning Date'],infer_datetime_format=True)
+                    valstart = pd.to_datetime(edf['IB Unit Commissioning Date'])
                     if pd.isnull(valstart):
                         print('no Commissioning Date available, guessing by Product program + 1 year.')
                         logging.debug(f"Engine.from_fleet: no Commissioning Date available, guessing by Product program + 1 year.")
-                        valstart = pd.to_datetime(edf['Product Program'],infer_datetime_format=True) + timedelta(weeks=52)
+                        valstart = pd.to_datetime(edf['Product Program']) + timedelta(weeks=52)
                         if pd.isnull(valstart):
                             logging.debug(f"Engine.from_fleet: SN {sn} => failed to estimate a valid commissioning date.")
                             raise ValueError(f"SN {sn} => no valid commissioning date found / estimated.")
-            valstart = pd.to_datetime(valstart,infer_datetime_format=True)
+            valstart = pd.to_datetime(valstart)
             ts = int(valstart.timestamp()*1e3)
             logging.debug(f"Engine.from_fleet: oph_start, is it None ? {oph_start is None}, valu: {oph_start} ")
             if oph_start is None:
@@ -261,7 +261,7 @@ class Engine:
                 #local_asset['validation'] = temp.eng
                 local_val = Engine.lookup_Installed_Fleet(self._mp, self._sn)
                 local_val.update({  
-                    'val start': pd.to_datetime(valstart,infer_datetime_format=True),
+                    'val start': pd.to_datetime(valstart),
                     'oph@start': int(oph_start),
                     'starts@start': int(start_start)
                 })

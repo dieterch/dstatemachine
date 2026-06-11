@@ -1,7 +1,5 @@
 ﻿from datetime import datetime
 from functools import reduce
-from numpy.lib.arraypad import _pad_dispatcher
-from numpy.testing._private.utils import build_err_msg
 import pandas as pd
 import numpy as np
 import sys

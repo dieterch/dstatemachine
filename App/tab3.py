@@ -254,6 +254,18 @@ class Tab():
     def filter_msg(self, df, mnum):
         mnums = str(mnum).strip().split(',')
         return any([m['msg']['name'] in mnums for m in df['alarms']] + [m['msg']['name'] in mnums for m in df['warnings']])
+
+    def present_columns(self, columns, df=None):
+        df = self.rde if df is None and hasattr(self, 'rde') else df
+        if df is None:
+            return []
+        return [c for c in columns if c in df.columns]
+
+    def present_plotcfg(self, plotcfg, df=None):
+        df = self.rde if df is None and hasattr(self, 'rde') else df
+        if df is None:
+            return []
+        return [r for r in plotcfg if all(c in df.columns for c in r['col'])]
     
     def manage_load_and_spread(self, *args):
         # print( *args)
@@ -281,13 +293,17 @@ class Tab():
         if self.cb_msgfilter.value:
             self.rda = self.rda[self.rda.apply(lambda x: self.filter_msg(x, self.msg_no.value), axis=1)] 
         if self.cb_powerabove.value:
-            self.rda = self.rda[self.rda['targetload'] > self.t_loadcap.value / 100 * cm.V.fsm._e['Power_PowerNominal']]
+            if 'targetload' in self.rda:
+                self.rda = self.rda[self.rda['targetload'] > self.t_loadcap.value / 100 * cm.V.fsm._e['Power_PowerNominal']]
         if self.cb_spreadabove.value:
-            self.rda = self.rda[self.rda['ExTCylMaxSpread'] > self.t_spreadcap.value]
+            if 'ExTCylMaxSpread' in self.rda:
+                self.rda = self.rda[self.rda['ExTCylMaxSpread'] > self.t_spreadcap.value]
         if self.cb_powerbelow.value:
-            self.rda = self.rda[self.rda['targetload'] < self.t_loadcap.value / 100 * cm.V.fsm._e['Power_PowerNominal']]
+            if 'targetload' in self.rda:
+                self.rda = self.rda[self.rda['targetload'] < self.t_loadcap.value / 100 * cm.V.fsm._e['Power_PowerNominal']]
         if self.cb_spreadbelow.value:
-            self.rda = self.rda[self.rda['ExTCylMaxSpread'] < self.t_spreadcap.value]
+            if 'ExTCylMaxSpread' in self.rda:
+                self.rda = self.rda[self.rda['ExTCylMaxSpread'] < self.t_spreadcap.value]
 
         self.rda = self.rda.reset_index(drop='index')
         return self.rda
@@ -321,7 +337,7 @@ class Tab():
                         #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
                     ]
                      #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
-                    dset_c = [r for r in dset if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
+                    dset_c = self.present_plotcfg(dset, self.rde)
                     dset = dmp2.equal_adjust(dset_c, self.rde, do_not_adjust=[-1])
                     ftitle = f"{cm.V.fsm._e}"
                     try:
@@ -346,7 +362,7 @@ class Tab():
                             #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
                         ]      
                          #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
-                        dset2_c = [r for r in dset2 if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
+                        dset2_c = self.present_plotcfg(dset2, self.rde)
                         dset2 = dmp2.equal_adjust(dset2_c, self.rde, do_not_adjust=[-1,-2])
                         ftitle = f"{cm.V.fsm._e}"
                         try:
@@ -358,29 +374,33 @@ class Tab():
                     else:
                         print("'oph' not found.")
                         
-                    vec = cm.V.fsm.results['run2_content']['startstop']
+                    vec = self.present_columns(cm.V.fsm.results['run2_content']['startstop'], self.rde)
                     print()
-                    display(_=self.rde[vec].hist(bins=30,figsize=(20,20)))
-                    print()
-                    display(self.rde[vec].describe()
-                                .style
-                                .set_table_styles([
-                                    {'selector':'table,td,th', 'props': 'font-size: 0.7rem; '}
-                                ])
-                                .format(
-                            precision=0,
-                            na_rep='-',
-                            formatter={
-                                'starter': "{:.1f}",
-                                'idle': "{:.1f}",
-                                'PressBoost_max': "{:.2f}",
-                                'ramprate':"{:.2f}",
-                                'runout': lambda x: f"{x:0.1f}"
-                            }
-                        ))
+                    if vec:
+                        display(self.rde[vec].hist(bins=30,figsize=(20,20)))
+                        print()
+                        display(self.rde[vec].describe()
+                                    .style
+                                    .set_table_styles([
+                                        {'selector':'table,td,th', 'props': 'font-size: 0.7rem; '}
+                                    ])
+                                    .format(
+                                precision=0,
+                                na_rep='-',
+                                formatter={
+                                    'starter': "{:.1f}",
+                                    'idle': "{:.1f}",
+                                    'PressBoost_max': "{:.2f}",
+                                    'ramprate':"{:.2f}",
+                                    'runout': lambda x: f"{x:0.1f}"
+                                }
+                            ))
+                    else:
+                        print('No timing columns available.')
                     print()
                     if self.show_startlist.value:
-                        display(self.rde[['starttime'] + cm.V.fsm.results['run2_content']['startstop']][::-1]
+                        startlist_cols = self.present_columns(['starttime'] + cm.V.fsm.results['run2_content']['startstop'], self.rde)
+                        display(self.rde[startlist_cols][::-1]
                                 .style
                                 .hide()
                                 .format(
