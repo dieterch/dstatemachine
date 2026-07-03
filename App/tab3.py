@@ -358,7 +358,7 @@ class Tab():
                     else:
                         print("'oph' not found.")
                         
-                    vec = cm.V.fsm.results['run2_content']['startstop']
+                    vec = [c for c in cm.V.fsm.results['run2_content']['startstop'] if c in self.rde.columns]
                     print()
                     display(_=self.rde[vec].hist(bins=30,figsize=(20,20)))
                     print()
@@ -380,7 +380,7 @@ class Tab():
                         ))
                     print()
                     if self.show_startlist.value:
-                        display(self.rde[['starttime'] + cm.V.fsm.results['run2_content']['startstop']][::-1]
+                        display(self.rde[['starttime'] + vec][::-1]
                                 .style
                                 .hide()
                                 .format(
