@@ -129,7 +129,6 @@ class Tab():
                 VBox([
                     self.tab2_selected_engine,
                     HBox([self.t1,self.t2]),
-                    self.tab2_out
                 ]),
                 VBox([
                     self.run2_chkbox,
@@ -148,7 +147,8 @@ class Tab():
                     self.b_savefsm,
                     self.b_appendfsm
                 ])
-            ])
+            ]),
+            self.tab2_out
         ],layout=widgets.Layout(min_height=V.hh))
         
 

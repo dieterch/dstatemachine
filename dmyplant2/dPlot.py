@@ -19,12 +19,19 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import matplotlib.dates as dates
+import matplotlib.colors as mcolors
+
+def _to_bokeh_color(c):
+    """Convert any matplotlib color (float tuple, named string, hex) to hex for Bokeh 3."""
+    try:
+        return mcolors.to_hex(c)
+    except (ValueError, TypeError):
+        return c
 
 #Bokeh imports
-from bokeh.io import push_notebook, show, output_notebook
+from bokeh.io import show, output_notebook
 from bokeh.plotting import figure, output_file, show as bokeh_show
 from bokeh.models import LinearAxis, Range1d, DataRange1d, HoverTool
-from bokeh.core.validation import check_integrity
 from bokeh.layouts import column, row, gridplot, layout
 from bokeh.models import ColumnDataSource, Div, Span, CustomJS
 
@@ -264,12 +271,13 @@ def bokeh_chart(source, pltcfg, x_ax='datetime', x_ax_unit=None, title=None, gri
 
     x_axis_label=(f'{x_ax} [{x_unit}]')
 
+    fig_kwargs = dict(width=mwidth, height=mheight, tools=TOOLS)
+    if x_range is not None: fig_kwargs['x_range'] = x_range
+    if y_range is not None: fig_kwargs['y_range'] = y_range
     if (x_ax == 'datetime'): #seperate constructors for object for datetime or no datetime x-axis
-        p = figure( plot_width=mwidth, plot_height=mheight, x_axis_label=None, x_axis_type='datetime',
-        x_range=x_range, y_range=y_range, tools=TOOLS)
+        p = figure(x_axis_label=None, x_axis_type='datetime', **fig_kwargs)
     else:
-        p = figure( plot_width=mwidth, plot_height=mheight, x_axis_label=x_axis_label,
-            tools=TOOLS, x_range=x_range, y_range=y_range)
+        p = figure(x_axis_label=x_axis_label, **fig_kwargs)
 
     if grid==False: p.grid.grid_line_color = None
         
@@ -292,7 +300,7 @@ def bokeh_chart(source, pltcfg, x_ax='datetime', x_ax_unit=None, title=None, gri
         if len(y['col'])==0: #jump to next iteration if no col remaining
             continue
         else:
-            color = next(cycle(colors))['color']
+            color = _to_bokeh_color(next(cycle(colors))['color'])
 
         if y.get('ylim'):
             ylim = list(y['ylim'])
@@ -308,55 +316,55 @@ def bokeh_chart(source, pltcfg, x_ax='datetime', x_ax_unit=None, title=None, gri
                     unit.append(y['unit'])
                 else:
                     unit.append('')
-            else: 
+            else:
                 unit.append(dataitems.loc[dataitems.myPlantName==col].iat[0,2])
 
-            if pd.isna(unit[-1]): 
+            if pd.isna(unit[-1]):
                 unit[-1]=''
 
             if 'color' in y:
                 if isinstance(y['color'], list):
-                    color = y['color'][ii]
+                    color = _to_bokeh_color(y['color'][ii])
                 else:
-                    color = y['color']
+                    color = _to_bokeh_color(y['color'])
             else:
-                color = next(cycle(colors))['color']
+                color = _to_bokeh_color(next(cycle(colors))['color'])
 
             # func = getattr(p, style) #to choose between different plotting styles
             # renderers.append(func(source=source, x=x_ax, y=col, #circle or line
             # color=color, y_range_name=str(i), legend_label=col, line_width=linewidth))
             if legend:
                 if style == 'line':
-                    func = getattr(p, 'line') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col,  #circle or line
+                    func = getattr(p, 'line')
+                    renderers.append(func(source=source, x=x_ax, y=col,
                     color=color, y_range_name=str(i), legend_label=col, line_width=linewidth))
                 if style == 'circle':
-                    func = getattr(p, 'circle') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col,  #circle or line
-                    color=color, y_range_name=str(i), legend_label=col, line_width=linewidth))
+                    func = getattr(p, 'scatter')
+                    renderers.append(func(source=source, x=x_ax, y=col,
+                    color=color, y_range_name=str(i), legend_label=col, size=6))
                 if style == 'both':
-                    func = getattr(p, 'line') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col,  #circle or line
+                    func = getattr(p, 'line')
+                    renderers.append(func(source=source, x=x_ax, y=col,
                     color=color, y_range_name=str(i), legend_label=col, line_width=linewidth))
-                    func = getattr(p, 'circle') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col,  #circle or line
-                    color=color, y_range_name=str(i), legend_label=col, line_width=linewidth))
+                    func = getattr(p, 'scatter')
+                    renderers.append(func(source=source, x=x_ax, y=col,
+                    color=color, y_range_name=str(i), legend_label=col, size=6))
             else:
                 if style == 'line':
-                    func = getattr(p, 'line') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col, #circle or line
+                    func = getattr(p, 'line')
+                    renderers.append(func(source=source, x=x_ax, y=col,
                     color=color, y_range_name=str(i), line_width=linewidth))
                 if style == 'circle':
-                    func = getattr(p, 'circle') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col,  #circle or line
-                    color=color, y_range_name=str(i), line_width=linewidth))
+                    func = getattr(p, 'scatter')
+                    renderers.append(func(source=source, x=x_ax, y=col,
+                    color=color, y_range_name=str(i), size=6))
                 if style == 'both':
-                    func = getattr(p, 'line') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col, #circle or line
+                    func = getattr(p, 'line')
+                    renderers.append(func(source=source, x=x_ax, y=col,
                     color=color, y_range_name=str(i), line_width=linewidth))
-                    func = getattr(p, 'circle') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col, #circle or line
-                    color=color, y_range_name=str(i), line_width=linewidth))
+                    func = getattr(p, 'scatter')
+                    renderers.append(func(source=source, x=x_ax, y=col,
+                    color=color, y_range_name=str(i), size=6))
 
             tooltips.append((col, '@{'+col +'}{0.2 f} '+unit[-1]))  # or 0.0 a
 
@@ -454,25 +462,13 @@ def bokeh_chart_engine_comparison(source, pltcfg, variable, eng_names, x_ax='dat
 
     x_axis_label=(f'{x_ax} [{x_unit}]')
 
+    fig_kwargs2 = dict(width=mwidth, height=mheight, tools=TOOLS)
+    if x_range is not None: fig_kwargs2['x_range'] = x_range
+    if y_range is not None: fig_kwargs2['y_range'] = y_range
     if (x_ax == 'datetime'): #seperate constructors for object for datetime or no datetime x-axis
-        p = figure(
-        plot_width=mwidth,
-        plot_height=mheight,
-        x_axis_label=None,#'datetime',
-        x_axis_type='datetime',
-        x_range=x_range,
-        y_range=y_range,
-        tools=TOOLS
-        )
+        p = figure(x_axis_label=None, x_axis_type='datetime', **fig_kwargs2)
     else:
-        p = figure(
-            plot_width=mwidth,
-            plot_height=mheight,
-            x_axis_label=x_axis_label,
-            tools=TOOLS,
-            x_range=x_range,
-            y_range=y_range
-        )
+        p = figure(x_axis_label=x_axis_label, **fig_kwargs2)
 
     if grid==False:
         p.grid.grid_line_color = None
@@ -493,7 +489,7 @@ def bokeh_chart_engine_comparison(source, pltcfg, variable, eng_names, x_ax='dat
         if len(y['col'])==0: #jump to next iteration if no col remaining
             continue
         else:
-            color = next(cycle(colors))['color']
+            color = _to_bokeh_color(next(cycle(colors))['color'])
 
         if y.get('ylim'):
             ylim = list(y['ylim'])
@@ -511,23 +507,23 @@ def bokeh_chart_engine_comparison(source, pltcfg, variable, eng_names, x_ax='dat
                     unit.append(y['unit'])
                 else:
                     unit.append('')
-            else: 
+            else:
                 unit.append(dataitems.loc[dataitems.myPlantName==variable].iat[0,2])
 
             if unit[-1] is np.nan: unit[-1]=''
 
             if 'color' in y:
-                color = y['color']
+                color = _to_bokeh_color(y['color'])
             else:
-                color = next(cycle(colors))['color']
+                color = _to_bokeh_color(next(cycle(colors))['color'])
 
-            func = getattr(p, style) #to choose between different plotting styles
             if style=='circle':
-                renderers.append(func(source=source, x=x_ax, y=col, #circle or line
-            color=color, y_range_name=str(i), legend_label=eng_name, line_width=linewidth, size=2))
+                renderers.append(p.scatter(source=source, x=x_ax, y=col,
+                color=color, y_range_name=str(i), legend_label=eng_name, size=2))
             else:
-                renderers.append(func(source=source, x=x_ax, y=col, #circle or line
-            color=color, y_range_name=str(i), legend_label=eng_name, line_width=linewidth))        
+                func = getattr(p, style)
+                renderers.append(func(source=source, x=x_ax, y=col,
+                color=color, y_range_name=str(i), legend_label=eng_name, line_width=linewidth))
             p.add_tools(HoverTool(tooltips=[(eng_name, '@{'+col +'}{0.2 f} '+unit[-1])], renderers=[renderers[-1]],toggleable=False))
 
         if not y.get('ylim'):  #only if y-limits not specified
@@ -757,7 +753,7 @@ def show_val_stats (vl, df_loadrange=None, df_starts_oph=None):
     example:
     .....
     """
-    from bokeh.models.widgets import DataTable, DateFormatter, TableColumn
+    from bokeh.models import DataTable, DateFormatter, TableColumn
     elements=[]
     #### loadrange
     if not df_loadrange.empty:
@@ -856,7 +852,7 @@ def show_val_stats (vl, df_loadrange=None, df_starts_oph=None):
     #Create bar for figure call
     bar_source=ColumnDataSource({'Validation Engines UP and Running': [(dft[((dft.OperationalCondition == 'Running') | (dft.Power_PowerAct > 0))].OperationalCondition.count())], 'Validation Engines not Running': [(dft[((dft.OperationalCondition != 'Running') & (dft.Power_PowerAct == 0))].OperationalCondition.count())]})
 
-    p = figure(plot_width=500,plot_height=50, tools="hover", tooltips="$name: @$name", toolbar_location=None)
+    p = figure(width=500, height=50, tools="hover", tooltips="$name: @$name", toolbar_location=None)
     p.axis.visible = False
     p.xgrid.visible = False
     p.ygrid.visible = False

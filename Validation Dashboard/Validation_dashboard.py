@@ -1,11 +1,10 @@
 #Version 1.2
 
-from bokeh.io import push_notebook, show, output_notebook, save
+from bokeh.io import show, output_notebook, save
 from bokeh.plotting import figure, output_file, show
 from bokeh.models import LinearAxis, Range1d, HoverTool
 from bokeh.layouts import column, row, gridplot, layout
-from bokeh.models import ColumnDataSource, Div
-from bokeh.models.widgets import Panel, Tabs
+from bokeh.models import ColumnDataSource, Div, TabPanel, Tabs
 import bokeh
 
 from itertools import cycle
@@ -314,7 +313,7 @@ for eng_count, eng in enumerate(enginelist):
     if make_tabs==True: #append to tabs or save in file
         text1=Div(text='<h2>'+title+' ('+eng.serialNumber+'): '+starttime_disp.strftime('%Y-%m-%d %H:%M')+' - '+endtime_disp.strftime('%Y-%m-%d %H:%M')+'</h2>')
         lay=layout(children=[text1,[plots]], sizing_mode='stretch_width')
-        tablist.append(Panel(child=lay, title=title))
+        tablist.append(TabPanel(child=lay, title=title))
     else:
         text1=Div(text='<h1>'+validation_name+': '+title+' ('+eng.serialNumber+'): '+'</h1><h2>'+starttime_disp.strftime('%Y-%m-%d %H:%M')+' - '+endtime_disp.strftime('%Y-%m-%d %H:%M')+'; '+filterstring)
         lay=layout(children=[text1,[plots]], sizing_mode='stretch_width')
@@ -328,12 +327,12 @@ for eng_count, eng in enumerate(enginelist):
 #Generate tab-layout and out
 if make_tabs:
     if display_statistics:
-        tablist=tablist+[Panel(child=show_val_stats(vl, df_loadrange=loadrange, df_starts_oph=starts_oph), title='Statistics')]
+        tablist=tablist+[TabPanel(child=show_val_stats(vl, df_loadrange=loadrange, df_starts_oph=starts_oph), title='Statistics')]
 
     tabs = Tabs(tabs=tablist)
     main_title=Div(text='<h1>'+validation_name+': </h1><h2>'+filterstring)
 
-    from bokeh.models.widgets import DataTable, DateFormatter, TableColumn
+    from bokeh.models import DataTable, DateFormatter, TableColumn
 
     #df_dashboard=vl.dashboard.drop('val start', axis=1)
     df_dashboard=vl.dashboard

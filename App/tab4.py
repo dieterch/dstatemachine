@@ -9,7 +9,6 @@ import bokeh
 from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 from IPython.display import display, HTML
 import dmyplant2 as dmp2
-from bokeh.io import push_notebook #, show, output_notebook
 #from App.common import loading_bar, V, myfigures, mp, tabs_out, status
 import App.common as cm
 #from App import tab2
@@ -215,7 +214,7 @@ class Tab():
             if not VSC:
                 cm.tabs_out.clear_output()
             # PLotter
-            ftitle = f"{fsm._e} ----- Start {startversuch['no']} {startversuch['mode']} | {startversuch['success']} | {startversuch['starttime'].round('S')}"
+            ftitle = f"{fsm._e} ----- Start {startversuch['no']} {startversuch['mode']} | {startversuch['success']} | {startversuch['starttime'].round('s')}"
             fig_handles = []
             if self.plotsize_chkbox.value:
                 self.pfigsize = cm.V.dfigsize_big
@@ -257,9 +256,7 @@ class Tab():
                     fig = dmp2.FSM_add_Alarms(fig, fsm, startversuch)
                 if self.warnings_chkbox.value:
                     fig = dmp2.FSM_add_Warnings(fig, fsm, startversuch)
-                fig_handles.append(dmp2.bokeh_show(fig, notebook_handle=True))
-            for h in fig_handles:
-                push_notebook(handle=h)
+                dmp2.bokeh_show(fig)
 
             print()
             print("messages leading to state change:")    
@@ -314,7 +311,7 @@ class Tab():
             rdf = cm.V.fsm.starts
             if not rdf.empty:
                 sv = rdf.iloc[self.sno.value]
-                ltitle = f" Start No {sv['no']} from: {sv['starttime'].round('S')} to: {sv['endtime'].round('S')}"
+                ltitle = f" Start No {sv['no']} from: {sv['starttime'].round('s')} to: {sv['endtime'].round('s')}"
                 #r = self.html_table(sv[startstopFSM.run2filter_content])
                 r = self.html_table(sv[cm.V.fsm.results['run2_content']['startstop']])
                 links = 'links to Myplant: | '

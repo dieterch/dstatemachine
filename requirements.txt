@@ -1,5 +1,5 @@
 arrow>=1.2.3
-bokeh==2.4.*
+bokeh>=3.0
 cryptography>=40.0.1
 ipyfilechooser>=0.6.0
 ipykernel>=6.21.3
@@ -13,7 +13,8 @@ jupyterlab>=3.6.1
 jupyterlab-widgets>=3.0.5
 matplotlib>=3.7.1
 matplotlib-inline>=0.1.6
-numpy>=1.24.2
+numpy>=2.0
+pytz>=2024.1
 nodejs>=0.1.1
 pandas>=1.5.3
 pyarrow>=11.0.0

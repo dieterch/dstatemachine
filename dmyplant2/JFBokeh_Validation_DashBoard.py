@@ -7,9 +7,8 @@ import os
 import dmyplant2
 from dmyplant2.dPlot import bokeh_chart, datastr_to_dict, expand_cylinder, shrink_cylinder, load_pltcfg_from_excel,show_val_stats
 
-from bokeh.io import push_notebook, show, output_notebook, save
-from bokeh.models import ColumnDataSource, Div
-from bokeh.models.widgets import Panel, Tabs
+from bokeh.io import show, output_notebook, save
+from bokeh.models import ColumnDataSource, Div, TabPanel, Tabs
 from bokeh.layouts import column, row, gridplot, layout
 from bokeh.plotting import figure, output_file, show
 
@@ -262,7 +261,7 @@ class ValidationDashboard:
             if self.v('make_tabs')==True: #append to tabs or save in file
                 text1=Div(text='<h2>'+title+' ('+eng.serialNumber+'): '+starttime_disp.strftime('%Y-%m-%d %H:%M')+' - '+endtime_disp.strftime('%Y-%m-%d %H:%M')+'</h2>')
                 lay=layout(children=[text1,[plots]], sizing_mode='stretch_width')
-                tablist.append(Panel(child=lay, title=title))
+                tablist.append(TabPanel(child=lay, title=title))
             else:
                 text1=Div(text='<h1>'+self.validation_name+': '+title+' ('+eng.serialNumber+'): '+'</h1><h2>'+starttime_disp.strftime('%Y-%m-%d %H:%M')+' - '+endtime_disp.strftime('%Y-%m-%d %H:%M')+'; '+filterstring)
                 lay=layout(children=[text1,[plots]], sizing_mode='stretch_width')
@@ -277,12 +276,12 @@ class ValidationDashboard:
         if self.v('make_tabs'):
             if self.v('display_statistics'):
                 pass
-                tablist=tablist+[Panel(child=show_val_stats(vl, df_loadrange=loadrange, df_starts_oph=starts_oph), title='Statistics')]
+                tablist=tablist+[TabPanel(child=show_val_stats(vl, df_loadrange=loadrange, df_starts_oph=starts_oph), title='Statistics')]
         
             tabs = Tabs(tabs=tablist)
             main_title=Div(text='<h1>'+self.validation_name+': </h1><h2>'+filterstring)
 
-            from bokeh.models.widgets import DataTable, DateFormatter, TableColumn
+            from bokeh.models import DataTable, DateFormatter, TableColumn
 
             df_dashboard=vl.dashboard
             if 'LOC' in '\#'.join(datastr):
