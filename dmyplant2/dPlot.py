@@ -263,12 +263,13 @@ def bokeh_chart(source, pltcfg, x_ax='datetime', x_ax_unit=None, title=None, gri
 
     x_axis_label=(f'{x_ax} [{x_unit}]')
 
+    fig_kwargs = dict(width=mwidth, height=mheight, tools=TOOLS)
+    if x_range is not None: fig_kwargs['x_range'] = x_range
+    if y_range is not None: fig_kwargs['y_range'] = y_range
     if (x_ax == 'datetime'): #seperate constructors for object for datetime or no datetime x-axis
-        p = figure( plot_width=mwidth, plot_height=mheight, x_axis_label=None, x_axis_type='datetime',
-        x_range=x_range, y_range=y_range, tools=TOOLS)
+        p = figure(x_axis_label=None, x_axis_type='datetime', **fig_kwargs)
     else:
-        p = figure( plot_width=mwidth, plot_height=mheight, x_axis_label=x_axis_label,
-            tools=TOOLS, x_range=x_range, y_range=y_range)
+        p = figure(x_axis_label=x_axis_label, **fig_kwargs)
 
     if grid==False: p.grid.grid_line_color = None
         
@@ -453,25 +454,13 @@ def bokeh_chart_engine_comparison(source, pltcfg, variable, eng_names, x_ax='dat
 
     x_axis_label=(f'{x_ax} [{x_unit}]')
 
+    fig_kwargs2 = dict(width=mwidth, height=mheight, tools=TOOLS)
+    if x_range is not None: fig_kwargs2['x_range'] = x_range
+    if y_range is not None: fig_kwargs2['y_range'] = y_range
     if (x_ax == 'datetime'): #seperate constructors for object for datetime or no datetime x-axis
-        p = figure(
-        plot_width=mwidth,
-        plot_height=mheight,
-        x_axis_label=None,#'datetime',
-        x_axis_type='datetime',
-        x_range=x_range,
-        y_range=y_range,
-        tools=TOOLS
-        )
+        p = figure(x_axis_label=None, x_axis_type='datetime', **fig_kwargs2)
     else:
-        p = figure(
-            plot_width=mwidth,
-            plot_height=mheight,
-            x_axis_label=x_axis_label,
-            tools=TOOLS,
-            x_range=x_range,
-            y_range=y_range
-        )
+        p = figure(x_axis_label=x_axis_label, **fig_kwargs2)
 
     if grid==False:
         p.grid.grid_line_color = None
@@ -855,7 +844,7 @@ def show_val_stats (vl, df_loadrange=None, df_starts_oph=None):
     #Create bar for figure call
     bar_source=ColumnDataSource({'Validation Engines UP and Running': [(dft[((dft.OperationalCondition == 'Running') | (dft.Power_PowerAct > 0))].OperationalCondition.count())], 'Validation Engines not Running': [(dft[((dft.OperationalCondition != 'Running') & (dft.Power_PowerAct == 0))].OperationalCondition.count())]})
 
-    p = figure(plot_width=500,plot_height=50, tools="hover", tooltips="$name: @$name", toolbar_location=None)
+    p = figure(width=500, height=50, tools="hover", tooltips="$name: @$name", toolbar_location=None)
     p.axis.visible = False
     p.xgrid.visible = False
     p.ygrid.visible = False
