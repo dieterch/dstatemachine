@@ -507,10 +507,11 @@ class Tab():
 
                     dmp2.bokeh_show(fig4)            
                     
+                vec_tj = [c for c in cm.V.fsm.results['run2_content']['tecjet'] if c in rde.columns]
                 print()
-                display(rde[cm.V.fsm.results['run2_content']['tecjet']].describe().style.format(precision=2, na_rep='-'))                
+                display(rde[vec_tj].describe().style.format(precision=2, na_rep='-'))
                 print()
-                display(rde[cm.V.fsm.results['run2_content']['tecjet']][::-1].style.format(precision=2,na_rep='-').hide())
+                display(rde[vec_tj][::-1].style.format(precision=2,na_rep='-').hide())
             else:
                 print('No Data available.')
     
@@ -541,12 +542,12 @@ class Tab():
                     fig4 = dmp2.dbokeh_chart(rde, dr2set3, style='both', figsize=self.dfigsize ,title=ntitle);
                     dmp2.bokeh_show(fig4)
 
+                    vec_ex = [c for c in cm.V.fsm.results['run2_content']['exhaust'] if c in rde.columns]
                     print()
-                    display(rde[cm.V.fsm.results['run2_content']['exhaust']].describe()
-                                .style.format(precision=2, na_rep='-'))            
-
+                    display(rde[vec_ex].describe()
+                                .style.format(precision=2, na_rep='-'))
                     print()
-                    display(rde[cm.V.fsm.results['run2_content']['exhaust']]
+                    display(rde[vec_ex]
                                 .style.format(precision=2,na_rep='-').hide())
             else:
                 print('No Data available.')
@@ -595,11 +596,12 @@ class Tab():
                     dmp2.bokeh_show(fig4)
 
 
+                    vec_sy = [c for c in cm.V.fsm.results['run2_content']['synchronisation'] if c in rde.columns]
                     print()
-                    display(rde[cm.V.fsm.results['run2_content']['synchronisation']].describe()
+                    display(rde[vec_sy].describe()
                                 .style.format(precision=2, na_rep='-'))
                     print()
-                    display(rde[cm.V.fsm.results['run2_content']['synchronisation']]
+                    display(rde[vec_sy]
                                 .style.format(precision=2,na_rep='-').hide())
             else:
                 print('No Data available.')
@@ -636,11 +638,12 @@ class Tab():
                     dmp2.bokeh_show(fig4)
 
 
+                    vec_lu = [c for c in cm.V.fsm.results['run2_content']['lubrication'] if c in rde.columns]
                     print()
-                    display(rde[cm.V.fsm.results['run2_content']['lubrication']].describe()
+                    display(rde[vec_lu].describe()
                                 .style.format(precision=2, na_rep='-'))
                     print()
-                    display(rde[cm.V.fsm.results['run2_content']['lubrication']]
+                    display(rde[vec_lu]
                                 .style.format(precision=2,na_rep='-').hide())
             else:
                 print('No Data available.')
