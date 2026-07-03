@@ -9,7 +9,6 @@ import bokeh
 from ipywidgets import AppLayout, Button, Text, Select, Tab, Layout, VBox, HBox, Label, HTML, interact, interact_manual, interactive, IntSlider, Output
 from IPython.display import display, HTML
 import dmyplant2 as dmp2
-from bokeh.io import push_notebook #, show, output_notebook
 #from App.common import loading_bar, V, myfigures, mp, tabs_out, status
 import App.common as cm
 #from App import tab2
@@ -257,9 +256,7 @@ class Tab():
                     fig = dmp2.FSM_add_Alarms(fig, fsm, startversuch)
                 if self.warnings_chkbox.value:
                     fig = dmp2.FSM_add_Warnings(fig, fsm, startversuch)
-                fig_handles.append(dmp2.bokeh_show(fig, notebook_handle=True))
-            for h in fig_handles:
-                push_notebook(handle=h)
+                dmp2.bokeh_show(fig)
 
             print()
             print("messages leading to state change:")    

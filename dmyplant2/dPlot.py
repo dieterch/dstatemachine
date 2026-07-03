@@ -21,10 +21,9 @@ import matplotlib.ticker as ticker
 import matplotlib.dates as dates
 
 #Bokeh imports
-from bokeh.io import push_notebook, show, output_notebook
+from bokeh.io import show, output_notebook
 from bokeh.plotting import figure, output_file, show as bokeh_show
 from bokeh.models import LinearAxis, Range1d, DataRange1d, HoverTool
-from bokeh.core.validation import check_integrity
 from bokeh.layouts import column, row, gridplot, layout
 from bokeh.models import ColumnDataSource, Div, Span, CustomJS
 
@@ -757,7 +756,7 @@ def show_val_stats (vl, df_loadrange=None, df_starts_oph=None):
     example:
     .....
     """
-    from bokeh.models.widgets import DataTable, DateFormatter, TableColumn
+    from bokeh.models import DataTable, DateFormatter, TableColumn
     elements=[]
     #### loadrange
     if not df_loadrange.empty:

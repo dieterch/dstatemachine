@@ -1,11 +1,10 @@
 #Version 1.2
 
-from bokeh.io import push_notebook, show, output_notebook, save
+from bokeh.io import show, output_notebook, save
 from bokeh.plotting import figure, output_file, show
 from bokeh.models import LinearAxis, Range1d, HoverTool, DataRange1d
 from bokeh.layouts import column, row, gridplot, layout
-from bokeh.models import ColumnDataSource, Div
-from bokeh.models.widgets import Panel, Tabs
+from bokeh.models import ColumnDataSource, Div, TabPanel, Tabs
 import bokeh
 
 from itertools import cycle
@@ -315,7 +314,7 @@ endtime_disp=df.index[-1].replace(tzinfo=pytz.utc).astimezone(berlin)
 
 text1=Div(text='<h1>'+validation_name+': Comparison between engines</h1><h2>Validation start - '+endtime_disp.strftime('%Y-%m-%d %H:%M'))
 
-from bokeh.models.widgets import DataTable, DateFormatter, TableColumn
+from bokeh.models import DataTable, DateFormatter, TableColumn
 df_dashboard=vl.dashboard
 if 'LOC' in '\#'.join(datastr):
     df_dashboard['LOC']=np.round( [float(i) for i in LOC_average_last], 3)
@@ -325,7 +324,7 @@ data_table = DataTable(columns=Columns, source=ColumnDataSource(df_dashboard), a
 
 if display_statistics:
     plot_lay=layout(children=[[plots]], sizing_mode='stretch_width')
-    tablist=[Panel(child=plot_lay, title='Engine comparison'), Panel(child=show_val_stats(vl, df_loadrange=loadrange, df_starts_oph=starts_oph), title='Statistics')]
+    tablist=[TabPanel(child=plot_lay, title='Engine comparison'), TabPanel(child=show_val_stats(vl, df_loadrange=loadrange, df_starts_oph=starts_oph), title='Statistics')]
     tabs = Tabs(tabs=tablist)
     lay=layout(children=[text1, data_table, tabs], sizing_mode='stretch_width')
 else:
