@@ -700,7 +700,7 @@ class FSMOperator:
         self._messages = self._messages[(self._messages.timestamp > pfrom_ts) & (self._messages.timestamp < pto_ts)]
         self.first_message = pd.to_datetime(self._messages.iloc[0]['timestamp']*1e6)
         self.last_message = pd.to_datetime(self._messages.iloc[-1]['timestamp']*1e6)
-        self._period = pd.Timedelta(self.last_message - self.first_message).round('S')
+        self._period = pd.Timedelta(self.last_message - self.first_message).round('s')
         if skip_days and not p_from:
             self.first_message = pd.Timestamp(arrow.get(self.first_message).shift(days=skip_days).timestamp()*1e9)
             self._messages = self._messages[self._messages['timestamp'] > int(arrow.get(self.first_message).shift(days=skip_days).timestamp()*1e3)]
@@ -1016,7 +1016,7 @@ class FSMOperator:
                     #self.results['starts'][sno]['datasize'] = len(data)
                     #self.results['starts'][sno]['loadingtime'] = t1-t0
                     if self.act_run in self.logrun:
-                        logging.debug(f"2 SNO{sno:5d} start: {startversuch['starttime'].round('S')} to: {startversuch['endtime'].round('S')} load_data: {(t1-t0):0.1f} sec. v-----------------------------v")
+                        logging.debug(f"2 SNO{sno:5d} start: {startversuch['starttime'].round('s')} to: {startversuch['endtime'].round('s')} load_data: {(t1-t0):0.1f} sec. v-----------------------------v")
                     if ((tfrom is not None) and (tto is not None)):
                         logging.debug(f"2 SNO{sno:5d} tfrom: {pd.to_datetime(tfrom * 1e9).strftime('%d.%m.%Y %H:%M:%S')} tto: {pd.to_datetime(tto * 1e9).strftime('%d.%m.%Y %H:%M:%S')} tto-tfrom: {(tto-tfrom):.1f} lenght of data: {len(data)} empty? {data.empty}")
                     else:
@@ -1041,7 +1041,7 @@ class FSMOperator:
                                 logging.debug(f"2 SNO{sno:5d} after  run2 collectors, {pf(list(self.results['starts'][sno]['startstoptiming'].keys()))}")
 
                 except Exception as err:
-                    err_str = f"\nDuring Run2 {startversuch['no']} from {startversuch['starttime'].round('S')} to {startversuch['endtime'].round('S')}, this Error occured: {err}"
+                    err_str = f"\nDuring Run2 {startversuch['no']} from {startversuch['starttime'].round('s')} to {startversuch['endtime'].round('s')}, this Error occured: {err}"
                     logging.error(traceback.format_exc())
 
             if not silent:
@@ -1106,7 +1106,7 @@ class FSMOperator:
                     #self.results['starts'][sno]['datasize'] = len(data)
                     #self.results['starts'][sno]['loadingtime'] = t1-t0
                     if self.act_run in self.logrun:
-                        logging.debug(f"4 SNO{sno:5d} start: {startversuch['starttime'].round('S')} to: {startversuch['endtime'].round('S')} load_data: {(t1-t0):0.1f} sec. v-----------------------------v")
+                        logging.debug(f"4 SNO{sno:5d} start: {startversuch['starttime'].round('s')} to: {startversuch['endtime'].round('s')} load_data: {(t1-t0):0.1f} sec. v-----------------------------v")
                     if ((tfrom is not None) and (tto is not None)):
                         logging.debug(f"4 SNO{sno:5d} tfrom: {pd.to_datetime(tfrom * 1e9).strftime('%d.%m.%Y %H:%M:%S')} tto: {pd.to_datetime(tto * 1e9).strftime('%d.%m.%Y %H:%M:%S')} tto-tfrom: {(tto-tfrom):.1f} lenght of data: {len(data)} empty? {data.empty}")
                     else:
@@ -1131,7 +1131,7 @@ class FSMOperator:
                         #        logging.debug(f"2 SNO{sno:5d} after  run2 collectors, {pf(list(self.results['starts'][sno]['startstoptiming'].keys()))}")
 
                 except Exception as err:
-                    err_str = f"\nDuring Run4 {startversuch['no']} from {startversuch['starttime'].round('S')} to {startversuch['endtime'].round('S')}, this Error occured: {err}"
+                    err_str = f"\nDuring Run4 {startversuch['no']} from {startversuch['starttime'].round('s')} to {startversuch['endtime'].round('s')}, this Error occured: {err}"
                     logging.error(traceback.format_exc())
 
             if not silent:

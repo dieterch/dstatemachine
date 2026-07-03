@@ -214,7 +214,7 @@ class Tab():
             if not VSC:
                 cm.tabs_out.clear_output()
             # PLotter
-            ftitle = f"{fsm._e} ----- Start {startversuch['no']} {startversuch['mode']} | {startversuch['success']} | {startversuch['starttime'].round('S')}"
+            ftitle = f"{fsm._e} ----- Start {startversuch['no']} {startversuch['mode']} | {startversuch['success']} | {startversuch['starttime'].round('s')}"
             fig_handles = []
             if self.plotsize_chkbox.value:
                 self.pfigsize = cm.V.dfigsize_big
@@ -311,7 +311,7 @@ class Tab():
             rdf = cm.V.fsm.starts
             if not rdf.empty:
                 sv = rdf.iloc[self.sno.value]
-                ltitle = f" Start No {sv['no']} from: {sv['starttime'].round('S')} to: {sv['endtime'].round('S')}"
+                ltitle = f" Start No {sv['no']} from: {sv['starttime'].round('s')} to: {sv['endtime'].round('s')}"
                 #r = self.html_table(sv[startstopFSM.run2filter_content])
                 r = self.html_table(sv[cm.V.fsm.results['run2_content']['startstop']])
                 links = 'links to Myplant: | '
