@@ -36,7 +36,7 @@ def FSM_splotBC(fsm,startversuch, source, dset, title=None, x_ax=None, x_range=N
 def FSM_VLine(fig, txt, x_pos, y_pos, color='rgba(0,0,0,0.8)', line='solid', alpha=1.0):
     fig.add_layout(Span(location=x_pos,dimension='height', line_color=color, line_dash=line, line_alpha=alpha))
     fig.add_layout(Label(x=x_pos, y=y_pos, x_units='data',y_units='screen',angle=np.pi / 2,
-                        text_font_size='8pt', text_color ='darkslategray',text_alpha=0.8,render_mode='css',
+                        text_font_size='8pt', text_color ='darkslategray',text_alpha=0.8,
                         text=txt))
     return fig    
 
