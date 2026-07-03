@@ -19,6 +19,14 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import matplotlib.dates as dates
+import matplotlib.colors as mcolors
+
+def _to_bokeh_color(c):
+    """Convert any matplotlib color (float tuple, named string, hex) to hex for Bokeh 3."""
+    try:
+        return mcolors.to_hex(c)
+    except (ValueError, TypeError):
+        return c
 
 #Bokeh imports
 from bokeh.io import show, output_notebook
@@ -292,7 +300,7 @@ def bokeh_chart(source, pltcfg, x_ax='datetime', x_ax_unit=None, title=None, gri
         if len(y['col'])==0: #jump to next iteration if no col remaining
             continue
         else:
-            color = next(cycle(colors))['color']
+            color = _to_bokeh_color(next(cycle(colors))['color'])
 
         if y.get('ylim'):
             ylim = list(y['ylim'])
@@ -308,19 +316,19 @@ def bokeh_chart(source, pltcfg, x_ax='datetime', x_ax_unit=None, title=None, gri
                     unit.append(y['unit'])
                 else:
                     unit.append('')
-            else: 
+            else:
                 unit.append(dataitems.loc[dataitems.myPlantName==col].iat[0,2])
 
-            if pd.isna(unit[-1]): 
+            if pd.isna(unit[-1]):
                 unit[-1]=''
 
             if 'color' in y:
                 if isinstance(y['color'], list):
-                    color = y['color'][ii]
+                    color = _to_bokeh_color(y['color'][ii])
                 else:
-                    color = y['color']
+                    color = _to_bokeh_color(y['color'])
             else:
-                color = next(cycle(colors))['color']
+                color = _to_bokeh_color(next(cycle(colors))['color'])
 
             # func = getattr(p, style) #to choose between different plotting styles
             # renderers.append(func(source=source, x=x_ax, y=col, #circle or line
@@ -481,7 +489,7 @@ def bokeh_chart_engine_comparison(source, pltcfg, variable, eng_names, x_ax='dat
         if len(y['col'])==0: #jump to next iteration if no col remaining
             continue
         else:
-            color = next(cycle(colors))['color']
+            color = _to_bokeh_color(next(cycle(colors))['color'])
 
         if y.get('ylim'):
             ylim = list(y['ylim'])
@@ -499,15 +507,15 @@ def bokeh_chart_engine_comparison(source, pltcfg, variable, eng_names, x_ax='dat
                     unit.append(y['unit'])
                 else:
                     unit.append('')
-            else: 
+            else:
                 unit.append(dataitems.loc[dataitems.myPlantName==variable].iat[0,2])
 
             if unit[-1] is np.nan: unit[-1]=''
 
             if 'color' in y:
-                color = y['color']
+                color = _to_bokeh_color(y['color'])
             else:
-                color = next(cycle(colors))['color']
+                color = _to_bokeh_color(next(cycle(colors))['color'])
 
             func = getattr(p, style) #to choose between different plotting styles
             if style=='circle':
