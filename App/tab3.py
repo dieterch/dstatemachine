@@ -473,14 +473,16 @@ class Tab():
                         dr2set2 = dmp2.equal_adjust(dr2set2, rde, do_not_adjust=['no'], minfactor=1.0, maxfactor=1.1)
                     except Exception as err:
                         print(f'Error: {str(err)}')
-                    ntitle = ftitle + ' | BMEP at Start vs TJ Gas Temperature in °C '
-                    fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasTemp1_at_Min', style='circle', figsize=self.dfigsize ,title=ntitle);
-                    fig3.add_layout(Span(location=cm.V.fsm._e.BMEP,
-                            dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
-                    fig3.add_layout(Span(location=20.0,
-                            dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
-
-                    dmp2.bokeh_show(fig3)
+                    if 'TJ_GasTemp1_at_Min' in rde.columns:
+                        ntitle = ftitle + ' | BMEP at Start vs TJ Gas Temperature in °C '
+                        fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasTemp1_at_Min', style='circle', figsize=self.dfigsize ,title=ntitle)
+                        if '0' in fig3.extra_y_ranges:
+                            fig3.add_layout(Span(location=cm.V.fsm._e.BMEP,
+                                    dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
+                        if '1' in fig3.extra_y_ranges:
+                            fig3.add_layout(Span(location=20.0,
+                                    dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
+                        dmp2.bokeh_show(fig3)
                     
                     dr2set2 = [
                             {'col':['targetload'],'ylim': [4100, 4700], 'color':'red', 'unit':'kW'},
@@ -498,14 +500,13 @@ class Tab():
                     except Exception as err:
                         print(f'Error: {str(err)}')
                         
-                    ntitle = ftitle + ' | BMEP at Start vs TJ TJ_GasDiffPressMin in mbar '
-                    fig4 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle);
-                    fig4.add_layout(Span(location=cm.V.fsm._e.BMEP,
-                            dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
-                    #fig3.add_layout(Span(location=20.0,
-                    #        dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
-
-                    dmp2.bokeh_show(fig4)            
+                    if 'TJ_GasDiffPressMin' in rde.columns:
+                        ntitle = ftitle + ' | BMEP at Start vs TJ TJ_GasDiffPressMin in mbar '
+                        fig4 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle)
+                        if '0' in fig4.extra_y_ranges:
+                            fig4.add_layout(Span(location=cm.V.fsm._e.BMEP,
+                                    dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
+                        dmp2.bokeh_show(fig4)
                     
                 vec_tj = [c for c in cm.V.fsm.results['run2_content']['tecjet'] if c in rde.columns]
                 print()
@@ -697,14 +698,13 @@ class Tab():
                     except Exception as err:
                         print(f'Error: {str(err)}')
 
-                    ntitle = ftitle + ' |  Mix Values at Engine Stop vs TJ Gas Temperature in °C '
-                    fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasTemp1_at_Min', style='circle', figsize=self.dfigsize ,title=ntitle);
-                    fig3.add_layout(Span(location=cm.V.fsm._e.BMEP,
-                            dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
-                    #fig3.add_layout(Span(location=20.0,
-                    #        dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
-
-                    dmp2.bokeh_show(fig3)
+                    if 'TJ_GasTemp1_at_Min' in rde.columns:
+                        ntitle = ftitle + ' |  Mix Values at Engine Stop vs TJ Gas Temperature in °C '
+                        fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasTemp1_at_Min', style='circle', figsize=self.dfigsize ,title=ntitle)
+                        if '0' in fig3.extra_y_ranges:
+                            fig3.add_layout(Span(location=cm.V.fsm._e.BMEP,
+                                    dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
+                        dmp2.bokeh_show(fig3)
                     
                     dr2set2 = [
                             {'col':['targetload'],'ylim': [4100, 4700], 'color':'red', 'unit':'kW'},
@@ -724,14 +724,13 @@ class Tab():
                     except Exception as err:
                         print(f'Error: {str(err)}')
                         
-                    ntitle = ftitle + ' | BMEP at Start & Stop Data vs TJ TJ_GasDiffPressMin in mbar '
-                    fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle);
-                    fig3.add_layout(Span(location=cm.V.fsm._e.BMEP,
-                            dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
-                    #fig3.add_layout(Span(location=20.0,
-                    #        dimension='width',x_range_name='default', y_range_name='1',line_color='blue', line_dash='dashed', line_alpha=0.6))
-
-                    dmp2.bokeh_show(fig3)            
+                    if 'TJ_GasDiffPressMin' in rde.columns:
+                        ntitle = ftitle + ' | BMEP at Start & Stop Data vs TJ TJ_GasDiffPressMin in mbar '
+                        fig3 = dmp2.dbokeh_chart(rde, dr2set2, x='TJ_GasDiffPressMin', style='circle', figsize=self.dfigsize ,title=ntitle)
+                        if '0' in fig3.extra_y_ranges:
+                            fig3.add_layout(Span(location=cm.V.fsm._e.BMEP,
+                                    dimension='width',x_range_name='default', y_range_name='0',line_color='red', line_dash='dashed', line_alpha=0.6))
+                        dmp2.bokeh_show(fig3)
                     
                 print()
                 display(rde[cm.V.fsm.results['run4_content']['stop']].describe().style.format(precision=2, na_rep='-'))                
