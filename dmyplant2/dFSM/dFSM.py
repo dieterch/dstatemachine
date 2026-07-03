@@ -695,8 +695,8 @@ class FSMOperator:
     def load_messages(self,e, p_from=None, p_to=None, skip_days=None, untilnow=False):
         #self._messages = e.get_messages(p_from, p_to) #using stored messages.
         self._messages = e.get_messages2(p_from, p_to, untilnow) 
-        pfrom_ts = int(pd.to_datetime(p_from, infer_datetime_format=True).timestamp() * 1000) if p_from else 0
-        pto_ts = int(pd.to_datetime(p_to, infer_datetime_format=True).timestamp() * 1000) if p_to else int(pd.Timestamp.now().timestamp() * 1000)
+        pfrom_ts = int(pd.to_datetime(p_from).timestamp() * 1000) if p_from else 0
+        pto_ts = int(pd.to_datetime(p_to).timestamp() * 1000) if p_to else int(pd.Timestamp.now().timestamp() * 1000)
         self._messages = self._messages[(self._messages.timestamp > pfrom_ts) & (self._messages.timestamp < pto_ts)]
         self.first_message = pd.to_datetime(self._messages.iloc[0]['timestamp']*1e6)
         self.last_message = pd.to_datetime(self._messages.iloc[-1]['timestamp']*1e6)
