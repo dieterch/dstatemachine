@@ -741,8 +741,8 @@ class Engine:
             df.reset_index(drop=True, inplace=True)
 
             dinfo = collect_info()
-            dinfo.to_hdf(fn, "info", complevel=6)
-            df.to_hdf(fn, "data", complevel=6)
+            dinfo.to_hdf(fn, key="info", complevel=6)
+            df.to_hdf(fn, key="data", complevel=6)
             if userfunc:
                 print("Calling user defined function...")
                 df = userfunc(df)
@@ -855,8 +855,8 @@ class Engine:
             df.reset_index(drop=True, inplace=True)
 
             dinfo = collect_info()
-            dinfo.to_hdf(fn, "info", complevel=6)
-            df.to_hdf(fn, "data", complevel=6)
+            dinfo.to_hdf(fn, key="info", complevel=6)
+            df.to_hdf(fn, key="data", complevel=6)
             if userfunc:
                 print("Calling user defined function...")
                 df = userfunc(df)
