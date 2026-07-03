@@ -335,36 +335,36 @@ def bokeh_chart(source, pltcfg, x_ax='datetime', x_ax_unit=None, title=None, gri
             # color=color, y_range_name=str(i), legend_label=col, line_width=linewidth))
             if legend:
                 if style == 'line':
-                    func = getattr(p, 'line') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col,  #circle or line
+                    func = getattr(p, 'line')
+                    renderers.append(func(source=source, x=x_ax, y=col,
                     color=color, y_range_name=str(i), legend_label=col, line_width=linewidth))
                 if style == 'circle':
-                    func = getattr(p, 'circle') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col,  #circle or line
-                    color=color, y_range_name=str(i), legend_label=col, line_width=linewidth))
+                    func = getattr(p, 'scatter')
+                    renderers.append(func(source=source, x=x_ax, y=col,
+                    color=color, y_range_name=str(i), legend_label=col, size=6))
                 if style == 'both':
-                    func = getattr(p, 'line') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col,  #circle or line
+                    func = getattr(p, 'line')
+                    renderers.append(func(source=source, x=x_ax, y=col,
                     color=color, y_range_name=str(i), legend_label=col, line_width=linewidth))
-                    func = getattr(p, 'circle') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col,  #circle or line
-                    color=color, y_range_name=str(i), legend_label=col, line_width=linewidth))
+                    func = getattr(p, 'scatter')
+                    renderers.append(func(source=source, x=x_ax, y=col,
+                    color=color, y_range_name=str(i), legend_label=col, size=6))
             else:
                 if style == 'line':
-                    func = getattr(p, 'line') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col, #circle or line
+                    func = getattr(p, 'line')
+                    renderers.append(func(source=source, x=x_ax, y=col,
                     color=color, y_range_name=str(i), line_width=linewidth))
                 if style == 'circle':
-                    func = getattr(p, 'circle') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col,  #circle or line
-                    color=color, y_range_name=str(i), line_width=linewidth))
+                    func = getattr(p, 'scatter')
+                    renderers.append(func(source=source, x=x_ax, y=col,
+                    color=color, y_range_name=str(i), size=6))
                 if style == 'both':
-                    func = getattr(p, 'line') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col, #circle or line
+                    func = getattr(p, 'line')
+                    renderers.append(func(source=source, x=x_ax, y=col,
                     color=color, y_range_name=str(i), line_width=linewidth))
-                    func = getattr(p, 'circle') #to choose between different plotting styles
-                    renderers.append(func(source=source, x=x_ax, y=col, #circle or line
-                    color=color, y_range_name=str(i), line_width=linewidth))
+                    func = getattr(p, 'scatter')
+                    renderers.append(func(source=source, x=x_ax, y=col,
+                    color=color, y_range_name=str(i), size=6))
 
             tooltips.append((col, '@{'+col +'}{0.2 f} '+unit[-1]))  # or 0.0 a
 
@@ -517,13 +517,13 @@ def bokeh_chart_engine_comparison(source, pltcfg, variable, eng_names, x_ax='dat
             else:
                 color = _to_bokeh_color(next(cycle(colors))['color'])
 
-            func = getattr(p, style) #to choose between different plotting styles
             if style=='circle':
-                renderers.append(func(source=source, x=x_ax, y=col, #circle or line
-            color=color, y_range_name=str(i), legend_label=eng_name, line_width=linewidth, size=2))
+                renderers.append(p.scatter(source=source, x=x_ax, y=col,
+                color=color, y_range_name=str(i), legend_label=eng_name, size=2))
             else:
-                renderers.append(func(source=source, x=x_ax, y=col, #circle or line
-            color=color, y_range_name=str(i), legend_label=eng_name, line_width=linewidth))        
+                func = getattr(p, style)
+                renderers.append(func(source=source, x=x_ax, y=col,
+                color=color, y_range_name=str(i), legend_label=eng_name, line_width=linewidth))
             p.add_tools(HoverTool(tooltips=[(eng_name, '@{'+col +'}{0.2 f} '+unit[-1])], renderers=[renderers[-1]],toggleable=False))
 
         if not y.get('ylim'):  #only if y-limits not specified
