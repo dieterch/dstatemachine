@@ -1,4 +1,5 @@
 import os
+import re
 import pickle
 import pandas as pd; pd.options.mode.chained_assignment = None
 from pprint import pformat as pf
@@ -9,6 +10,21 @@ from ipyfilechooser import FileChooser
 import dmyplant2 as dmp2
 import App.common as cm
 import logging
+
+
+class SortedFileChooser(FileChooser):
+    """FileChooser that sorts entries by plant name, ignoring leading digits and underscore."""
+
+    def _set_form_values(self, path, filename):
+        super()._set_form_values(path, filename)
+        current_value = self._dircontent.value
+
+        def sort_key(disp_name):
+            real_name = self._map_disp_to_name.get(disp_name, disp_name)
+            return re.sub(r'^\d+_', '', real_name).lower()
+
+        self._dircontent.options = sorted(self._dircontent.options, key=sort_key)
+        self._dircontent.value = current_value
 
 #cred()
 #mp = MyPlant(3600)
@@ -27,7 +43,7 @@ class Tab():
             button_style='')
         self.bt_load_testfile.on_click(self.load_testfile)
 
-        self.fdialog = FileChooser(
+        self.fdialog = SortedFileChooser(
             os.getcwd() + '/data',
             filename='',
             #title='<b>FileChooser example</b>',
