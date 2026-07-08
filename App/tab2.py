@@ -117,10 +117,17 @@ class Tab():
 
         self.b_appendfsm = widgets.Button(
             description='Append FSM\'s',
-            disabled=False, 
+            disabled=False,
             button_style='primary',
             layout=widgets.Layout(display='none'))
-        self.b_appendfsm.on_click(self.fsm_append) 
+        self.b_appendfsm.on_click(self.fsm_append)
+
+        self.b_run4only = widgets.Button(
+            description='Add Run4',
+            disabled=False,
+            button_style='warning',
+            layout=widgets.Layout(display='none'))
+        self.b_run4only.on_click(self.fsm_add_run4)
 
     @property
     def tab(self):
@@ -145,7 +152,8 @@ class Tab():
                     self.b_runfsm2,
                     self.b_runfsm4,
                     self.b_savefsm,
-                    self.b_appendfsm
+                    self.b_appendfsm,
+                    self.b_run4only
                 ])
             ]),
             self.tab2_out
@@ -183,15 +191,16 @@ class Tab():
             else: # engine was loaded from file
                 if V.e is not None:
                     self.tab2_selected_engine.value = V.selected
-                    #self.b_loadmessages.description = 'append new messages'
                     self.b_loadmessages.layout.display = 'none'
                     self.b_appendfsm.layout.display = 'block'
                     self.b_runfsm.layout.display = 'none'
                     self.b_savefsm.layout.display = 'none'
-                    #self.single_runs_chkbox.display = 'none'
-                    #self.run2_chkbox.display = 'none',
-                    #self.run4_chkbox.display = 'none',
-                    #self.refresh_chkbox.display = 'none',
+                    if (V.fsm is not None and
+                            all(r in V.fsm.runs_completed for r in [0, 1, 2]) and
+                            4 not in V.fsm.runs_completed):
+                        self.b_run4only.layout.display = 'block'
+                    else:
+                        self.b_run4only.layout.display = 'none'
                     self.check_buttons()
                 
         with self.tab2_out:        
@@ -358,6 +367,21 @@ class Tab():
                 tabs_out.clear_output()
                 self.check_buttons()
 
+    def fsm_add_run4(self, b):
+        if V.fsm is not None:
+            filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm'
+            with self.tab2_out:
+                self.tab2_out.clear_output()
+                try:
+                    print(f'tab2 - ⌛ adding run4 to {filename} ...')
+                    V.fsm = dmp2.FSMOperator.update_run4(mp, filename)
+                    V.rdf = V.fsm.starts
+                    self.b_run4only.layout.display = 'none'
+                    self.check_buttons()
+                    print(f'tab2 - run4 added and saved to {filename}')
+                except ValueError as err:
+                    print(f'tab2 - Error: {err}')
+
     def check_buttons(self):
         #for b in [ self.b_loadmessages, self.b_runfsm, self.b_resultsfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
         for b in [ self.b_loadmessages, self.b_runfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
@@ -386,8 +410,14 @@ class Tab():
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1,2])):
             self.b_runfsm2.disabled = True            
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1,2,4])):
-            self.b_runfsm4.disabled = True            
+            self.b_runfsm4.disabled = True
             self.b_savefsm.disabled = False
+        if (V.fsm is not None and
+                all(r in V.fsm.runs_completed for r in [0, 1, 2]) and
+                4 not in V.fsm.runs_completed):
+            self.b_run4only.disabled = False
+        else:
+            self.b_run4only.disabled = True
 
             
             

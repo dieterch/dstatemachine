@@ -7,6 +7,8 @@ import os
 import sys
 import time
 import pickle
+import sqlite3
+import json
 import warnings
 from pprint import pprint as pp, pformat as pf
 import arrow
@@ -19,6 +21,252 @@ from dmyplant2.dEngine import Engine
 from .dFSMToolBox import Target_load_Collector, Exhaust_temp_Collector, Tecjet_Collector, Sync_Current_Collector, Oil_Start_Collector, Rampdown_Collector,Coolrun_Collector,Runout_Collector,load_data, msg_smalltxt
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
+###########################################################################################
+## SQLite serialization helpers
+###########################################################################################
+
+_NESTED_KEYS = {'startstoptiming', 'alarms', 'warnings'}
+_TS_COLS_STARTS = ['starttime', 'endtime']
+_TS_COLS_STOPS  = ['starttime', 'endtime']
+
+# run4 scalar KPI columns written by Rampdown/Coolrun/Runout collectors
+_RUN4_COLS = [
+    'run4',
+    'Stop_Power', 'StopPower',           # Rampdown_Collector writes 'StopPower' (content declares 'Stop_Power')
+    'StopCrankCasePressure', 'HexTemp@Power', 'oph', 'starts', 'LOC', 'StopRoomTemp',
+    'Stop_Overspeed', 'Idle_CrankcasePressure',
+    'Stop_Throttle', 'Stop_PVKDifPress', 'MaxHexTemp',
+]
+
+def _ts_to_str(ts):
+    if ts is pd.NaT or ts != ts:
+        return None
+    try:
+        return ts.isoformat()
+    except Exception:
+        return None
+
+def _str_to_ts(s):
+    if s is None:
+        return pd.NaT
+    return pd.Timestamp(s)
+
+def _coerce_val(v):
+    """Convert numpy/pandas scalars to Python natives for sqlite3."""
+    if isinstance(v, (np.integer,)):
+        return int(v)
+    if isinstance(v, (np.floating,)):
+        return None if np.isnan(v) else float(v)
+    if isinstance(v, (np.bool_,)):
+        return int(v)
+    if isinstance(v, bool):
+        return int(v)
+    if v != v:  # catch float nan
+        return None
+    return v
+
+def _save_sqlite(con, results):
+    """Write the full results dict into an open SQLite connection (no commit)."""
+    cur = con.cursor()
+
+    # --- info ---
+    cur.execute("DROP TABLE IF EXISTS info")
+    cur.execute("CREATE TABLE info (key TEXT PRIMARY KEY, value TEXT)")
+    for k, v in results.get('info', {}).items():
+        cur.execute("INSERT INTO info VALUES (?,?)", (str(k), str(v)))
+
+    # --- starts (flat scalar columns) ---
+    cur.execute("DROP TABLE IF EXISTS starts")
+    flat_starts = []
+    for s in results['starts']:
+        row = {k: v for k, v in s.items() if k not in _NESTED_KEYS}
+        for col in _TS_COLS_STARTS:
+            if col in row:
+                row[col] = _ts_to_str(row[col])
+        row = {k: _coerce_val(v) for k, v in row.items()}
+        flat_starts.append(row)
+    if flat_starts:
+        df_starts = pd.DataFrame(flat_starts)
+        df_starts.to_sql('starts', con, if_exists='replace', index=False)
+    else:
+        cur.execute("CREATE TABLE starts (no INTEGER PRIMARY KEY)")
+
+    # --- stops ---
+    cur.execute("DROP TABLE IF EXISTS stops")
+    flat_stops = []
+    for s in results['stops']:
+        row = {k: v for k, v in s.items() if k not in _NESTED_KEYS}
+        for col in _TS_COLS_STOPS:
+            if col in row:
+                row[col] = _ts_to_str(row[col])
+        row = {k: _coerce_val(v) for k, v in row.items()}
+        flat_stops.append(row)
+    if flat_stops:
+        df_stops = pd.DataFrame(flat_stops)
+        df_stops.to_sql('stops', con, if_exists='replace', index=False)
+    else:
+        cur.execute("CREATE TABLE stops (no INTEGER PRIMARY KEY)")
+
+    # --- timings ---
+    cur.execute("DROP TABLE IF EXISTS timings")
+    cur.execute("CREATE TABLE timings (start_no INTEGER, phase TEXT, seq INTEGER, phase_start TEXT, phase_end TEXT)")
+    for s in results['starts']:
+        for phase, entries in s.get('startstoptiming', {}).items():
+            for seq, entry in enumerate(entries):
+                cur.execute("INSERT INTO timings VALUES (?,?,?,?,?)", (
+                    s['no'], phase, seq,
+                    _ts_to_str(entry.get('start')),
+                    _ts_to_str(entry.get('end')),
+                ))
+
+    # --- alarms ---
+    cur.execute("DROP TABLE IF EXISTS alarms")
+    cur.execute("CREATE TABLE alarms (start_no INTEGER, seq INTEGER, state TEXT, ts_epoch INTEGER, name TEXT, severity INTEGER, message TEXT)")
+    for s in results['starts']:
+        for seq, a in enumerate(s.get('alarms', [])):
+            msg = a.get('msg', {})
+            cur.execute("INSERT INTO alarms VALUES (?,?,?,?,?,?,?)", (
+                s['no'], seq, a.get('state'),
+                msg.get('timestamp'), msg.get('name'),
+                msg.get('severity'), msg.get('message'),
+            ))
+
+    # --- warnings ---
+    cur.execute("DROP TABLE IF EXISTS warnings")
+    cur.execute("CREATE TABLE warnings (start_no INTEGER, seq INTEGER, state TEXT, ts_epoch INTEGER, name TEXT, severity INTEGER, message TEXT)")
+    for s in results['starts']:
+        for seq, w in enumerate(s.get('warnings', [])):
+            msg = w.get('msg', {})
+            cur.execute("INSERT INTO warnings VALUES (?,?,?,?,?,?,?)", (
+                s['no'], seq, w.get('state'),
+                msg.get('timestamp'), msg.get('name'),
+                msg.get('severity'), msg.get('message'),
+            ))
+
+    # --- misc (everything that doesn't fit a flat table) ---
+    cur.execute("DROP TABLE IF EXISTS misc")
+    cur.execute("CREATE TABLE misc (key TEXT PRIMARY KEY, value TEXT)")
+    misc_keys = ['run2_content', 'run4_content', 'serviceselectortiming',
+                 'oilpumptiming', 'run2_failed', 'run4_failed', 'runlogdetail', 'runs_completed']
+    for k in misc_keys:
+        if k in results:
+            try:
+                cur.execute("INSERT INTO misc VALUES (?,?)", (k, json.dumps(results[k], default=str)))
+            except Exception as e:
+                logging.warning(f"_save_sqlite: could not serialize misc key '{k}': {e}")
+
+
+def _load_sqlite_results(con, results):
+    """Populate a results dict from an open SQLite connection.
+    Restores the full nested structure (startstoptiming, alarms, warnings).
+    Returns runs_completed as a list.
+    """
+    # --- starts ---
+    df = pd.read_sql_query("SELECT * FROM starts", con)
+    for col in _TS_COLS_STARTS:
+        if col in df.columns:
+            df[col] = df[col].apply(_str_to_ts)
+    for col in ['run2', 'run4']:
+        if col in df.columns:
+            df[col] = df[col].astype(bool)
+    starts = df.to_dict('records')
+
+    # restore nested fields
+    timing_df = pd.read_sql_query("SELECT * FROM timings", con)
+    alarm_df  = pd.read_sql_query("SELECT * FROM alarms",  con)
+    warn_df   = pd.read_sql_query("SELECT * FROM warnings", con)
+
+    for s in starts:
+        sno = s['no']
+        # startstoptiming
+        stt = {}
+        rows = timing_df[timing_df.start_no == sno].sort_values(['phase', 'seq'])
+        for _, row in rows.iterrows():
+            phase = row['phase']
+            entry = {'start': _str_to_ts(row['phase_start']), 'end': _str_to_ts(row['phase_end'])}
+            stt.setdefault(phase, []).append(entry)
+        s['startstoptiming'] = stt
+        # alarms
+        arows = alarm_df[alarm_df.start_no == sno].sort_values('seq')
+        s['alarms'] = [
+            {'state': r['state'], 'msg': {
+                'timestamp': r['ts_epoch'], 'name': r['name'],
+                'severity': r['severity'], 'message': r['message']}}
+            for _, r in arows.iterrows()
+        ]
+        # warnings
+        wrows = warn_df[warn_df.start_no == sno].sort_values('seq')
+        s['warnings'] = [
+            {'state': r['state'], 'msg': {
+                'timestamp': r['ts_epoch'], 'name': r['name'],
+                'severity': r['severity'], 'message': r['message']}}
+            for _, r in wrows.iterrows()
+        ]
+
+    results['starts'] = starts
+    results['starts_counter'] = starts[-1]['no'] + 1 if starts else 0
+
+    # --- stops ---
+    df_stops = pd.read_sql_query("SELECT * FROM stops", con)
+    for col in _TS_COLS_STOPS:
+        if col in df_stops.columns:
+            df_stops[col] = df_stops[col].apply(_str_to_ts)
+    # alarms/warnings are not stored per stop (stops have them as lists in misc potentially)
+    stops = df_stops.to_dict('records')
+    for s in stops:
+        s.setdefault('alarms', [])
+        s.setdefault('warnings', [])
+    results['stops'] = stops
+    results['stops_counter'] = stops[-1]['no'] + 1 if stops else 0
+
+    # --- misc ---
+    misc_rows = pd.read_sql_query("SELECT * FROM misc", con)
+    for _, row in misc_rows.iterrows():
+        try:
+            results[row['key']] = json.loads(row['value'])
+        except Exception:
+            results[row['key']] = row['value']
+
+    runs_completed = results.pop('runs_completed', [])
+    return runs_completed
+
+
+def migrate_dfsm(mp, old_path, new_path=None):
+    """Convert a legacy pickle .dfsm to SQLite format.
+    Creates a .pkl_bak backup if overwriting in place.
+    Returns the reconstructed FSMOperator.
+    """
+    from dmyplant2.dEngine import Engine
+    new_path = new_path or old_path
+    with open(old_path, 'rb') as f:
+        magic = f.read(16)
+    if magic.startswith(b'SQLite format 3'):
+        print(f'{old_path} is already SQLite — nothing to do.')
+        return FSMOperator.load_results(mp, old_path)
+
+    with open(old_path, 'rb') as f:
+        results = pickle.load(f)
+
+    # Build a minimal shell FSMOperator bypassing __init__ (avoids network load_messages)
+    e = Engine.from_sn(mp, results['info']['serialNumber'])
+    lfsm = FSMOperator.__new__(FSMOperator)
+    lfsm._e = e
+    lfsm._p_from = results['info']['p_from']
+    lfsm._p_to   = results['info']['p_to']
+    lfsm.results = results
+    lfsm.runs_completed = results['info'].get('runs_completed', [])
+    lfsm.pfn = e._fname + '_statemachine.pkl'
+
+    if new_path == old_path:
+        backup = old_path + '.pkl_bak'
+        os.rename(old_path, backup)
+        print(f'Backup created: {backup}')
+
+    lfsm.save_results(new_path)
+    print(f'Migrated to SQLite: {new_path}')
+    return lfsm
+
 
 #Various_Bits_CollAlarm
 ###########################################################################################
@@ -581,7 +829,7 @@ class FSMOperator:
         if self.exists:
             os.remove(self.pfn)
 
-    def save_results(self, filename):
+    def save_results(self, filename, fmt='sqlite'):
         if len(self.starts) > 0:
             self.unstore()
             self.results['info'] = dict(
@@ -593,25 +841,91 @@ class FSMOperator:
                 starts = len(self.starts)
             )
             self.results['info'].update(self._e.description)
-            with open(filename, 'wb') as handle:
-                pickle.dump(self.results, handle, protocol=5)
-                logging.info(f"Results successfully saved to {filename}")
+            if fmt == 'pickle':
+                with open(filename, 'wb') as handle:
+                    pickle.dump(self.results, handle, protocol=5)
+                    logging.info(f"Results successfully saved (pickle) to {filename}")
+            else:
+                con = sqlite3.connect(filename)
+                try:
+                    _save_sqlite(con, self.results)
+                    con.commit()
+                finally:
+                    con.close()
+                logging.info(f"Results successfully saved (sqlite) to {filename}")
         else:
-            print('no results to save.')        
+            print('no results to save.')
+
+    @classmethod
+    def _load_sqlite(cls, mp, filename):
+        con = sqlite3.connect(filename)
+        try:
+            info = dict(pd.read_sql_query("SELECT key, value FROM info", con).values)
+        finally:
+            con.close()
+
+        e = Engine.from_sn(mp, info['serialNumber'])
+        lfsm = cls(e, p_from=info.get('p_from'), p_to=info.get('p_to'))
+
+        con = sqlite3.connect(filename)
+        try:
+            runs_completed = _load_sqlite_results(con, lfsm.results)
+        finally:
+            con.close()
+
+        lfsm.results['info'] = info
+        lfsm.runs_completed = runs_completed if isinstance(runs_completed, list) else json.loads(runs_completed)
+        return lfsm
 
     @classmethod
     def load_results(cls, mp, filename):
-        if os.path.exists(filename):
-            with open(filename, 'rb') as handle:
-                results = pickle.load(handle)
-                #pp(results['info'])
-                e = Engine.from_sn(mp, results['info']['serialNumber'])
-                lfsm = cls(e, p_from=results['info']['p_from'], p_to=results['info']['p_to'])
-                lfsm.results = results
-                lfsm.runs_completed = results['info'].get('runs_completed',[])
-                return lfsm
-        else:
+        if not os.path.exists(filename):
             raise FileNotFoundError(filename)
+        with open(filename, 'rb') as f:
+            magic = f.read(16)
+        if magic.startswith(b'SQLite format 3'):
+            return cls._load_sqlite(mp, filename)
+        # legacy pickle path
+        with open(filename, 'rb') as handle:
+            results = pickle.load(handle)
+            e = Engine.from_sn(mp, results['info']['serialNumber'])
+            lfsm = cls(e, p_from=results['info']['p_from'], p_to=results['info']['p_to'])
+            lfsm.results = results
+            lfsm.runs_completed = results['info'].get('runs_completed', [])
+            return lfsm
+
+    @classmethod
+    def update_run4(cls, mp, filename):
+        """Load an existing SQLite .dfsm, run run4 on starts that need it,
+        write only the run4 KPI columns back in-place. Returns the FSMOperator.
+        Raises ValueError if the file is not SQLite format.
+        """
+        with open(filename, 'rb') as f:
+            magic = f.read(16)
+        if not magic.startswith(b'SQLite format 3'):
+            raise ValueError(f"{filename} is not a SQLite .dfsm file. Migrate it first with migrate_dfsm().")
+
+        lfsm = cls.load_results(mp, filename)
+        lfsm.run4(silent=False)
+
+        con = sqlite3.connect(filename)
+        try:
+            for start in lfsm.results['starts']:
+                updates = {k: _coerce_val(start[k]) for k in _RUN4_COLS if k in start}
+                if not updates:
+                    continue
+                set_clause = ', '.join(f'"{k}"=?' for k in updates)
+                con.execute(
+                    f'UPDATE starts SET {set_clause} WHERE no=?',
+                    list(updates.values()) + [start['no']]
+                )
+            rc = json.dumps(list(set(lfsm.runs_completed)))
+            con.execute("INSERT OR REPLACE INTO misc(key,value) VALUES('runs_completed',?)", (rc,))
+            con.execute("UPDATE info SET value=? WHERE key='runs_completed'", (rc,))
+            con.commit()
+        finally:
+            con.close()
+        return lfsm
 
     def append_results(self, mfsm):
         #check is it is the same engine
