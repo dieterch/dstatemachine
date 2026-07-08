@@ -241,7 +241,8 @@ Concrete collectors:
 | `data/<sn>.pkl` | Asset metadata per engine | pickle |
 | `data/<sn>_statemachine.pkl` | Intermediate FSM run results | pickle protocol 5 |
 | `data/<sn>_statemachine.hdf` | Per-engine time-series (HDF5, slotted) | HDF5 |
-| `data/*.dfsm` | Final FSM results (renamed pickle 5) | pickle protocol 5 |
+| `data/*.dfsm` | Final FSM results — **SQLite** (7 tables); legacy pickle files still load transparently | SQLite / pickle (legacy) |
+| `data/*.dfsm.pkl_bak` | Backup of original pickle when migrating via `migrate_dfsm()` | pickle protocol 5 |
 | `data/<sn>_temp.feather` | Temporary feather cache | Feather |
 
 ---
@@ -274,10 +275,30 @@ Plot definitions in `App/figures.json` use a declarative format:
 2. **`LoadrampStateV2`**: synthesizes the `9047` (target load) message on run0 if firmware never emits it, using `rP_Ramp_Set` (ramp rate in %/s) and `sync_load`.
 3. **Multi-pass design**: run0 enriches messages, run1 classifies, run2/run4 download and annotate time-series. Each pass can be run independently; `runs_completed` tracks what's been done.
 4. **`append_results`**: allows two `.dfsm` files for the same engine to be merged by matching starttime of the last start in file A with an early start in file B.
+4a. **`update_run4(mp, filename)`**: classmethod that loads a SQLite `.dfsm`, runs run4 on starts where `run4==False`, then writes only the run4 KPI columns back in-place via SQL `UPDATE`. No full rewrite needed.
+4b. **`migrate_dfsm(mp, path)`**: converts a legacy pickle `.dfsm` to SQLite in-place, creating a `.pkl_bak` backup first.
 5. **No formal tests**: ad-hoc `test.py` and a few doctests in `dEngine.py`.
 6. **Bokeh 3 compatibility**: several fixes applied (2025-07): `circle()` → `scatter(size=)`, `render_mode` removed from `Label`, `Panel` → `TabPanel`, widget imports from `bokeh.models` (not `bokeh.models.widgets`).
 7. **Timestamp duality**: Myplant API uses epoch milliseconds (`mp_ts` / `epoch_ts` helpers in `dMyplant.py` normalize between ms and s).
 8. **HDF slot caching**: `Engine.hist_data2()` stores time-series per-slot to avoid redundant downloads when the same data is needed multiple times (e.g. run2 and tab4 both read load ramp data).
+
+---
+
+## .dfsm SQLite schema
+
+Seven tables per file:
+
+| Table | Purpose |
+|---|---|
+| `info` | key/value — engine metadata + run summary |
+| `starts` | one row per start; all scalar KPI columns; timestamps as ISO-8601 TEXT |
+| `stops` | one row per stop |
+| `timings` | normalised `startstoptiming`: (start_no, phase, seq, phase_start, phase_end) |
+| `alarms` | per-start alarm list (start_no, seq, state, ts_epoch, name, severity, message) |
+| `warnings` | same structure as alarms |
+| `misc` | JSON-encoded: run2_content, run4_content, serviceselectortiming, oilpumptiming, run2_failed, runlogdetail, runs_completed |
+
+Legacy pickle `.dfsm` files are auto-detected on load via magic bytes and continue to work unchanged.
 
 ---
 
