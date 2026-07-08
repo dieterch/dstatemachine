@@ -48,6 +48,7 @@ dstatemachine/
 ├── engines.pkl                 # (legacy) pickled query list
 ├── requirements.txt
 ├── setup.py
+│   └── tab8.py                 # Figure Editor (figures.json GUI)
 └── data/                       # Runtime data directory (gitignored)
     ├── .credentials            # Fernet-encrypted credentials
     ├── dataitems.pkl / .csv    # Myplant dataitem catalog (cached from API)
@@ -260,6 +261,7 @@ Global state is held in the `V` dataclass in `App/common.py`. The `mp` (MyPlant)
 | 5 | settings | Engine metadata display, dataitem lookup, FSM parameter tweaks. |
 | 6 | Run2/4 Results | KPI scatter plots from run2 (load ramp). Filters: load capacity cutoff (%), exhaust spread cutoff. |
 | 7 | Run4 Results | Stop-phase KPI scatter plots from run4. |
+| 8 | Figure Editor | GUI editor for `App/figures.json`. Browse/add/delete figure sets and panels, edit col/unit/ylim/color, search the Myplant dataitem catalog and add items to panels, toggle `func_cyl|` prefix and `func_power` ylim. Save writes back to disk and live-reloads `V.lfigures`/`V.vset`. |
 
 Plot definitions in `App/figures.json` use a declarative format:
 ```json
@@ -306,5 +308,5 @@ Legacy pickle `.dfsm` files are auto-detected on load via magic bytes and contin
 
 - **Add a new KPI**: subclass `Data_Collector` in `dFSMToolBox.py`, register it in `FSMOperator.run2()` or `run4()`.
 - **Add a new FSM state**: add the state to `startstopFSM._states` dict with trigger messages; no other file needs changing.
-- **Add a new plot panel**: add an entry to `App/figures.json`; no Python code needed.
+- **Add a new plot panel**: add an entry to `App/figures.json` by hand or via the Tab 8 Figure Editor GUI.
 - **Add a new UI tab**: create `App/tabN.py` with a `Tab` class, import in `App.ipynb`.
