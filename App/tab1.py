@@ -4,27 +4,11 @@ import traceback
 import pandas as pd; pd.options.mode.chained_assignment = None
 import ipywidgets as widgets
 from IPython.display import display, HTML
-from ipyfilechooser import FileChooser
 import dmyplant2 as dmp2
 import App.common as cm
 import logging
 
-
-class SortedFileChooser(FileChooser):
-    """FileChooser sorted by plant name (ignoring leading digits), with search support."""
-
-    def _set_form_values(self, path, filename):
-        super()._set_form_values(path, filename)
-        current_value = self._dircontent.value
-
-        def sort_key(disp_name):
-            real_name = self._map_disp_to_name.get(disp_name, disp_name)
-            return re.sub(r'^\d+_', '', real_name).lower()
-
-        sorted_opts = sorted(self._dircontent.options, key=sort_key)
-        self._dircontent.options = sorted_opts
-        self._dircontent.value = current_value
-        self._all_sorted_options = list(sorted_opts)
+DATA_DIR = os.path.join(os.getcwd(), 'data')
 
 
 class Tab():
@@ -33,30 +17,29 @@ class Tab():
         self.tab1_out = widgets.Output()
 
         # ── File chooser panel ──────────────────────────────────────
+        self._all_files = self._scan_dfsm_files()
+
+        self.file_search = widgets.Text(
+            value='',
+            placeholder='type to filter …',
+            description='Filter:',
+            layout=widgets.Layout(width='340px'))
+        self.file_search.observe(self._apply_search, 'value')
+
+        self.file_select = widgets.Select(
+            options=self._all_files,
+            rows=12,
+            layout=widgets.Layout(width='560px'))
+
         self.bt_load_testfile = widgets.Button(
             description='Load',
             disabled=False,
             button_style='success')
         self.bt_load_testfile.on_click(self.load_testfile)
 
-        self.fdialog = SortedFileChooser(
-            os.getcwd() + '/data',
-            filename='',
-            show_hidden=False,
-            select_default=False,
-            show_only_dirs=False)
-        self.fdialog.filter_pattern = '*.dfsm'
-
-        self.file_search = widgets.Text(
-            value='',
-            placeholder='type to filter list …',
-            description='Filter:',
-            layout=widgets.Layout(width='340px'))
-        self.file_search.observe(self._apply_search, 'value')
-
         self.child1 = widgets.VBox([
             widgets.HBox([self.file_search, self.bt_load_testfile]),
-            self.fdialog
+            self.file_select,
         ])
 
         # ── Fleet panel ─────────────────────────────────────────────
@@ -126,27 +109,23 @@ class Tab():
         # ── Persistent load-state indicator ─────────────────────────
         self.load_state_html = widgets.HTML(value=self._render_load_state())
 
-    # ── Search ──────────────────────────────────────────────────────
+    # ── File list helpers ────────────────────────────────────────────
+
+    def _scan_dfsm_files(self):
+        """Return sorted list of .dfsm filenames in DATA_DIR, sorted by plant name."""
+        try:
+            files = [f for f in os.listdir(DATA_DIR) if f.endswith('.dfsm')]
+        except OSError:
+            return []
+        return sorted(files, key=lambda f: re.sub(r'^\d+_', '', f).lower())
 
     def _apply_search(self, change):
         q = change['new'].strip().lower()
-        all_opts = getattr(self.fdialog, '_all_sorted_options',
-                           list(self.fdialog._dircontent.options))
-        if q:
-            filtered = [o for o in all_opts
-                        if q in self.fdialog._map_disp_to_name.get(o, o).lower()]
-        else:
-            filtered = all_opts
-        current = self.fdialog._dircontent.value
-        # Temporarily disconnect the observer so rewriting options doesn't
-        # trigger _on_dircontent_select and cause a directory navigation.
-        self.fdialog._dircontent.unobserve(self.fdialog._on_dircontent_select, names='value')
-        self.fdialog._dircontent.options = filtered
+        filtered = [f for f in self._all_files if q in f.lower()] if q else self._all_files
+        current = self.file_select.value
+        self.file_select.options = filtered
         if current in filtered:
-            self.fdialog._dircontent.value = current
-        else:
-            self.fdialog._dircontent.value = filtered[0] if filtered else None
-        self.fdialog._dircontent.observe(self.fdialog._on_dircontent_select, names='value')
+            self.file_select.value = current
 
     # ── Load state indicator ────────────────────────────────────────
 
@@ -270,11 +249,11 @@ class Tab():
 
     def load_testfile(self, but):
         self.tab1_out.clear_output()
-        sel = self.fdialog.selected
-        if not sel or not sel.endswith('.dfsm'):
+        fname = self.file_select.value
+        if not fname:
             cm.status('tab1', 'please select a *.dfsm file.')
             return
-        fname = os.path.basename(sel)
+        sel = os.path.join(DATA_DIR, fname)
         cm.status('tab1', f'⌛ loading {fname} …')
         try:
             cm.V.fsm = dmp2.FSMOperator.load_results(cm.mp, sel)
@@ -312,6 +291,7 @@ class Tab():
         self.selected_engine.value = ''
         self.selected_engine_number.value = ''
         self.file_search.value = ''
+        self.file_select.options = self._all_files
         cm.V.selected = None
         cm.V.selected_number = None
         cm.V.fsm = None
