@@ -841,6 +841,7 @@ class FSMOperator:
     def save_results(self, filename, fmt='sqlite'):
         if len(self.starts) > 0:
             self.unstore()
+            self.results['runs_completed'] = list(set(self.runs_completed))
             self.results['info'] = dict(
                 save_date = pd.to_datetime('today').normalize(),
                 p_from = self._p_from,
