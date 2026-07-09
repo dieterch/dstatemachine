@@ -55,13 +55,7 @@ class Tab():
         self.file_search.observe(self._apply_search, 'value')
 
         self.child1 = widgets.VBox([
-            widgets.HBox([
-                self.file_search,
-                widgets.HTML(
-                    '&nbsp;<span style="font-size:0.8rem;color:#888">'
-                    'filters as you type — then click a file, then Load</span>'),
-            ]),
-            widgets.HBox([self.bt_load_testfile]),
+            widgets.HBox([self.file_search, self.bt_load_testfile]),
             self.fdialog
         ])
 
