@@ -894,14 +894,30 @@ class FSMOperator:
             magic = f.read(16)
         if magic.startswith(b'SQLite format 3'):
             return cls._load_sqlite(mp, filename)
-        # legacy pickle path
+        # legacy pickle path — bypass __init__ to avoid network load_messages call
         with open(filename, 'rb') as handle:
             results = pickle.load(handle)
-            e = Engine.from_sn(mp, results['info']['serialNumber'])
-            lfsm = cls(e, p_from=results['info']['p_from'], p_to=results['info']['p_to'])
-            lfsm.results = results
-            lfsm.runs_completed = results['info'].get('runs_completed', [])
-            return lfsm
+        e = Engine.from_sn(mp, results['info']['serialNumber'])
+        lfsm = cls.__new__(cls)
+        lfsm._e = e
+        lfsm._p_from = results['info']['p_from']
+        lfsm._p_to   = results['info']['p_to']
+        lfsm.results = results
+        lfsm.runs_completed = results['info'].get('runs_completed', [])
+        lfsm.pfn = e._fname + '_statemachine.pkl'
+        lfsm.hdfn = e._fname + '_statemachine.hdf'
+        lfsm.tempfn = e._fname + '_temp.feather'
+        lfsm.message_queue = []
+        lfsm.extra_messages = []
+        lfsm.logrun = [1, 2]
+        lfsm.logstates = ['startstop']
+        lfsm.act_run = 0
+        lfsm.startstopHandler = startstopFSM(lfsm, e)
+        lfsm.serviceSelectorHandler = ServiceSelectorFSM()
+        lfsm.oilpumpHandler = OilPumpFSM()
+        # _messages / nsvec / first_message / last_message are loaded on demand
+        # (call lfsm.load_messages(...) before re-running the FSM)
+        return lfsm
 
     @classmethod
     def update_run4(cls, mp, filename):
@@ -1015,6 +1031,22 @@ class FSMOperator:
         return os.path.exists(self.pfn) 
 
     ## message handling
+    def _ensure_messages(self):
+        """Load messages lazily — called by run0/run1 when loading from legacy pickle skipped __init__."""
+        if not hasattr(self, '_messages') or self._messages is None:
+            self.load_messages(self._e, self._p_from, self._p_to)
+            self.nsvec = {
+                self.startstopHandler.name: self.startstopHandler.initialize_statevector(self.first_message),
+                self.serviceSelectorHandler.name: self.serviceSelectorHandler.initialize_statevector(self.first_message),
+                self.oilpumpHandler.name: self.oilpumpHandler.initialize_statevector(self.first_message),
+                'logstates': self.logstates,
+                'in_operation': 'off',
+                'service_selector': self.serviceSelectorHandler.initial_state,
+                'oil_pump': self.oilpumpHandler._initial_state,
+                'msg': 'none',
+                'startno': 0
+            }
+
     def load_messages(self,e, p_from=None, p_to=None, skip_days=None, untilnow=False):
         #self._messages = e.get_messages(p_from, p_to) #using stored messages.
         self._messages = e.get_messages2(p_from, p_to, untilnow) 
@@ -1167,11 +1199,12 @@ class FSMOperator:
 
 
     def run0(self, enforce=False, silent=False ,debug=False):
-        """Statemachine Operator Run0 - collect e.g. calculated future events in self.extra_messages 
+        """Statemachine Operator Run0 - collect e.g. calculated future events in self.extra_messages
         Args:
             enforce (bool, optional): if True runs statemachine even if results are already available. Defaults to False.
             silent (bool, optional): do not show progress bar if True. Defaults to False.
-        """        
+        """
+        self._ensure_messages()
 
         if len(self.results['starts']) == 0 or enforce:
             self.init_results()            

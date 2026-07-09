@@ -126,10 +126,17 @@ tabs_html = widgets.HTML(
         display='flex')
 )
 
-def status(tbname ,text=''):
+def status(tbname, text=''):
     with tabs_out:
         tabs_out.clear_output()
         print(f'{tbname}{" - " if text != "" else ""}{text}')
+
+def refresh_load_state(error=None):
+    """Refresh the tab1 load-state indicator from any tab after FSM state changes."""
+    try:
+        V.app.tab_objects_list[0]._update_load_state(error=error)
+    except Exception:
+        pass
 
 def disp_alwr(row, key, filterit, filtermsgs):
     mnums = str(filtermsgs).strip().split(',')

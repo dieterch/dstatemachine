@@ -11,6 +11,7 @@ from IPython.display import display
 import dmyplant2 as dmp2
 #from dmyplant2 import cred, MyPlant, Engine, FSMOperator, get_size
 from App import tab1
+import App.common as cm
 from App.common import loading_bar, V, mp, tabs_out, tabs_html
 
 #########################################
@@ -252,17 +253,19 @@ class Tab():
             self.tab2_out.clear_output()
             if V.fsm is not None:
                 print()
-                V.fsm.run0(enforce=True, silent=False, debug=False)
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
-                V.fsm.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
-                if self.run2_chkbox.value:
-                    V.fsm.run2(silent = False, p_refresh=self.refresh_chkbox.value)
-                    #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
-                if self.run4_chkbox.value:
-                    V.fsm.run4(silent = False, p_refresh=self.refresh_chkbox.value)
-                    #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
-                V.rdf = V.fsm.starts
+                try:
+                    V.fsm.run0(enforce=True, silent=False, debug=False)
+                    V.fsm.run1(silent=False, successtime=300, debug=False)
+                    if self.run2_chkbox.value:
+                        V.fsm.run2(silent=False, p_refresh=self.refresh_chkbox.value)
+                    if self.run4_chkbox.value:
+                        V.fsm.run4(silent=False, p_refresh=self.refresh_chkbox.value)
+                    V.rdf = V.fsm.starts
+                except Exception as err:
+                    print(f'Error during FSM run: {err}')
+                    cm.refresh_load_state(error=str(err))
+                else:
+                    cm.refresh_load_state()
                 self.check_buttons()
 
     def print_result(self):
@@ -299,44 +302,57 @@ class Tab():
                         display(pd.DataFrame(V.fsm.results['run2_failed'])[dfilter].style.hide())
 
     def fsm_run0(self,b):
-        #motor = V.fleet.iloc[int(V.selected_number)]
         with self.tab2_out:
             self.tab2_out.clear_output()
             if V.fsm is not None:
                 print()
-                V.fsm.run0(enforce=True, silent=False, debug=False)
+                try:
+                    V.fsm.run0(enforce=True, silent=False, debug=False)
+                except Exception as err:
+                    print(f'run0 error: {err}')
+                    cm.refresh_load_state(error=str(err))
+                else:
+                    cm.refresh_load_state()
                 self.check_buttons()
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
 
     def fsm_run1(self,b):
         with self.tab2_out:
-            #tab2_out.clear_output()
             if V.fsm is not None:
-                V.fsm.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
+                try:
+                    V.fsm.run1(silent=False, successtime=300, debug=False)
+                    V.rdf = V.fsm.starts
+                except Exception as err:
+                    print(f'run1 error: {err}')
+                    cm.refresh_load_state(error=str(err))
+                else:
+                    cm.refresh_load_state()
                 self.check_buttons()
-                V.rdf = V.fsm.starts
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
 
-                
     def fsm_run2(self,b):
-        #motor = V.fleet.iloc[int(V.selected_number))]
         with self.tab2_out:
-            #tab2_out.clear_output()
             if V.fsm is not None:
-                V.fsm.run2(silent = False, debug=True, p_refresh=self.refresh_chkbox.value)
+                try:
+                    V.fsm.run2(silent=False, debug=True, p_refresh=self.refresh_chkbox.value)
+                    V.rdf = V.fsm.starts
+                except Exception as err:
+                    print(f'run2 error: {err}')
+                    cm.refresh_load_state(error=str(err))
+                else:
+                    cm.refresh_load_state()
                 self.check_buttons()
-                V.rdf = V.fsm.starts
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
 
     def fsm_run4(self,b):
-        #motor = V.fleet.iloc[int(V.selected_number))]
         with self.tab2_out:
-            #tab2_out.clear_output()
             if V.fsm is not None:
-                V.fsm.run4(silent = False, debug=True, p_refresh=self.refresh_chkbox.value)
+                try:
+                    V.fsm.run4(silent=False, debug=True, p_refresh=self.refresh_chkbox.value)
+                    V.rdf = V.fsm.starts
+                except Exception as err:
+                    print(f'run4 error: {err}')
+                    cm.refresh_load_state(error=str(err))
+                else:
+                    cm.refresh_load_state()
                 self.check_buttons()
-                V.rdf = V.fsm.starts
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
 
     def fsm_save(self,b):
         if V.fsm is not None:
