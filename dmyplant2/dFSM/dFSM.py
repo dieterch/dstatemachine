@@ -855,6 +855,14 @@ class FSMOperator:
                     pickle.dump(self.results, handle, protocol=5)
                     logging.info(f"Results successfully saved (pickle) to {filename}")
             else:
+                # If an existing file is a legacy pickle, back it up before overwriting
+                if os.path.exists(filename):
+                    with open(filename, 'rb') as _f:
+                        _magic = _f.read(16)
+                    if not _magic.startswith(b'SQLite format 3'):
+                        backup = filename + '.pkl_bak'
+                        os.rename(filename, backup)
+                        logging.info(f"Legacy pickle backed up to {backup}")
                 con = sqlite3.connect(filename)
                 try:
                     _save_sqlite(con, self.results)

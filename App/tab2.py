@@ -356,11 +356,17 @@ class Tab():
 
     def fsm_save(self,b):
         if V.fsm is not None:
-            #filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}_{V.fsm.last_message.strftime("%Y%m%d")}.dfsm'
             filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm'
             with tabs_out:
-                print(filename)
-                V.fsm.save_results(filename)
+                tabs_out.clear_output()
+                try:
+                    print(f'Saving {filename} …')
+                    V.fsm.save_results(filename)
+                    print(f'Saved.')
+                    cm.refresh_load_state()
+                except Exception as err:
+                    print(f'Save error: {err}')
+                    cm.refresh_load_state(error=str(err))
         # with self.tab2_out:
         #     if V.fsm is not None:
         #         V.fsm.store()
