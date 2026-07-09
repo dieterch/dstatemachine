@@ -111,20 +111,36 @@ class Tab():
 
     # ── File list helpers ────────────────────────────────────────────
 
+    def _dfsm_label(self, fname):
+        path = os.path.join(DATA_DIR, fname)
+        try:
+            with open(path, 'rb') as fh:
+                magic = fh.read(16)
+            if magic[:15] == b'SQLite format 3':
+                icon = '\U0001f5c4'   # 🗄 cabinet (SQLite)
+            elif magic[:1] == b'\x80':
+                icon = '\U0001f952'   # 🥒 pickle
+            else:
+                icon = '\U0001f4c4'   # 📄 generic
+        except OSError:
+            icon = '?'
+        return f'{icon} {fname}'
+
     def _scan_dfsm_files(self):
-        """Return sorted list of .dfsm filenames in DATA_DIR, sorted by plant name."""
+        """Return sorted list of (label, filename) tuples for .dfsm files in DATA_DIR."""
         try:
             files = [f for f in os.listdir(DATA_DIR) if f.endswith('.dfsm')]
         except OSError:
             return []
-        return sorted(files, key=lambda f: re.sub(r'^\d+_', '', f).lower())
+        files = sorted(files, key=lambda f: re.sub(r'^\d+_', '', f).lower())
+        return [(self._dfsm_label(f), f) for f in files]
 
     def _apply_search(self, change):
         q = change['new'].strip().lower()
-        filtered = [f for f in self._all_files if q in f.lower()] if q else self._all_files
+        filtered = [t for t in self._all_files if q in t[1].lower()] if q else self._all_files
         current = self.file_select.value
         self.file_select.options = filtered
-        if current in filtered:
+        if current in [t[1] for t in filtered]:
             self.file_select.value = current
 
     # ── Load state indicator ────────────────────────────────────────

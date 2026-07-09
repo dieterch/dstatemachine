@@ -19,9 +19,22 @@ class Tab():
         # Top buttons
         self.b_save = Button(description='Save figures.json', button_style='success',
                              layout=Layout(width='160px'))
-        self.b_reload = Button(description='Reload from disk', button_style='',
-                               layout=Layout(width='140px'))
         self.b_save.on_click(self._do_save)
+
+        self.save_as_name = widgets.Text(
+            placeholder='filename (no .json)', layout=Layout(width='200px'))
+        self.b_save_as = Button(description='Save As', button_style='warning',
+                                layout=Layout(width='90px'))
+        self.b_save_as.on_click(self._do_save_as)
+
+        self._json_files = self._scan_json_files()
+        self.file_pick_select = widgets.Select(
+            options=self._json_files, rows=4, layout=Layout(width='260px'))
+        if 'figures.json' in self._json_files:
+            self.file_pick_select.value = 'figures.json'
+
+        self.b_reload = Button(description='Load from disk', button_style='',
+                               layout=Layout(width='120px'))
         self.b_reload.on_click(self._do_reload)
 
         # Figure set selector
@@ -85,6 +98,8 @@ class Tab():
         # DataItem search
         self.search_text = widgets.Text(
             placeholder='Search dataitems...', layout=Layout(width='280px'))
+        self.exclude_text = widgets.Text(
+            placeholder='Exclude prefix, e.g. par_', layout=Layout(width='220px'))
         self.search_myplant_chkbox = widgets.Checkbox(
             value=False, description='search myPlantName', indent=False)
         self.b_search = Button(description='Search', button_style='primary',
@@ -134,13 +149,22 @@ class Tab():
 
         search_section = VBox([
             widgets.HTML('<b>Search DataItems</b>'),
-            HBox([self.search_text, self.b_search, self.search_myplant_chkbox]),
+            HBox([self.search_text, self.exclude_text, self.b_search, self.search_myplant_chkbox]),
             self.search_results,
             HBox([self.b_add_to_panel, self.func_cyl_chkbox]),
         ])
 
+        file_section = VBox([
+            widgets.HTML('<b>Load from disk</b>'),
+            self.file_pick_select,
+            self.b_reload,
+        ])
+
         return VBox([
-            HBox([self.b_save, self.b_reload]),
+            HBox([self.b_save,
+                  self.save_as_name, self.b_save_as,
+                  widgets.HTML('&nbsp;&nbsp;&nbsp;'),
+                  file_section]),
             HBox([set_col, panel_col]),
             form_section,
             search_section,
@@ -151,6 +175,15 @@ class Tab():
 
     def cleartab(self):
         self.tab8_out.clear_output()
+
+    # --- File list helper ---
+
+    def _scan_json_files(self):
+        app_dir = os.path.join(os.getcwd(), 'App')
+        try:
+            return sorted(f for f in os.listdir(app_dir) if f.endswith('.json'))
+        except OSError:
+            return []
 
     # --- Internal helpers ---
 
@@ -360,6 +393,7 @@ class Tab():
 
     def _do_search(self, b):
         lookup = self.search_text.value.strip()
+        exclude = self.exclude_text.value.strip().lower()
         search_myplant = self.search_myplant_chkbox.value
         df = dmp2.MyPlant.get_dataitems()
 
@@ -374,6 +408,8 @@ class Tab():
 
         if lookup:
             df = df[df.apply(sfun, axis=1)].reset_index(drop=True)
+        if exclude:
+            df = df[~df['name'].str.lower().str.startswith(exclude)].reset_index(drop=True)
         self._search_names = list(df['name'])
         opts = tuple(
             f"{row['name']}  |  {row['unit']}  |  {row['myPlantName']}"
@@ -475,17 +511,40 @@ class Tab():
     def _do_save(self, b):
         with self.tab8_out:
             self.tab8_out.clear_output()
-            path = os.getcwd() + '/App/figures.json'
+            path = os.path.join(os.getcwd(), 'App', 'figures.json')
             dmp2.save_json(path, self._figures)
             cm.V.lfigures = cm.dfigures(cm.V.e)
             cm.V.plotdef, cm.V.vset = dmp2.cplotdef(cm.mp, cm.V.lfigures)
             print(f'Saved to {path}')
             print(f'Reloaded: {len(cm.V.plotdef)} figure sets, {len(cm.V.vset)} data items.')
 
-    def _do_reload(self, b):
-        self._figures = dmp2.load_json(os.getcwd() + '/App/figures.json')
-        cur_set = self._current_set()
-        self._refresh_set_list(keep_value=cur_set)
+    def _do_save_as(self, b):
+        name = self.save_as_name.value.strip()
         with self.tab8_out:
             self.tab8_out.clear_output()
-            print('Reloaded figures.json from disk.')
+            if not name:
+                print('Enter a filename (without .json) in the text field.')
+                return
+            fname = name if name.endswith('.json') else name + '.json'
+            path = os.path.join(os.getcwd(), 'App', fname)
+            dmp2.save_json(path, self._figures)
+            print(f'Saved to {path}')
+            self.save_as_name.value = ''
+            # refresh file picker so the new file appears
+            self._json_files = self._scan_json_files()
+            self.file_pick_select.options = self._json_files
+            if fname in self._json_files:
+                self.file_pick_select.value = fname
+
+    def _do_reload(self, b):
+        fname = self.file_pick_select.value
+        with self.tab8_out:
+            self.tab8_out.clear_output()
+            if not fname:
+                print('Select a file in the list above first.')
+                return
+            path = os.path.join(os.getcwd(), 'App', fname)
+            self._figures = dmp2.load_json(path)
+            cur_set = self._current_set()
+            self._refresh_set_list(keep_value=cur_set)
+            print(f'Loaded {fname} from disk.')
