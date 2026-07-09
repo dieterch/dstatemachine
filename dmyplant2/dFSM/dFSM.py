@@ -172,37 +172,46 @@ def _load_sqlite_results(con, results):
             df[col] = df[col].astype(bool)
     starts = df.to_dict('records')
 
-    # restore nested fields
-    timing_df = pd.read_sql_query("SELECT * FROM timings", con)
-    alarm_df  = pd.read_sql_query("SELECT * FROM alarms",  con)
-    warn_df   = pd.read_sql_query("SELECT * FROM warnings", con)
+    # restore nested fields — use groupby to avoid O(n²) per-start filtering
+    timing_df = pd.read_sql_query("SELECT * FROM timings ORDER BY phase, seq", con)
+    alarm_df  = pd.read_sql_query("SELECT * FROM alarms  ORDER BY seq",         con)
+    warn_df   = pd.read_sql_query("SELECT * FROM warnings ORDER BY seq",         con)
+
+    # pre-group by start_no so each lookup is O(1)
+    timing_by_no = {sno: grp for sno, grp in timing_df.groupby('start_no')}
+    alarm_by_no  = {sno: grp for sno, grp in alarm_df.groupby('start_no')}
+    warn_by_no   = {sno: grp for sno, grp in warn_df.groupby('start_no')}
 
     for s in starts:
         sno = s['no']
         # startstoptiming
         stt = {}
-        rows = timing_df[timing_df.start_no == sno].sort_values(['phase', 'seq'])
-        for _, row in rows.iterrows():
-            phase = row['phase']
-            entry = {'start': _str_to_ts(row['phase_start']), 'end': _str_to_ts(row['phase_end'])}
-            stt.setdefault(phase, []).append(entry)
+        if sno in timing_by_no:
+            for _, row in timing_by_no[sno].iterrows():
+                phase = row['phase']
+                entry = {'start': _str_to_ts(row['phase_start']), 'end': _str_to_ts(row['phase_end'])}
+                stt.setdefault(phase, []).append(entry)
         s['startstoptiming'] = stt
         # alarms
-        arows = alarm_df[alarm_df.start_no == sno].sort_values('seq')
-        s['alarms'] = [
-            {'state': r['state'], 'msg': {
-                'timestamp': r['ts_epoch'], 'name': r['name'],
-                'severity': r['severity'], 'message': r['message']}}
-            for _, r in arows.iterrows()
-        ]
+        if sno in alarm_by_no:
+            s['alarms'] = [
+                {'state': r['state'], 'msg': {
+                    'timestamp': r['ts_epoch'], 'name': r['name'],
+                    'severity': r['severity'], 'message': r['message']}}
+                for _, r in alarm_by_no[sno].iterrows()
+            ]
+        else:
+            s['alarms'] = []
         # warnings
-        wrows = warn_df[warn_df.start_no == sno].sort_values('seq')
-        s['warnings'] = [
-            {'state': r['state'], 'msg': {
-                'timestamp': r['ts_epoch'], 'name': r['name'],
-                'severity': r['severity'], 'message': r['message']}}
-            for _, r in wrows.iterrows()
-        ]
+        if sno in warn_by_no:
+            s['warnings'] = [
+                {'state': r['state'], 'msg': {
+                    'timestamp': r['ts_epoch'], 'name': r['name'],
+                    'severity': r['severity'], 'message': r['message']}}
+                for _, r in warn_by_no[sno].iterrows()
+            ]
+        else:
+            s['warnings'] = []
 
     results['starts'] = starts
     results['starts_counter'] = starts[-1]['no'] + 1 if starts else 0

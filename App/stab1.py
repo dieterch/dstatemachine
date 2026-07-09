@@ -1,5 +1,6 @@
 import json
 import os
+import threading
 import pandas as pd
 from pathlib import Path
 from pprint import pformat as pf
@@ -23,28 +24,33 @@ def LoadFile(localpath,pattern):
     def lfilter(s):
         #return s.endswith(pattern)
         return str(s).endswith(pattern)
-    
+
+    def _do_load():
+        try:
+            set_fsminfo("###⌛ &nbsp;Reading file ...")
+            cm.V.fsm = dmp2.FSMOperator.load_results(cm.mp, file)
+            set_fsminfo("###⌛ &nbsp;Building starts table ...")
+            cm.V.e = cm.V.fsm._e
+            cm.V.rdf = cm.V.fsm.starts
+            cm.V.selected = cm.V.fsm.results['info']['Name']
+            cm.V.selected_number = '0'
+            info = cm.V.fsm.results['info']
+            sinfo =  "| Name | Value |\n"
+            sinfo += "| :--- |  ---: |\n"
+            for k in info.keys():
+                val = info[k].strftime('%Y-%m-%d') if isinstance(info[k], pd.Timestamp) else str(info[k])
+                sinfo += f"| {k} | {val} |\n"
+            set_fsminfo(sinfo)
+        except Exception as e:
+            set_fsminfo(str(e))
+        finally:
+            set_showspinner(False)
+
     def lonclick():
         if file is not None:
             set_showspinner(True)
-            _ , lfile = os.path.split(file) if file is not None else (None, None) 
-            set_fsminfo(f"###⌛ &nbsp;loading ...")
-            try:
-                cm.V.fsm = dmp2.FSMOperator.load_results(cm.mp, file)
-                cm.V.e = cm.V.fsm._e
-                cm.V.rdf = cm.V.fsm.starts
-                cm.V.selected = cm.V.fsm.results['info']['Name']
-                cm.V.selected_number = '0'
-                set_showspinner(False)
-                info = cm.V.fsm.results['info']
-                sinfo =  "| Name | Value |\n"
-                sinfo += "| :--- |  ---: |\n"
-                for k in info.keys():
-                    val = info[k].strftime('%Y-%m-%d') if isinstance(info[k] , pd.Timestamp) else str(info[k])
-                    sinfo += f"| {k} | {val} |\n"
-                set_fsminfo(sinfo)
-            except Exception as e:
-                set_fsminfo(e)
+            set_fsminfo("###⌛ &nbsp;loading ...")
+            threading.Thread(target=_do_load, daemon=True).start()
 
     def delclick():
         set_file(None)
