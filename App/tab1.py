@@ -43,7 +43,7 @@ class Tab():
             os.getcwd() + '/data',
             filename='',
             show_hidden=False,
-            select_default=True,
+            select_default=False,
             show_only_dirs=False)
         self.fdialog.filter_pattern = '*.dfsm'
 
@@ -138,9 +138,15 @@ class Tab():
         else:
             filtered = all_opts
         current = self.fdialog._dircontent.value
+        # Temporarily disconnect the observer so rewriting options doesn't
+        # trigger _on_dircontent_select and cause a directory navigation.
+        self.fdialog._dircontent.unobserve(self.fdialog._on_dircontent_select, names='value')
         self.fdialog._dircontent.options = filtered
         if current in filtered:
             self.fdialog._dircontent.value = current
+        else:
+            self.fdialog._dircontent.value = filtered[0] if filtered else None
+        self.fdialog._dircontent.observe(self.fdialog._on_dircontent_select, names='value')
 
     # ── Load state indicator ────────────────────────────────────────
 
