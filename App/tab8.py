@@ -1,4 +1,5 @@
 import os
+import re
 import copy
 import math
 import ipywidgets as widgets
@@ -46,10 +47,13 @@ class Tab():
             placeholder='Set name', layout=Layout(width='150px'))
         self.b_add_set = Button(description='+ Add Set', layout=Layout(width='90px'))
         self.b_rename_set = Button(description='Rename', layout=Layout(width='80px'))
+        self.b_copy_set = Button(description='Copy Set', button_style='info',
+                                 layout=Layout(width='90px'))
         self.b_delete_set = Button(description='Delete Set', button_style='danger',
                                    layout=Layout(width='90px'))
         self.b_add_set.on_click(self._do_add_set)
         self.b_rename_set.on_click(self._do_rename_set)
+        self.b_copy_set.on_click(self._do_copy_set)
         self.b_delete_set.on_click(self._do_delete_set)
 
         # Panel list
@@ -72,6 +76,14 @@ class Tab():
         self.b_col_remove = Button(description='Remove Selected', button_style='warning',
                                    layout=Layout(width='140px'))
         self.b_col_remove.on_click(self._do_col_remove)
+
+        self.col_edit_text = widgets.Text(
+            placeholder='Select a column to edit its name',
+            layout=Layout(width='380px'))
+        self.b_col_apply = Button(description='Apply Edit', button_style='info',
+                                  layout=Layout(width='100px'))
+        self.b_col_apply.on_click(self._do_col_apply)
+        self.col_select.observe(self._on_col_selected, 'value')
 
         self.unit_text = widgets.Text(description='Unit:', layout=Layout(width='200px'))
         self.color_text = widgets.Text(
@@ -128,7 +140,7 @@ class Tab():
             self.set_select,
             self.new_set_name,
             HBox([self.b_add_set, self.b_rename_set]),
-            self.b_delete_set,
+            HBox([self.b_copy_set, self.b_delete_set]),
         ])
 
         panel_col = VBox([
@@ -141,6 +153,7 @@ class Tab():
             widgets.HTML('<b>Edit Panel</b>'),
             HBox([widgets.HTML('<b>Columns:</b>'), self.b_col_remove]),
             self.col_select,
+            HBox([self.col_edit_text, self.b_col_apply]),
             HBox([self.unit_text, self.color_text]),
             HBox([self.ylim_radio, self.ylim_min, self.ylim_max]),
             HBox([self.b_preview, self.sno_preview]),
@@ -241,8 +254,10 @@ class Tab():
         self._updating = True
         self.col_select.options = tuple(p.get('col', []))
         self.unit_text.value = str(p.get('unit', ''))
+        has_wildcard = any('*' in c for c in p.get('col', []))
+        self.color_text.disabled = has_wildcard
         color = p.get('color', '')
-        self.color_text.value = ', '.join(color) if isinstance(color, list) else str(color)
+        self.color_text.value = '' if has_wildcard else (', '.join(color) if isinstance(color, list) else str(color))
         ylim = p.get('ylim', [0, 100])
         if ylim == 'func_power':
             self.ylim_radio.value = 'func_power'
@@ -266,8 +281,13 @@ class Tab():
             return
         p = self._figures[skey][idx]
         p['unit'] = self.unit_text.value
-        color_str = self.color_text.value.strip()
-        p['color'] = [c.strip() for c in color_str.split(',')] if ',' in color_str else color_str
+        if any('*' in c for c in p.get('col', [])):
+            p.pop('color', None)
+            self.color_text.disabled = True
+        else:
+            self.color_text.disabled = False
+            color_str = self.color_text.value.strip()
+            p['color'] = [c.strip() for c in color_str.split(',')] if ',' in color_str else color_str
         if self.ylim_radio.value == 'func_power':
             p['ylim'] = 'func_power'
             self.ylim_min.disabled = True
@@ -334,6 +354,25 @@ class Tab():
         self.new_set_name.value = ''
         self._refresh_set_list(keep_value=new_name)
 
+    def _do_copy_set(self, b):
+        skey = self._current_set()
+        new_name = self.new_set_name.value.strip()
+        if not skey:
+            return
+        if not new_name:
+            with self.tab8_out:
+                self.tab8_out.clear_output()
+                print('Enter a name for the copy in the text field above first.')
+            return
+        if new_name in self._figures:
+            with self.tab8_out:
+                self.tab8_out.clear_output()
+                print(f'Set "{new_name}" already exists.')
+            return
+        self._figures[new_name] = copy.deepcopy(self._figures[skey])
+        self.new_set_name.value = ''
+        self._refresh_set_list(keep_value=new_name)
+
     # --- Panel management ---
 
     def _do_panel_add(self, b):
@@ -389,6 +428,39 @@ class Tab():
         self.panel_select.value = opts[idx]
         self._updating = False
 
+    def _on_col_selected(self, change):
+        if self._updating:
+            return
+        selected = self.col_select.value
+        if len(selected) == 1:
+            self.col_edit_text.value = selected[0]
+
+    def _do_col_apply(self, b):
+        skey = self._current_set()
+        idx = self._current_panel_idx()
+        if skey is None or idx is None:
+            return
+        selected = self.col_select.value
+        if len(selected) != 1:
+            with self.tab8_out:
+                self.tab8_out.clear_output()
+                print('Select exactly one column to edit.')
+            return
+        new_name = self.col_edit_text.value.strip()
+        if not new_name:
+            return
+        old_name = selected[0]
+        p = self._figures[skey][idx]
+        p['col'] = [new_name if c == old_name else c for c in p['col']]
+        self._updating = True
+        self.col_select.options = tuple(p['col'])
+        self.col_select.value = (new_name,)
+        opts = list(self.panel_select.options)
+        opts[idx] = self._panel_option_str(idx, p)
+        self.panel_select.options = tuple(opts)
+        self.panel_select.value = opts[idx]
+        self._updating = False
+
     # --- DataItem search ---
 
     def _do_search(self, b):
@@ -437,6 +509,7 @@ class Tab():
             return
         name = self._search_names[sel_idx]
         if self.func_cyl_chkbox.value:
+            name = re.sub(r'\d+$', '', name)
             if not name.endswith('*'):
                 name = name + '*'
             name = 'func_cyl|' + name
@@ -508,11 +581,22 @@ class Tab():
 
     # --- Save / Reload ---
 
+    def _clean_figures(self, figures):
+        for panels in figures.values():
+            for p in panels:
+                color = p.get('color', None)
+                if color is not None:
+                    empty = (isinstance(color, str) and color.strip() == '') or \
+                            (isinstance(color, list) and all(c.strip() == '' for c in color))
+                    if empty:
+                        del p['color']
+        return figures
+
     def _do_save(self, b):
         with self.tab8_out:
             self.tab8_out.clear_output()
             path = os.path.join(os.getcwd(), 'App', 'figures.json')
-            dmp2.save_json(path, self._figures)
+            dmp2.save_json(path, self._clean_figures(self._figures))
             cm.V.lfigures = cm.dfigures(cm.V.e)
             cm.V.plotdef, cm.V.vset = dmp2.cplotdef(cm.mp, cm.V.lfigures)
             print(f'Saved to {path}')
@@ -527,7 +611,7 @@ class Tab():
                 return
             fname = name if name.endswith('.json') else name + '.json'
             path = os.path.join(os.getcwd(), 'App', fname)
-            dmp2.save_json(path, self._figures)
+            dmp2.save_json(path, self._clean_figures(self._figures))
             print(f'Saved to {path}')
             self.save_as_name.value = ''
             # refresh file picker so the new file appears

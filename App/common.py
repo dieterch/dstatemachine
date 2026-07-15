@@ -43,9 +43,11 @@ def dfigures(e = None):
                     figures[key][i]['ylim'] = [0,func_power]
             for j , dataitem in enumerate(r['col']):
                 if 'func_cyl|' in dataitem:
+                    pattern = dataitem[len('func_cyl|'):]
                     lcol = figures[key][i]['col'].copy()
-                    lcol[j] = func_cyl(f"{dataitem[len('func_cyl|'):]}")
+                    lcol[j] = func_cyl(pattern)
                     figures[key][i]['col'] = flatten_list(lcol)
+                    figures[key][i]['label'] = pattern
     return figures
 
 with open('./assets/Misterious_mist.gif', 'rb') as f:

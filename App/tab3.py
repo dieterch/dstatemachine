@@ -1,4 +1,5 @@
 import os
+import asyncio
 import pickle
 import pandas as pd; pd.options.mode.chained_assignment = None
 from datetime import datetime, date
@@ -293,19 +294,19 @@ class Tab():
         return self.rda
 
     #@tab3_out.capture(clear_output=True)
-    def show_timings(self,b):
+    def show_timings(self, b):
+        asyncio.ensure_future(self._show_timings_async())
+
+    async def _show_timings_async(self):
         with self.tab3_out:
             if cm.V.fsm is not None:
                 self.tab3_out.clear_output()
                 self.filter_results()
-                self.rde = self.rda #.fillna('')
+                self.rde = self.rda
                 if not self.rde.empty:
                     self.rde['datetime'] = pd.to_datetime(self.rde['starttime'])
                     sdict ={'success':1, 'failed':0, 'undefined':0.5}
                     self.rde['isuccess'] = self.rde.apply(lambda x: sdict[x['success']], axis=1)
-                    #vec = ['startpreparation','speedup','idle','synchronize','loadramp','targetload','ramprate','cumstarttime','targetoperation','rampdown','coolrun','runout','isuccess']
-                    
-                    #dfigsize = (20,10)
                     dset = [
                         {'col':['cumstarttime'],'_ylim':(-600,800), 'color':'darkblue', 'unit':'sec' },
                         {'col':['runout'],'_ylim':(0,100) , 'unit':'sec' },
@@ -318,21 +319,20 @@ class Tab():
                         {'col':['degasing'],'_ylim':(-1000,800), 'unit':'sec' },
                         {'col':['W','A','isuccess'],'_ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
                         {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.1)'] , 'unit':'-' },
-                        #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
                     ]
-                     #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
                     dset_c = [r for r in dset if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
                     dset = dmp2.equal_adjust(dset_c, self.rde, do_not_adjust=[-1])
                     ftitle = f"{cm.V.fsm._e}"
                     try:
-                        fig = dmp2.dbokeh_chart(self.rde, dset, style='both', figsize=cm.V.dfigsize ,title=ftitle);
+                        fig = dmp2.dbokeh_chart(self.rde, dset, style='both', figsize=cm.V.dfigsize, title=ftitle)
                         print()
                         dmp2.bokeh_show(fig)
                     except Exception as err:
                         print('\n','no figure to display, Error: ', str(err))
 
-                    if 'oph' in self.rde:            
-                        print
+                    await asyncio.sleep(0)
+
+                    if 'oph' in self.rde:
                         dset2 = [
                             {'col':['targetload','maxload'],'ylim':(-4000,26000), 'unit':'kW' },
                             {'col':['idle'],'ylim':(-100,1000), 'color':'dodgerblue', 'unit':'sec' },
@@ -343,60 +343,53 @@ class Tab():
                             {'col':['W','A','isuccess'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,128,0,0.2)'] , 'unit':'-' },
                             {'col':['LOC'],'ylim': [0, 1], 'color':'green', 'unit':'g/kWh'},
                             {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.1)'] , 'unit':'-' },
-                            #{'col':['W','A','no'],'ylim':(-1,200), 'color':['rgba(255,165,0,0.3)','rgba(255,0,0,0.3)','rgba(0,0,0,0.1)'] }
-                        ]      
-                         #Checken, ob run2 Resultate im den Daten vorhanden sind und dr2set2 entsprechend anpassen
+                        ]
                         dset2_c = [r for r in dset2 if all(res in list(cm.V.fsm.starts.columns) for res in r['col'])]
                         dset2 = dmp2.equal_adjust(dset2_c, self.rde, do_not_adjust=[-1,-2])
-                        ftitle = f"{cm.V.fsm._e}"
                         try:
-                            fig2 = dmp2.dbokeh_chart(self.rde, dset2, x='oph', style='both', figsize=cm.V.dfigsize ,title=ftitle);
+                            fig2 = dmp2.dbokeh_chart(self.rde, dset2, x='oph', style='both', figsize=cm.V.dfigsize, title=ftitle)
                             print()
                             dmp2.bokeh_show(fig2)
                         except Exception as err:
                             print('\n','no figure to display, Error: ', str(err))
                     else:
                         print("'oph' not found.")
-                        
-                    vec = [c for c in cm.V.fsm.results['run2_content']['startstop'] if c in self.rde.columns]
-                    print()
-                    display(_=self.rde[vec].hist(bins=30,figsize=(20,20)))
-                    print()
-                    display(self.rde[vec].describe()
-                                .style
-                                .set_table_styles([
-                                    {'selector':'table,td,th', 'props': 'font-size: 0.7rem; '}
-                                ])
-                                .format(
-                            precision=0,
-                            na_rep='-',
-                            formatter={
-                                'starter': "{:.1f}",
-                                'idle': "{:.1f}",
-                                'PressBoost_max': "{:.2f}",
-                                'ramprate':"{:.2f}",
-                                'runout': lambda x: f"{x:0.1f}"
-                            }
-                        ))
-                    print()
-                    if self.show_startlist.value:
-                        display(self.rde[['starttime'] + vec][::-1]
-                                .style
-                                .hide()
-                                .format(
-                            precision=2,
-                            na_rep='-',
-                            formatter={
-                                'starttime': "{:%Y-%m-%d %H:%M:%S %z}",
-                                'starter': "{:.1f}",
-                                'idle': "{:.1f}",
-                                'PressBoost_max': "{:.2f}",
-                                'ramprate':"{:.2f}",
-                                'runout': lambda x: f"{x:0.1f}"
-                            }
-                        ))
-                    #else:
-                    print()
+
+                    await asyncio.sleep(0)
+
+                    try:
+                        vec = [c for c in cm.V.fsm.results['run2_content']['startstop'] if c in self.rde.columns]
+                        print()
+                        # display(_=self.rde[vec].hist(bins=30,figsize=(20,20)))
+                        print()
+                        fmt_cols = {
+                            'starter': "{:.1f}",
+                            'idle': "{:.1f}",
+                            'PressBoost_max': "{:.2f}",
+                            'ramprate':"{:.2f}",
+                            'runout': lambda x: f"{x:0.1f}"
+                        }
+                        active_fmt = {k: v for k, v in fmt_cols.items() if k in vec}
+                        display(self.rde[vec].describe()
+                                    .style
+                                    .set_table_styles([
+                                        {'selector':'table,td,th', 'props': 'font-size: 0.7rem; '}
+                                    ])
+                                    .format(precision=0, na_rep='-', formatter=active_fmt))
+                        print()
+                        if self.show_startlist.value:
+                            sl_fmt = {k: v for k, v in fmt_cols.items() if k in vec}
+                            sl_fmt['starttime'] = "{:%Y-%m-%d %H:%M:%S %z}"
+                            display(self.rde[['starttime'] + vec][::-1]
+                                    .style
+                                    .hide()
+                                    .format(precision=2, na_rep='-', formatter=sl_fmt))
+                        print()
+                    except Exception as err:
+                        import traceback
+                        print(f'\n*** ERROR after charts: {err} ***')
+                        print(traceback.format_exc())
+
                     if self.list_alarms.value or self.list_warnings.value:
                         self.rde['AW'] = self.rde.apply(lambda x: x['A'] + x['W'] > 0, axis=1)
                         self.rde = self.rde[::-1].reset_index()
@@ -406,14 +399,6 @@ class Tab():
                             while True:
                                 i,row = next(rowgen)
                                 if row['AW']:
-                                    #if i-k > 0:
-                                    #    if not self.show_only_messages.value:
-                                    #        display_fmt(self.rde.iloc[k:i])
-                                    #if not self.show_only_messages.value:
-                                    #    display_fmt(row.to_frame().T)
-                                    #else:
-                                    #    print('--------------')
-                                    #display(HTML("<hr>"))
                                     if self.list_alarms.value:
                                         cm.disp_alwr(row,'alarms',self.cb_msgfilter,self.msg_no.value)
                                     if self.list_warnings.value:

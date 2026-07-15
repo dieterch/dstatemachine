@@ -37,8 +37,14 @@ class Tab():
             button_style='success')
         self.bt_load_testfile.on_click(self.load_testfile)
 
+        self.bt_to_sqlite = widgets.Button(
+            description='Save as SQLite',
+            button_style='warning',
+            layout=widgets.Layout(display='none'))
+        self.bt_to_sqlite.on_click(self._do_to_sqlite)
+
         self.child1 = widgets.VBox([
-            widgets.HBox([self.file_search, self.bt_load_testfile]),
+            widgets.HBox([self.file_search, self.bt_load_testfile, self.bt_to_sqlite]),
             self.file_select,
         ])
 
@@ -280,6 +286,8 @@ class Tab():
             self.selected_engine.value = cm.V.selected
             self.selected_engine_number.value = cm.V.selected_number
             self._update_load_state()
+            is_pickle = sel.endswith('.dfsm') and open(sel, 'rb').read(1) == b'\x80'
+            self.bt_to_sqlite.layout.display = 'block' if is_pickle else 'none'
             cm.status('tab1', cm.V.selected)
             with self.tab1_out:
                 info = cm.V.fsm.results['info']
@@ -296,6 +304,26 @@ class Tab():
             logging.error(f"load_testfile: {traceback.format_exc()}")
             self._update_load_state(error=f'Load failed: {err}')
             cm.status('tab1', f'Error loading {fname}: {err}')
+
+    def _do_to_sqlite(self, but):
+        self.tab1_out.clear_output()
+        fname = self.file_select.value
+        if not fname or cm.V.fsm is None:
+            return
+        sel = os.path.join(DATA_DIR, fname)
+        with self.tab1_out:
+            try:
+                cm.status('tab1', f'⌛ converting {fname} to SQLite …')
+                cm.V.fsm.save_results(sel, fmt='sqlite')
+                self.bt_to_sqlite.layout.display = 'none'
+                self._all_files = self._scan_dfsm_files()
+                self.file_select.options = self._all_files
+                self.file_select.value = fname
+                cm.status('tab1', f'Converted {fname} to SQLite.')
+                print(f'Saved as SQLite: {sel}')
+            except Exception as err:
+                cm.status('tab1', f'Conversion error: {err}')
+                print(f'Error: {err}')
 
     def clear(self, but):
         cm.tabs_out.clear_output()
