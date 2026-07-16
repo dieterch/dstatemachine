@@ -225,7 +225,8 @@ class Tab():
                 res2_dict = {
                     'actors':'synchronisation',
                     'tecjet':'tecjet',
-                    'exhaust':'exhaust'
+                    'exhaust':'exhaust',
+                    'bearing':'bearing',
                 }
 
                 if res2_dict.get(doplot, '') in cm.V.fsm.results['run2_content']:

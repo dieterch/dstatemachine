@@ -371,6 +371,45 @@ class Oil_Start_Collector(Data_Collector):
         results['starts'][sno].update(res)
         return results  
 
+####################################
+### collect Bearing Temperature Data
+####################################
+class Bearing_Temp_Collector(Data_Collector):
+    def __init__(self, results, engine):
+        self.name = 'bearing'
+        self.phases = ['speedup', 'loadramp']
+        super().__init__(self.phases)
+        self._e = engine
+        self.tmain = self._e.dataItemsCyl('Bear_Main_Temp*')
+        self.tconrod = self._e.dataItemsCyl('Bear_Conrod_Temp*')
+        self._vset += self.tmain + self.tconrod + ['Hyd_TempOil']
+        self._content = ['BearMain_TempMax', 'BearMain_TempMaxPos',
+                         'BearConrod_TempMax', 'BearConrod_TempMaxPos',
+                         'TempOil_at_BearMax']
+        results['run2_content'][self.name] = ['no'] + self._content
+
+    def collect(self, startversuch, results, data):
+        tdata = self.cut_data(startversuch, data, self.phases, post_phase=60)
+        res = {k: np.nan for k in self._content}
+        if not tdata.empty:
+            present_main = [c for c in self.tmain if c in tdata.columns]
+            present_conrod = [c for c in self.tconrod if c in tdata.columns]
+            if present_main:
+                main_max_series = tdata[present_main].max(axis=1)
+                peak_idx = main_max_series.idxmax()
+                hottest_col = tdata[present_main].loc[peak_idx].idxmax()
+                res['BearMain_TempMax'] = main_max_series.max()
+                res['BearMain_TempMaxPos'] = int(hottest_col[-2:])
+                if 'Hyd_TempOil' in tdata.columns:
+                    res['TempOil_at_BearMax'] = tdata.at[peak_idx, 'Hyd_TempOil']
+            if present_conrod:
+                hottest_conrod = tdata[present_conrod].max(axis=0).idxmax()
+                res['BearConrod_TempMax'] = tdata[present_conrod].max(axis=1).max()
+                res['BearConrod_TempMaxPos'] = int(hottest_conrod[-2:])
+        sno = startversuch['no']
+        results['starts'][sno].update(res)
+        return results
+
 # RUN4 Results
 ####################################
 ### collect Stop Data

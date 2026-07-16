@@ -18,7 +18,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from dmyplant2.dEngine import Engine
-from .dFSMToolBox import Target_load_Collector, Exhaust_temp_Collector, Tecjet_Collector, Sync_Current_Collector, Oil_Start_Collector, Rampdown_Collector,Coolrun_Collector,Runout_Collector,load_data, msg_smalltxt
+from .dFSMToolBox import Target_load_Collector, Exhaust_temp_Collector, Tecjet_Collector, Sync_Current_Collector, Oil_Start_Collector, Bearing_Temp_Collector, Rampdown_Collector,Coolrun_Collector,Runout_Collector,load_data, msg_smalltxt
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -37,6 +37,13 @@ _RUN4_COLS = [
     'StopCrankCasePressure', 'HexTemp@Power', 'oph', 'starts', 'LOC', 'StopRoomTemp',
     'Stop_Overspeed', 'Idle_CrankcasePressure',
     'Stop_Throttle', 'Stop_PVKDifPress', 'MaxHexTemp',
+]
+
+# run2 bearing KPI columns written by Bearing_Temp_Collector
+_RUN2_BEARING_COLS = [
+    'BearMain_TempMax', 'BearMain_TempMaxPos',
+    'BearConrod_TempMax', 'BearConrod_TempMaxPos',
+    'TempOil_at_BearMax',
 ]
 
 def _ts_to_str(ts):
@@ -961,6 +968,53 @@ class FSMOperator:
             con.close()
         return lfsm
 
+    @classmethod
+    def update_run2_bearing(cls, mp, filename):
+        """Load an existing SQLite .dfsm, run Bearing_Temp_Collector on starts where
+        BearMain_TempMax is NULL, write only the bearing KPI columns back in-place.
+        Returns the FSMOperator. Raises ValueError if not SQLite format.
+        """
+        with open(filename, 'rb') as f:
+            magic = f.read(16)
+        if not magic.startswith(b'SQLite format 3'):
+            raise ValueError(f"{filename} is not a SQLite .dfsm file. Migrate it first with migrate_dfsm().")
+
+        lfsm = cls.load_results(mp, filename)
+        bearing_col = Bearing_Temp_Collector(lfsm.results, lfsm._e)
+
+        con = sqlite3.connect(filename)
+        try:
+            existing_cols = {row[1] for row in con.execute("PRAGMA table_info(starts)")}
+            for col in _RUN2_BEARING_COLS:
+                if col not in existing_cols:
+                    con.execute(f'ALTER TABLE starts ADD COLUMN "{col}" REAL')
+            con.commit()
+
+            pbar = tqdm(total=len(lfsm.results['starts']), ncols=80, mininterval=2, unit=' starts', desc="BearUpdate", file=sys.stdout)
+            for startversuch in lfsm.results['starts']:
+                sno = startversuch['no']
+                bear_val = startversuch.get('BearMain_TempMax', float('nan'))
+                if bear_val == bear_val:  # already collected (not NaN) — skip
+                    pbar.update()
+                    continue
+                try:
+                    vset, tfrom, tto = bearing_col.register(startversuch, vset=[], tfrom=None, tto=None)
+                    if tfrom is not None and tto is not None:
+                        data = load_data(lfsm, cycletime=1, tts_from=tfrom, tts_to=tto, silent=True, p_data=vset, p_forceReload=False, p_suffix='_run2', debug=False)
+                        lfsm.results = bearing_col.collect(startversuch, lfsm.results, data)
+                        updates = {k: _coerce_val(lfsm.results['starts'][sno][k]) for k in _RUN2_BEARING_COLS if k in lfsm.results['starts'][sno]}
+                        if updates:
+                            set_clause = ', '.join(f'"{k}"=?' for k in updates)
+                            con.execute(f'UPDATE starts SET {set_clause} WHERE no=?', list(updates.values()) + [sno])
+                except Exception as err:
+                    logging.error(f"update_run2_bearing: start {sno}: {err}\n{traceback.format_exc()}")
+                pbar.update()
+            pbar.close()
+            con.commit()
+        finally:
+            con.close()
+        return lfsm
+
     def append_results(self, mfsm):
         #check is it is the same engine
         if (mfsm.results['sn'] == self.results['sn']):
@@ -1330,25 +1384,33 @@ class FSMOperator:
         #ratedload = self._e['Power_PowerNominal']
         self.target_load_collector = Target_load_Collector(self.results, self._e, period_factor=3, helplinefactor=0.8)
         self.exhaust_temp_collector = Exhaust_temp_Collector(self.results, self._e)
-        self.tecjet_collector = Tecjet_Collector(self.results, self._e)
+        if str(self._e['Engine Series']) in ('4', '6'):
+            self.tecjet_collector = Tecjet_Collector(self.results, self._e)
+        else:
+            self.tecjet_collector = None
+            self.results['run2_content'].setdefault('tecjet', ['no'])
         self.sync_current_collector = Sync_Current_Collector(self.results, self._e)
         self.oil_start_collector = Oil_Start_Collector(self.results, self._e)
-        
+        self.bearing_temp_collector = Bearing_Temp_Collector(self.results, self._e)
 
     def run2_collectors_register(self, startversuch):
         vset, tfrom, tto = self.target_load_collector.register(startversuch, vset=[], tfrom=None, tto=None) #vset,tfrom,tto will be populated by the Collectors
         vset, tfrom, tto = self.exhaust_temp_collector.register(startversuch, vset, tfrom, tto)
-        vset, tfrom, tto = self.tecjet_collector.register(startversuch, vset, tfrom, tto)
+        if self.tecjet_collector is not None:
+            vset, tfrom, tto = self.tecjet_collector.register(startversuch, vset, tfrom, tto)
         vset, tfrom, tto = self.sync_current_collector.register(startversuch, vset, tfrom, tto)
         vset, tfrom, tto = self.oil_start_collector.register(startversuch, vset, tfrom, tto)
-        return vset, tfrom, tto 
+        vset, tfrom, tto = self.bearing_temp_collector.register(startversuch, vset, tfrom, tto)
+        return vset, tfrom, tto
 
     def run2_collectors_collect(self, startversuch, results, data):
         results = self.target_load_collector.collect(startversuch, results, data)
         results = self.exhaust_temp_collector.collect(startversuch, results, data)
-        results = self.tecjet_collector.collect(startversuch, results, data)
+        if self.tecjet_collector is not None:
+            results = self.tecjet_collector.collect(startversuch, results, data)
         results = self.sync_current_collector.collect(startversuch, results, data)
         results = self.oil_start_collector.collect(startversuch, results, data)
+        results = self.bearing_temp_collector.collect(startversuch, results, data)
         return results
 
     def run2(self, silent=False, debug=False, p_refresh=False):
