@@ -1,5 +1,4 @@
 import os
-import asyncio
 import pickle
 import pandas as pd; pd.options.mode.chained_assignment = None
 from datetime import datetime, date
@@ -293,11 +292,7 @@ class Tab():
         self.rda = self.rda.reset_index(drop='index')
         return self.rda
 
-    #@tab3_out.capture(clear_output=True)
     def show_timings(self, b):
-        asyncio.ensure_future(self._show_timings_async())
-
-    async def _show_timings_async(self):
         with self.tab3_out:
             if cm.V.fsm is not None:
                 self.tab3_out.clear_output()
@@ -330,8 +325,6 @@ class Tab():
                     except Exception as err:
                         print('\n','no figure to display, Error: ', str(err))
 
-                    await asyncio.sleep(0)
-
                     if 'oph' in self.rde:
                         dset2 = [
                             {'col':['targetload','maxload'],'ylim':(-4000,26000), 'unit':'kW' },
@@ -354,8 +347,6 @@ class Tab():
                             print('\n','no figure to display, Error: ', str(err))
                     else:
                         print("'oph' not found.")
-
-                    await asyncio.sleep(0)
 
                     try:
                         vec = [c for c in cm.V.fsm.results['run2_content']['startstop'] if c in self.rde.columns]
