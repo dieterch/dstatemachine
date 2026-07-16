@@ -206,6 +206,14 @@ class Tab():
         )
         self.b_stop.on_click(self.show_stop)
 
+        self.b_bearing = widgets.Button(
+            description='Bearing Temps',
+            disabled=False,
+            button_style='primary',
+            tooltip='Show Bearing Temperature Results collected in Run2',
+        )
+        self.b_bearing.on_click(self.show_bearing)
+
     @property
     def tab(self):
         return widgets.VBox([
@@ -228,7 +236,7 @@ class Tab():
                             self.cb_spreadabove
                             ])
                         ]),
-                    widgets.HBox([self.timings_button, self.b_tecjet,self.b_exhaust,self.b_sync,self.b_oil,self.b_stop]),
+                    widgets.HBox([self.timings_button, self.b_tecjet,self.b_exhaust,self.b_sync,self.b_oil,self.b_stop,self.b_bearing]),
                     self.tab3_out
                     ],
                     layout=widgets.Layout(min_height=cm.V.hh))
@@ -709,8 +717,52 @@ class Tab():
                         dmp2.bokeh_show(fig3)
                     
                 print()
-                display(rde[cm.V.fsm.results['run4_content']['stop']].describe().style.format(precision=2, na_rep='-'))                
+                display(rde[cm.V.fsm.results['run4_content']['stop']].describe().style.format(precision=2, na_rep='-'))
                 print()
                 display(rde[cm.V.fsm.results['run4_content']['stop']][::-1].style.format(precision=2,na_rep='-').hide())
             else:
                 print('No Data available.')
+
+    def show_bearing(self, b):
+        with self.tab3_out:
+            self.tab3_out.clear_output()
+            if ((cm.V.fsm is not None) and cm.V.fsm.starts.iloc[0]['run2']
+                    and 'bearing' in cm.V.fsm.results['run2_content']
+                    and 'BearMain_TempMax' in cm.V.fsm.starts.columns):
+                rde = self.filter_results()
+                if not rde.empty:
+                    rde['datetime'] = pd.to_datetime(rde['starttime'])
+                    ntitle = f"{cm.V.fsm._e}" + ' | Bearing Temperatures at Start'
+                    dset = [
+                        {'col':['BearMain_TempMax'],'_ylim': [0, 120], 'color':'crimson', 'unit':'°C'},
+                        {'col':['BearConrod_TempMax'],'_ylim': [0, 120], 'color':'orange', 'unit':'°C'},
+                        {'col':['TempOil_at_BearMax'],'_ylim': [0, 100], 'color':'dodgerblue', 'unit':'°C'},
+                        {'col':['BearMain_TempMaxPos'],'_ylim': [0, 12], 'color':'plum', 'unit':'-'},
+                        {'col':['BearConrod_TempMaxPos'],'_ylim': [0, 24], 'color':'sandybrown', 'unit':'-'},
+                        {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)']},
+                    ]
+                    dset_c = [r for r in dset if all(res in rde.columns for res in r['col'])]
+                    dset_c = dmp2.equal_adjust(dset_c, rde, do_not_adjust=['no'], minfactor=0.9, maxfactor=1.1)
+                    fig1 = dmp2.dbokeh_chart(rde, dset_c, style='both', figsize=self.dfigsize, title=ntitle)
+                    dmp2.bokeh_show(fig1)
+
+                    if 'TempOil_at_BearMax' in rde.columns:
+                        print()
+                        ntitle2 = f"{cm.V.fsm._e}" + ' | Max Bearing Temp vs Oil Temp'
+                        dset2 = [
+                            {'col':['BearMain_TempMax'],'_ylim': [0, 120], 'color':'crimson', 'unit':'°C'},
+                            {'col':['BearConrod_TempMax'],'_ylim': [0, 120], 'color':'orange', 'unit':'°C'},
+                            {'col':['no'],'_ylim':(0,1000), 'color':['rgba(0,0,0,0.05)']},
+                        ]
+                        dset2_c = [r for r in dset2 if all(res in rde.columns for res in r['col'])]
+                        dset2_c = dmp2.equal_adjust(dset2_c, rde, do_not_adjust=['no'], minfactor=0.9, maxfactor=1.1)
+                        fig2 = dmp2.dbokeh_chart(rde, dset2_c, x='TempOil_at_BearMax', style='circle', figsize=self.dfigsize, title=ntitle2)
+                        dmp2.bokeh_show(fig2)
+
+                    vec_b = [c for c in cm.V.fsm.results['run2_content']['bearing'] if c in rde.columns]
+                    print()
+                    display(rde[vec_b].describe().style.format(precision=2, na_rep='-'))
+                    print()
+                    display(rde[vec_b][::-1].style.format(precision=2, na_rep='-').hide())
+            else:
+                print('No bearing temperature data available. Run "Add Bearing Temps" in Tab 2 first.')
