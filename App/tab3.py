@@ -1,7 +1,6 @@
 import os
 import asyncio
 import pickle
-from tornado.ioloop import IOLoop
 import pandas as pd; pd.options.mode.chained_assignment = None
 from datetime import datetime, date
 import ipywidgets as widgets
@@ -296,7 +295,7 @@ class Tab():
 
     #@tab3_out.capture(clear_output=True)
     def show_timings(self, b):
-        IOLoop.current().spawn_callback(self._show_timings_async)
+        asyncio.ensure_future(self._show_timings_async())
 
     async def _show_timings_async(self):
         with self.tab3_out:
