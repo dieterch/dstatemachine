@@ -409,7 +409,7 @@ def bokeh_chart(source, pltcfg, x_ax='datetime', x_ax_unit=None, title=None, gri
             tooltips=tip,
             formatters={'@datetime': 'datetime'},
             mode='mouse',
-            toggleable=False))
+            visible=False))
 
     p.toolbar.active_drag = p.select_one('BoxZoomTool')
     p.toolbar.active_scroll = p.select_one('WheelZoomTool')
@@ -544,7 +544,7 @@ def bokeh_chart_engine_comparison(source, pltcfg, variable, eng_names, x_ax='dat
                 func = getattr(p, style)
                 renderers.append(func(source=source, x=x_ax, y=col,
                 color=color, y_range_name=str(i), legend_label=eng_name, line_width=linewidth))
-            p.add_tools(HoverTool(tooltips=[(eng_name, '@{'+col +'}{0.2 f} '+unit[-1])], renderers=[renderers[-1]],toggleable=False))
+            p.add_tools(HoverTool(tooltips=[(eng_name, '@{'+col +'}{0.2 f} '+unit[-1])], renderers=[renderers[-1]],visible=False))
 
         if not y.get('ylim'):  #only if y-limits not specified
             p.extra_y_ranges[str(i)].renderers = renderers #only use axis specific renderers for calculation of limits
