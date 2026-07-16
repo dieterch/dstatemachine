@@ -1010,6 +1010,8 @@ class FSMOperator:
                     logging.error(f"update_run2_bearing: start {sno}: {err}\n{traceback.format_exc()}")
                 pbar.update()
             pbar.close()
+            con.execute("INSERT OR REPLACE INTO misc(key,value) VALUES('run2_content',?)",
+                        (json.dumps(lfsm.results['run2_content'], default=str),))
             con.commit()
         finally:
             con.close()
