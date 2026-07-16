@@ -152,14 +152,10 @@ def _plot(idf, x12='datetime', y1 = ['Various_Values_SpeedAct'], y2 = ['Power_Po
     ax2.set_ylim(ylim2)
     return ax, ax2, idf
 
-_output_notebook_done = False
-
 def dbokeh_chart(source, pltcfg, x='datetime', x_ax_unit=None, title=None, grid=True, legend=True, style='line', x_range=None, y_range=None, notebook=True, figsize=(8,6), *args, **kwargs):
     """wrapper function for bokeh_chart from Johannes"""
-    global _output_notebook_done
-    if notebook and not _output_notebook_done:
+    if notebook:
         output_notebook(hide_banner=True)
-        _output_notebook_done = True
     if title: title = str(title)
     for col in pltcfg: 
         if not 'unit' in col: col['unit'] = ''
