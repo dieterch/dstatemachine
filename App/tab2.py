@@ -130,6 +130,13 @@ class Tab():
             layout=widgets.Layout(display='none'))
         self.b_run4only.on_click(self.fsm_add_run4)
 
+        self.b_bearing_update = widgets.Button(
+            description='Add Bearing Temps',
+            disabled=False,
+            button_style='warning',
+            layout=widgets.Layout(display='none'))
+        self.b_bearing_update.on_click(self.fsm_add_bearing)
+
     @property
     def tab(self):
         return VBox([
@@ -154,7 +161,8 @@ class Tab():
                     self.b_runfsm4,
                     self.b_savefsm,
                     self.b_appendfsm,
-                    self.b_run4only
+                    self.b_run4only,
+                    self.b_bearing_update
                 ])
             ]),
             self.tab2_out
@@ -202,6 +210,15 @@ class Tab():
                         self.b_run4only.layout.display = 'block'
                     else:
                         self.b_run4only.layout.display = 'none'
+                    filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm' if V.fsm is not None else ''
+                    is_sqlite = (os.path.exists(filename) and
+                                 open(filename, 'rb').read(16).startswith(b'SQLite format 3'))
+                    if (V.fsm is not None and
+                            all(r in V.fsm.runs_completed for r in [0, 1, 2]) and
+                            is_sqlite):
+                        self.b_bearing_update.layout.display = 'block'
+                    else:
+                        self.b_bearing_update.layout.display = 'none'
                     self.check_buttons()
                 
         with self.tab2_out:        
@@ -404,6 +421,20 @@ class Tab():
                 except ValueError as err:
                     print(f'tab2 - Error: {err}')
 
+    def fsm_add_bearing(self, b):
+        if V.fsm is not None:
+            filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm'
+            with self.tab2_out:
+                self.tab2_out.clear_output()
+                try:
+                    print(f'tab2 - ⌛ adding bearing temps to {filename} ...')
+                    V.fsm = dmp2.FSMOperator.update_run2_bearing(mp, filename)
+                    V.rdf = V.fsm.starts
+                    self.check_buttons()
+                    print(f'tab2 - bearing temps added and saved to {filename}')
+                except ValueError as err:
+                    print(f'tab2 - Error: {err}')
+
     def check_buttons(self):
         #for b in [ self.b_loadmessages, self.b_runfsm, self.b_resultsfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
         for b in [ self.b_loadmessages, self.b_runfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
@@ -440,6 +471,11 @@ class Tab():
             self.b_run4only.disabled = False
         else:
             self.b_run4only.disabled = True
+        if (V.fsm is not None and
+                all(r in V.fsm.runs_completed for r in [0, 1, 2])):
+            self.b_bearing_update.disabled = False
+        else:
+            self.b_bearing_update.disabled = True
 
             
             
