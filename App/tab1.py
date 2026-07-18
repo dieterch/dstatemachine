@@ -1,128 +1,200 @@
 import os
-import pickle
+import re
+import traceback
 import pandas as pd; pd.options.mode.chained_assignment = None
-from pprint import pformat as pf
 import ipywidgets as widgets
-#import solara
-from IPython.display import display
-from ipyfilechooser import FileChooser
+from IPython.display import display, HTML
 import dmyplant2 as dmp2
 import App.common as cm
 import logging
 
-#cred()
-#mp = MyPlant(3600)
-#########################################
-# tab1
-#########################################
+DATA_DIR = os.path.join(os.getcwd(), 'data')
+
+
 class Tab():
     def __init__(self):
-
         self.title = '1. select Engine'
         self.tab1_out = widgets.Output()
 
+        # ── File chooser panel ──────────────────────────────────────
+        self._all_files = self._scan_dfsm_files()
+
+        self.file_search = widgets.Text(
+            value='',
+            placeholder='type to filter …',
+            description='Filter:',
+            layout=widgets.Layout(width='340px'))
+        self.file_search.observe(self._apply_search, 'value')
+
+        self.file_select = widgets.Select(
+            options=self._all_files,
+            rows=12,
+            layout=widgets.Layout(width='560px'))
+
         self.bt_load_testfile = widgets.Button(
             description='Load',
-            disabled=False, 
-            button_style='')
+            disabled=False,
+            button_style='success')
         self.bt_load_testfile.on_click(self.load_testfile)
 
-        self.fdialog = FileChooser(
-            os.getcwd() + '/data',
-            filename='',
-            #title='<b>FileChooser example</b>',
-            show_hidden=False,
-            select_default=True,
-            show_only_dirs=False
-        )
-        self.fdialog.filter_pattern = '*.dfsm'
+        self.bt_to_sqlite = widgets.Button(
+            description='Save as SQLite',
+            button_style='warning',
+            layout=widgets.Layout(display='none'))
+        self.bt_to_sqlite.on_click(self._do_to_sqlite)
 
+        self.child1 = widgets.VBox([
+            widgets.HBox([self.file_search, self.bt_load_testfile, self.bt_to_sqlite]),
+            self.file_select,
+        ])
+
+        # ── Fleet panel ─────────────────────────────────────────────
         self.query_drop_down = widgets.Combobox(
             value='',
-            # placeholder='Choose Someone',
             options=cm.V.query_list,
             description='Site Name:',
-            #ensure_option=True,
             disabled=False,
             layout=widgets.Layout(width='600px'))
 
         self.engine_selections = widgets.Select(
-            options=list(), 
-            #value='', 
-            rows=10, 
-            description='Engine:', 
-            disabled=False, 
+            options=list(),
+            rows=10,
+            description='Engine:',
+            disabled=False,
             layout=widgets.Layout(width='600px'))
         self.engine_selections.observe(self.do_selection, 'value')
 
         self.selected_engine = widgets.Text(
-            value='-', 
-            description='selected:', 
-            disabled=True, 
+            value='-',
+            description='selected:',
+            disabled=True,
             layout=widgets.Layout(width='400px'))
 
         self.selected_engine_number = widgets.Text(
-            value='-', 
-            description='Motor No:', 
-            disabled=True, 
+            value='-',
+            description='Motor No:',
+            disabled=True,
             layout=widgets.Layout(width='200px'))
 
         self.b_search = widgets.Button(
             description='Lookup',
             disabled=False,
-            tooltip = \
-        '''- Site Name
-        - Engine Type
-        - Engine Version
-        - Design Number
-        - serialNumber
-        - assetNumber''',
+            tooltip='Site Name / Engine Type / Engine Version / Design Number / serialNumber / assetNumber',
             button_style='primary')
         self.b_search.on_click(self.search)
 
         self.b_LoadEngine = widgets.Button(
             description='Load Engine',
-            disabled=False, 
+            disabled=False,
             button_style='primary',
             layout=widgets.Layout(display='none'))
         self.b_LoadEngine.on_click(self.loadEngine)
 
         self.b_clear = widgets.Button(
             description='Clear',
-            disabled=False, 
+            disabled=False,
             button_style='')
         self.b_clear.on_click(self.clear)
 
-
-        self.child1 = widgets.HBox([self.bt_load_testfile,self.fdialog])
         self.child2 = widgets.HBox([
-                            widgets.VBox([
-                                self.query_drop_down,
-                                self.engine_selections,
-                                widgets.HBox([self.selected_engine,self.selected_engine_number])
-                            ]),
-                            widgets.VBox([self.b_search,self.b_LoadEngine,self.b_clear])
-                        ])
+            widgets.VBox([
+                self.query_drop_down,
+                self.engine_selections,
+                widgets.HBox([self.selected_engine, self.selected_engine_number])
+            ]),
+            widgets.VBox([self.b_search, self.b_LoadEngine, self.b_clear])
+        ])
 
-        self.accordion = widgets.Accordion(
-            children=[
-                self.child1, 
-                self.child2
-            ]
-        )
-        self.accordion.set_title(0,'FSM Files')
-        self.accordion.set_title(1,'Start Analysis from Installed Fleet')
+        # ── Accordion ───────────────────────────────────────────────
+        self.accordion = widgets.Accordion(children=[self.child1, self.child2])
+        self.accordion.set_title(0, 'FSM Files')
+        self.accordion.set_title(1, 'Start Analysis from Installed Fleet')
         self.accordion.observe(self.accordion_change_index, 'selected_index')
         self.accordion.selected_index = 1
+
+        # ── Persistent load-state indicator ─────────────────────────
+        self.load_state_html = widgets.HTML(value=self._render_load_state())
+
+    # ── File list helpers ────────────────────────────────────────────
+
+    def _dfsm_label(self, fname):
+        path = os.path.join(DATA_DIR, fname)
+        try:
+            with open(path, 'rb') as fh:
+                magic = fh.read(16)
+            if magic[:15] == b'SQLite format 3':
+                icon = '\U0001f5c4'   # 🗄 cabinet (SQLite)
+            elif magic[:1] == b'\x80':
+                icon = '\U0001f952'   # 🥒 pickle
+            else:
+                icon = '\U0001f4c4'   # 📄 generic
+        except OSError:
+            icon = '?'
+        return f'{icon} {fname}'
+
+    def _scan_dfsm_files(self):
+        """Return sorted list of (label, filename) tuples for .dfsm files in DATA_DIR."""
+        try:
+            files = [f for f in os.listdir(DATA_DIR) if f.endswith('.dfsm')]
+        except OSError:
+            return []
+        files = sorted(files, key=lambda f: re.sub(r'^\d+_', '', f).lower())
+        return [(self._dfsm_label(f), f) for f in files]
+
+    def _apply_search(self, change):
+        q = change['new'].strip().lower()
+        filtered = [t for t in self._all_files if q in t[1].lower()] if q else self._all_files
+        current = self.file_select.value
+        self.file_select.options = filtered
+        if current in [t[1] for t in filtered]:
+            self.file_select.value = current
+
+    # ── Load state indicator ────────────────────────────────────────
+
+    def _render_load_state(self, error=None):
+        if error:
+            return (f'<div style="padding:6px 10px; background:#ffebee; '
+                    f'border-left:4px solid #f44336; font-size:0.85rem; color:#b71c1c">'
+                    f'&#10060; {error}</div>')
+        if cm.V.fsm is None and cm.V.e is None:
+            return ('<div style="padding:6px 10px; background:#f5f5f5; '
+                    'border-left:4px solid #aaa; font-size:0.85rem; color:#666">'
+                    'No data loaded</div>')
+        if cm.V.fsm is None:
+            return (f'<div style="padding:6px 10px; background:#fff8e1; '
+                    f'border-left:4px solid #ffc107; font-size:0.85rem">'
+                    f'Engine: <b>{cm.V.selected}</b> &nbsp;|&nbsp; no FSM results</div>')
+        runs = sorted(cm.V.fsm.runs_completed)
+        runs_str = ', '.join(f'run{r}' for r in runs) if runs else '—'
+        rdf = cm.V.rdf
+        n = len(rdf) if rdf is not None and not rdf.empty else 0
+        if n > 0 and 2 in runs:
+            succ = rdf[rdf['success'] == 'success'].shape[0]
+            fail = rdf[rdf['success'] == 'failed'].shape[0]
+            pct = succ / n * 100
+            detail = f'{n} starts &nbsp;|&nbsp; {succ} ok / {fail} fail &nbsp;|&nbsp; reliability {pct:.0f}%'
+        else:
+            detail = f'{n} starts'
+        return (f'<div style="padding:6px 10px; background:#e8f5e9; '
+                f'border-left:4px solid #4caf50; font-size:0.85rem">'
+                f'&#10003; Engine: <b>{cm.V.selected}</b> &nbsp;|&nbsp; '
+                f'{runs_str} &nbsp;|&nbsp; {detail}</div>')
+
+    def _update_load_state(self, error=None):
+        self.load_state_html.value = self._render_load_state(error=error)
+
+    # ── Widget tree ─────────────────────────────────────────────────
 
     @property
     def tab(self):
         return widgets.VBox([
-                        self.accordion,
-                        self.tab1_out
-                    ],layout=widgets.Layout(min_height=cm.V.hh))
+            self.accordion,
+            self.load_state_html,
+            self.tab1_out
+        ], layout=widgets.Layout(min_height=cm.V.hh))
 
     def selected(self):
+        self._update_load_state()
         with cm.tabs_out:
             cm.tabs_out.clear_output()
             print(f'tab1 - {cm.V.selected}')
@@ -130,114 +202,150 @@ class Tab():
     def cleartab(self):
         self.tab1_out.clear_output()
 
-    def loadEngine(self, but):
-        if cm.V.selected_number is not None:
-            with cm.tabs_out:
-                cm.tabs_out.clear_output()
-                cm.tabs_html.value = ''
-                print(f'tab1 - ⌛ loading Myplant Engine Data for "{cm.V.selected}" ...')
-                logging.debug(f"loadEngine: cm.V.e = {cm.V.e}.")
-                logging.debug(f"fleet info: {cm.V.fleet.iloc[int(cm.V.selected_number)]}")            
-                cm.V.e=dmp2.Engine.from_fleet(cm.mp, cm.V.fleet.iloc[int(cm.V.selected_number)])
-                logging.debug(f"got this engine back: {cm.V.e}")    
-                cm.tabs_out.clear_output()
-                cm.V.fsm = None
-                print(f'tab1 - {cm.V.selected}')
+    # ── Callbacks ───────────────────────────────────────────────────
 
-    def do_lookup(self,lookup):
+    def loadEngine(self, but):
+        if cm.V.selected_number is None:
+            return
+        cm.tabs_html.value = ''
+        cm.status('tab1', f'⌛ loading Myplant Engine Data for "{cm.V.selected}" …')
+        try:
+            logging.debug(f"loadEngine: cm.V.e = {cm.V.e}.")
+            logging.debug(f"fleet info: {cm.V.fleet.iloc[int(cm.V.selected_number)]}")
+            cm.V.e = dmp2.Engine.from_fleet(cm.mp, cm.V.fleet.iloc[int(cm.V.selected_number)])
+            logging.debug(f"got this engine back: {cm.V.e}")
+            cm.V.fsm = None
+            self._update_load_state()
+            cm.status('tab1', cm.V.selected)
+        except Exception as err:
+            logging.error(f"loadEngine: {err}")
+            self._update_load_state(error=f'Engine load failed: {err}')
+            cm.status('tab1', f'Error: {err}')
+
+    def do_lookup(self, lookup):
         def sfun(x):
-            #return all([ (lookup in str(x['Design Number'])),  (x['OperationalCondition'] != 'Decommissioned') ])
             return (
-                (str(lookup).upper() in str(x['IB Site Name']).upper()) or \
-                (str(lookup).upper() in str(x['Engine Type']).upper()) or \
-                (str(lookup).upper() in str(x['Engine Version']).upper()) or \
-                (str(lookup) == str(x['Design Number'])) or \
-                (str(lookup) == str(x['serialNumber'])) or \
+                (str(lookup).upper() in str(x['IB Site Name']).upper()) or
+                (str(lookup).upper() in str(x['Engine Type']).upper()) or
+                (str(lookup).upper() in str(x['Engine Version']).upper()) or
+                (str(lookup) == str(x['Design Number'])) or
+                (str(lookup) == str(x['serialNumber'])) or
                 (str(lookup) == str(x['id']))) and \
                 (x['OperationalCondition'] != 'Decommissioned')
 
         cm.V.fleet = cm.mp.search_installed_fleet(sfun).drop('index', axis=1)
-        cm.V.fleet = cm.V.fleet.sort_values(by = "Engine ID",ascending=True).reset_index(drop='index')
-        ddl = [f"{x['serialNumber']}  J{x['Engine Type']} {x['Engine Version']:<4} {x['Engine ID']} {x['IB Site Name']}" for i, x in cm.V.fleet.iterrows()]
-        ddl = [m for m in ddl]
-        return ddl
+        cm.V.fleet = cm.V.fleet.sort_values(by='Engine ID', ascending=True).reset_index(drop='index')
+        return [f"{x['serialNumber']}  J{x['Engine Type']} {x['Engine Version']:<4} {x['Engine ID']} {x['IB Site Name']}"
+                for i, x in cm.V.fleet.iterrows()]
 
-    #@tab1_out.capture(clear_output=True)
-    def do_selection(self,*args):
+    def do_selection(self, *args):
         self.selected_engine.value = self.engine_selections.value
-        self.selected_engine_number.value = str(list(self.engine_selections.options).index(self.engine_selections.value))
+        self.selected_engine_number.value = str(
+            list(self.engine_selections.options).index(self.engine_selections.value))
         cm.V.selected = self.selected_engine.value
         cm.V.selected_number = self.selected_engine_number.value
-        cm.status('tab1',f'{len(list(self.engine_selections.options))} Engines found - please select an Engine and load it.')
-        self.b_LoadEngine.layout.display = 'block' 
+        cm.status('tab1', f'{len(list(self.engine_selections.options))} Engines found — select one and load it.')
+        self.b_LoadEngine.layout.display = 'block'
 
-    #@self.tab1_out.capture(clear_output=True)
-    def search(self,but):
+    def search(self, but):
         self.tab1_out.clear_output()
-        if self.query_drop_down.value != '':
+        if not self.query_drop_down.value:
+            cm.status('tab1', 'please provide a query string.')
+            return
+        try:
             self.engine_selections.options = self.do_lookup(self.query_drop_down.value)
-            #display(HTML(pd.DataFrame.from_dict(e.dash, orient='index').T.to_html(escape=False, index=False)))
             with cm.tabs_out:
-                cm.tabs_html.value = cm.V.fleet[:].T \
-                    .style \
-                    .set_table_styles([
-                            {'selector':'th,td','props':'font-size:0.7rem; min-width: 70px; margin: 0px; padding: 0px;'}]
-                        ) \
-                    .format(
-                        precision=0,
-                        na_rep='-'
-                        ).to_html(escape=False, index=False)
-            if ((not self.query_drop_down.value in cm.V.query_list) and (len(self.engine_selections.options) > 0)):
+                cm.tabs_html.value = (cm.V.fleet[:].T
+                    .style
+                    .set_table_styles([{'selector': 'th,td',
+                                        'props': 'font-size:0.7rem; min-width: 70px; margin: 0px; padding: 0px;'}])
+                    .format(precision=0, na_rep='-')
+                    .to_html(escape=False, index=False))
+            if (self.query_drop_down.value not in cm.V.query_list and
+                    len(self.engine_selections.options) > 0):
                 cm.V.query_list.append(self.query_drop_down.value)
             cm.save_query_list(cm.V.query_list)
-        else: 
-            cm.status('tab1','please provide a query string.')
+        except Exception as err:
+            logging.error(f"search: {err}")
+            cm.status('tab1', f'Lookup error: {err}')
 
-    #@tab1_out.capture(clear_output=True)
-    def load_testfile(self,but):
+    def load_testfile(self, but):
         self.tab1_out.clear_output()
-        if self.fdialog.selected.endswith('.dfsm'):
-            cm.status('tab1', f'⌛ loading {self.fdialog.selected}')
-            cm.V.fsm = dmp2.FSMOperator.load_results(cm.mp, self.fdialog.selected)
+        fname = self.file_select.value
+        if not fname:
+            cm.status('tab1', 'please select a *.dfsm file.')
+            return
+        sel = os.path.join(DATA_DIR, fname)
+        cm.status('tab1', f'⌛ loading {fname} …')
+        try:
+            cm.V.fsm = dmp2.FSMOperator.load_results(cm.mp, sel)
             cm.V.e = cm.V.fsm._e
             cm.V.rdf = cm.V.fsm.starts
-            self.selected_engine.value = cm.V.selected = cm.V.fsm.results['info']['Name']
-            self.selected_engine_number.value = cm.V.selected_number = '0'
-            with cm.tabs_out:
-                cm.status('tab1')
-                display(pd.DataFrame.from_dict(cm.V.fsm.results['info'], orient='index').T.style.hide())
-                cm.V.app.clear_all()
-        else:
-            cm.status('tab1','please select a *.dfsm File.')
-
-    def clear(self,but):
-        with cm.tabs_out:
-            cm.tabs_out.clear_output()
-            #self.tab1_out.clear_output()
-            cm.tabs_html.value = ''
-            self.b_LoadEngine.layout.display = 'none'
-            self.query_drop_down.value = ''
-            self.engine_selections.options = ['']
-            # engine_selections.value = ''
-            self.selected_engine.value = ''
-            self.selected_engine_number.value = ''
-            cm.tabs_html.value = ''
-            cm.V.selected = None
-            cm.V.selected_number = None
-            cm.V.fsm = None
+            cm.V.selected = cm.V.fsm.results['info']['Name']
+            cm.V.selected_number = '0'
+            self.selected_engine.value = cm.V.selected
+            self.selected_engine_number.value = cm.V.selected_number
+            self._update_load_state()
+            is_pickle = sel.endswith('.dfsm') and open(sel, 'rb').read(1) == b'\x80'
+            self.bt_to_sqlite.layout.display = 'block' if is_pickle else 'none'
+            cm.status('tab1', cm.V.selected)
+            with self.tab1_out:
+                info = cm.V.fsm.results['info']
+                rows = ''.join(
+                    f'<tr><td style="font-weight:bold;padding:2px 8px">{k}</td>'
+                    f'<td style="padding:2px 8px">'
+                    f'{v.strftime("%Y-%m-%d") if isinstance(v, pd.Timestamp) else str(v)}'
+                    f'</td></tr>'
+                    for k, v in info.items())
+                display(HTML(
+                    f'<table style="font-size:0.8rem;border-collapse:collapse">{rows}</table>'))
             cm.V.app.clear_all()
-            cm.status('tab1')
+        except Exception as err:
+            logging.error(f"load_testfile: {traceback.format_exc()}")
+            self._update_load_state(error=f'Load failed: {err}')
+            cm.status('tab1', f'Error loading {fname}: {err}')
 
-        #cm.V.query_list = init_query_list()
-        #save_query_list(cm.V.query_list)
+    def _do_to_sqlite(self, but):
+        self.tab1_out.clear_output()
+        fname = self.file_select.value
+        if not fname or cm.V.fsm is None:
+            return
+        sel = os.path.join(DATA_DIR, fname)
+        with self.tab1_out:
+            try:
+                cm.status('tab1', f'⌛ converting {fname} to SQLite …')
+                cm.V.fsm.save_results(sel, fmt='sqlite')
+                self.bt_to_sqlite.layout.display = 'none'
+                self._all_files = self._scan_dfsm_files()
+                self.file_select.options = self._all_files
+                self.file_select.value = fname
+                cm.status('tab1', f'Converted {fname} to SQLite.')
+                print(f'Saved as SQLite: {sel}')
+            except Exception as err:
+                cm.status('tab1', f'Conversion error: {err}')
+                print(f'Error: {err}')
 
-#    def status(self,text=''):
-#        with cm.tabs_out:
-#            cm.tabs_out.clear_output()
-#            print(f'tab1{" - " if text != "" else ""}{text}')
+    def clear(self, but):
+        cm.tabs_out.clear_output()
+        cm.tabs_html.value = ''
+        self.tab1_out.clear_output()
+        self.b_LoadEngine.layout.display = 'none'
+        self.query_drop_down.value = ''
+        self.engine_selections.options = ['']
+        self.selected_engine.value = ''
+        self.selected_engine_number.value = ''
+        self.file_search.value = ''
+        self.file_select.options = self._all_files
+        cm.V.selected = None
+        cm.V.selected_number = None
+        cm.V.fsm = None
+        cm.V.e = None
+        self._update_load_state()
+        cm.V.app.clear_all()
+        cm.status('tab1')
 
-    def accordion_change_index(self,*args):
+    def accordion_change_index(self, *args):
         if self.accordion.selected_index == 0:
-            cm.status('tab1','please select a *.dfsm File.')
+            cm.status('tab1', 'please select a *.dfsm file.')
         elif self.accordion.selected_index == 1:
-            cm.status('tab1','please provide a query string.')
+            cm.status('tab1', 'please provide a query string.')

@@ -26,8 +26,9 @@ from dmyplant2.dPlot import (
     count_columns
     )
 from dmyplant2.dFSM import (
-    FSMOperator, 
-    startstopFSM, 
+    FSMOperator,
+    startstopFSM,
+    migrate_dfsm,
     FSM_splot,
     FSM_splotBC,
     FSM_VLine,

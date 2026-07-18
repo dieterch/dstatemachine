@@ -225,17 +225,15 @@ class Tab():
                 res2_dict = {
                     'actors':'synchronisation',
                     'tecjet':'tecjet',
-                    'exhaust':'exhaust'
+                    'exhaust':'exhaust',
+                    'bearing':'bearing',
                 }
 
                 if res2_dict.get(doplot, '') in cm.V.fsm.results['run2_content']:
                     display(HTML(self.html_table(startversuch[cm.V.fsm.results['run2_content'][res2_dict[doplot]]])))
                 dset = lfigures[doplot]
                 ltitle = f"{ftitle} | {doplot}"
-                if dmp2.count_columns(dset) > 12: # no legend, if too many lines.
-                    fig = dmp2.FSM_splot(fsm, startversuch, data, dset, title=ltitle, legend=False, figsize=self.pfigsize)
-                else:
-                    fig = dmp2.FSM_splot(fsm, startversuch, data, dset, title=ltitle, figsize=self.pfigsize)
+                fig = dmp2.FSM_splot(fsm, startversuch, data, dset, title=ltitle, figsize=self.pfigsize)
 
                 if self.export_chkbox.value:
                     ndata = data[['time','Various_Values_SpeedAct']]

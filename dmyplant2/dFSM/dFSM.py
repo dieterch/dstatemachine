@@ -7,6 +7,8 @@ import os
 import sys
 import time
 import pickle
+import sqlite3
+import json
 import warnings
 from pprint import pprint as pp, pformat as pf
 import arrow
@@ -16,9 +18,271 @@ import pandas as pd
 from tqdm import tqdm
 
 from dmyplant2.dEngine import Engine
-from .dFSMToolBox import Target_load_Collector, Exhaust_temp_Collector, Tecjet_Collector, Sync_Current_Collector, Oil_Start_Collector, Rampdown_Collector,Coolrun_Collector,Runout_Collector,load_data, msg_smalltxt
+from .dFSMToolBox import Target_load_Collector, Exhaust_temp_Collector, Tecjet_Collector, Sync_Current_Collector, Oil_Start_Collector, Bearing_Temp_Collector, Rampdown_Collector,Coolrun_Collector,Runout_Collector,load_data, msg_smalltxt
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
+###########################################################################################
+## SQLite serialization helpers
+###########################################################################################
+
+_NESTED_KEYS = {'startstoptiming', 'alarms', 'warnings'}
+_TS_COLS_STARTS = ['starttime', 'endtime']
+_TS_COLS_STOPS  = ['starttime', 'endtime']
+
+# run4 scalar KPI columns written by Rampdown/Coolrun/Runout collectors
+_RUN4_COLS = [
+    'run4',
+    'Stop_Power', 'StopPower',           # Rampdown_Collector writes 'StopPower' (content declares 'Stop_Power')
+    'StopCrankCasePressure', 'HexTemp@Power', 'oph', 'starts', 'LOC', 'StopRoomTemp',
+    'Stop_Overspeed', 'Idle_CrankcasePressure',
+    'Stop_Throttle', 'Stop_PVKDifPress', 'MaxHexTemp',
+]
+
+# run2 bearing KPI columns written by Bearing_Temp_Collector
+_RUN2_BEARING_COLS = [
+    'BearMain_TempMax', 'BearMain_TempMaxPos',
+    'BearConrod_TempMax', 'BearConrod_TempMaxPos',
+    'TempOil_at_BearMax',
+]
+
+def _ts_to_str(ts):
+    if ts is pd.NaT or ts != ts:
+        return None
+    try:
+        return ts.isoformat()
+    except Exception:
+        return None
+
+def _str_to_ts(s):
+    if s is None:
+        return pd.NaT
+    return pd.Timestamp(s)
+
+def _coerce_val(v):
+    """Convert numpy/pandas scalars to Python natives for sqlite3."""
+    if isinstance(v, (np.integer,)):
+        return int(v)
+    if isinstance(v, (np.floating,)):
+        return None if np.isnan(v) else float(v)
+    if isinstance(v, (np.bool_,)):
+        return int(v)
+    if isinstance(v, bool):
+        return int(v)
+    if v != v:  # catch float nan
+        return None
+    return v
+
+def _save_sqlite(con, results):
+    """Write the full results dict into an open SQLite connection (no commit)."""
+    cur = con.cursor()
+
+    # --- info ---
+    cur.execute("DROP TABLE IF EXISTS info")
+    cur.execute("CREATE TABLE info (key TEXT PRIMARY KEY, value TEXT)")
+    for k, v in results.get('info', {}).items():
+        cur.execute("INSERT INTO info VALUES (?,?)", (str(k), str(v)))
+
+    # --- starts (flat scalar columns) ---
+    cur.execute("DROP TABLE IF EXISTS starts")
+    flat_starts = []
+    for s in results['starts']:
+        row = {k: v for k, v in s.items() if k not in _NESTED_KEYS}
+        for col in _TS_COLS_STARTS:
+            if col in row:
+                row[col] = _ts_to_str(row[col])
+        row = {k: _coerce_val(v) for k, v in row.items()}
+        flat_starts.append(row)
+    if flat_starts:
+        df_starts = pd.DataFrame(flat_starts)
+        df_starts.to_sql('starts', con, if_exists='replace', index=False)
+    else:
+        cur.execute("CREATE TABLE starts (no INTEGER PRIMARY KEY)")
+
+    # --- stops ---
+    cur.execute("DROP TABLE IF EXISTS stops")
+    flat_stops = []
+    for s in results['stops']:
+        row = {k: v for k, v in s.items() if k not in _NESTED_KEYS}
+        for col in _TS_COLS_STOPS:
+            if col in row:
+                row[col] = _ts_to_str(row[col])
+        row = {k: _coerce_val(v) for k, v in row.items()}
+        flat_stops.append(row)
+    if flat_stops:
+        df_stops = pd.DataFrame(flat_stops)
+        df_stops.to_sql('stops', con, if_exists='replace', index=False)
+    else:
+        cur.execute("CREATE TABLE stops (no INTEGER PRIMARY KEY)")
+
+    # --- timings ---
+    cur.execute("DROP TABLE IF EXISTS timings")
+    cur.execute("CREATE TABLE timings (start_no INTEGER, phase TEXT, seq INTEGER, phase_start TEXT, phase_end TEXT)")
+    for s in results['starts']:
+        for phase, entries in s.get('startstoptiming', {}).items():
+            for seq, entry in enumerate(entries):
+                cur.execute("INSERT INTO timings VALUES (?,?,?,?,?)", (
+                    s['no'], phase, seq,
+                    _ts_to_str(entry.get('start')),
+                    _ts_to_str(entry.get('end')),
+                ))
+
+    # --- alarms ---
+    cur.execute("DROP TABLE IF EXISTS alarms")
+    cur.execute("CREATE TABLE alarms (start_no INTEGER, seq INTEGER, state TEXT, ts_epoch INTEGER, name TEXT, severity INTEGER, message TEXT)")
+    for s in results['starts']:
+        for seq, a in enumerate(s.get('alarms', [])):
+            msg = a.get('msg', {})
+            cur.execute("INSERT INTO alarms VALUES (?,?,?,?,?,?,?)", (
+                s['no'], seq, a.get('state'),
+                msg.get('timestamp'), msg.get('name'),
+                msg.get('severity'), msg.get('message'),
+            ))
+
+    # --- warnings ---
+    cur.execute("DROP TABLE IF EXISTS warnings")
+    cur.execute("CREATE TABLE warnings (start_no INTEGER, seq INTEGER, state TEXT, ts_epoch INTEGER, name TEXT, severity INTEGER, message TEXT)")
+    for s in results['starts']:
+        for seq, w in enumerate(s.get('warnings', [])):
+            msg = w.get('msg', {})
+            cur.execute("INSERT INTO warnings VALUES (?,?,?,?,?,?,?)", (
+                s['no'], seq, w.get('state'),
+                msg.get('timestamp'), msg.get('name'),
+                msg.get('severity'), msg.get('message'),
+            ))
+
+    # --- misc (everything that doesn't fit a flat table) ---
+    cur.execute("DROP TABLE IF EXISTS misc")
+    cur.execute("CREATE TABLE misc (key TEXT PRIMARY KEY, value TEXT)")
+    misc_keys = ['run2_content', 'run4_content', 'serviceselectortiming',
+                 'oilpumptiming', 'run2_failed', 'run4_failed', 'runlogdetail', 'runs_completed']
+    for k in misc_keys:
+        if k in results:
+            try:
+                cur.execute("INSERT INTO misc VALUES (?,?)", (k, json.dumps(results[k], default=str)))
+            except Exception as e:
+                logging.warning(f"_save_sqlite: could not serialize misc key '{k}': {e}")
+
+
+def _load_sqlite_results(con, results):
+    """Populate a results dict from an open SQLite connection.
+    Restores the full nested structure (startstoptiming, alarms, warnings).
+    Returns runs_completed as a list.
+    """
+    # --- starts ---
+    df = pd.read_sql_query("SELECT * FROM starts", con)
+    for col in _TS_COLS_STARTS:
+        if col in df.columns:
+            df[col] = df[col].apply(_str_to_ts)
+    for col in ['run2', 'run4']:
+        if col in df.columns:
+            df[col] = df[col].astype(bool)
+    starts = df.to_dict('records')
+
+    # restore nested fields — use groupby to avoid O(n²) per-start filtering
+    timing_df = pd.read_sql_query("SELECT * FROM timings ORDER BY phase, seq", con)
+    alarm_df  = pd.read_sql_query("SELECT * FROM alarms  ORDER BY seq",         con)
+    warn_df   = pd.read_sql_query("SELECT * FROM warnings ORDER BY seq",         con)
+
+    # pre-group by start_no so each lookup is O(1)
+    timing_by_no = {sno: grp for sno, grp in timing_df.groupby('start_no')}
+    alarm_by_no  = {sno: grp for sno, grp in alarm_df.groupby('start_no')}
+    warn_by_no   = {sno: grp for sno, grp in warn_df.groupby('start_no')}
+
+    for s in starts:
+        sno = s['no']
+        # startstoptiming
+        stt = {}
+        if sno in timing_by_no:
+            for _, row in timing_by_no[sno].iterrows():
+                phase = row['phase']
+                entry = {'start': _str_to_ts(row['phase_start']), 'end': _str_to_ts(row['phase_end'])}
+                stt.setdefault(phase, []).append(entry)
+        s['startstoptiming'] = stt
+        # alarms
+        if sno in alarm_by_no:
+            s['alarms'] = [
+                {'state': r['state'], 'msg': {
+                    'timestamp': r['ts_epoch'], 'name': r['name'],
+                    'severity': r['severity'], 'message': r['message']}}
+                for _, r in alarm_by_no[sno].iterrows()
+            ]
+        else:
+            s['alarms'] = []
+        # warnings
+        if sno in warn_by_no:
+            s['warnings'] = [
+                {'state': r['state'], 'msg': {
+                    'timestamp': r['ts_epoch'], 'name': r['name'],
+                    'severity': r['severity'], 'message': r['message']}}
+                for _, r in warn_by_no[sno].iterrows()
+            ]
+        else:
+            s['warnings'] = []
+
+    results['starts'] = starts
+    results['starts_counter'] = starts[-1]['no'] + 1 if starts else 0
+
+    # --- stops ---
+    df_stops = pd.read_sql_query("SELECT * FROM stops", con)
+    for col in _TS_COLS_STOPS:
+        if col in df_stops.columns:
+            df_stops[col] = df_stops[col].apply(_str_to_ts)
+    # alarms/warnings are not stored per stop (stops have them as lists in misc potentially)
+    stops = df_stops.to_dict('records')
+    for s in stops:
+        s.setdefault('alarms', [])
+        s.setdefault('warnings', [])
+    results['stops'] = stops
+    results['stops_counter'] = stops[-1]['no'] + 1 if stops else 0
+
+    # --- misc ---
+    misc_rows = pd.read_sql_query("SELECT * FROM misc", con)
+    for _, row in misc_rows.iterrows():
+        try:
+            results[row['key']] = json.loads(row['value'])
+        except Exception:
+            results[row['key']] = row['value']
+
+    runs_completed = results.pop('runs_completed', [])
+    return runs_completed
+
+
+def migrate_dfsm(mp, old_path, new_path=None):
+    """Convert a legacy pickle .dfsm to SQLite format.
+    Creates a .pkl_bak backup if overwriting in place.
+    Returns the reconstructed FSMOperator.
+    """
+    from dmyplant2.dEngine import Engine
+    new_path = new_path or old_path
+    with open(old_path, 'rb') as f:
+        magic = f.read(16)
+    if magic.startswith(b'SQLite format 3'):
+        print(f'{old_path} is already SQLite — nothing to do.')
+        return FSMOperator.load_results(mp, old_path)
+
+    with open(old_path, 'rb') as f:
+        results = pickle.load(f)
+
+    # Build a minimal shell FSMOperator bypassing __init__ (avoids network load_messages)
+    e = Engine.from_sn(mp, results['info']['serialNumber'])
+    lfsm = FSMOperator.__new__(FSMOperator)
+    lfsm._e = e
+    lfsm._p_from = results['info']['p_from']
+    lfsm._p_to   = results['info']['p_to']
+    lfsm.results = results
+    lfsm.runs_completed = results['info'].get('runs_completed', [])
+    lfsm.pfn = e._fname + '_statemachine.pkl'
+
+    if new_path == old_path:
+        backup = old_path + '.pkl_bak'
+        os.rename(old_path, backup)
+        print(f'Backup created: {backup}')
+
+    lfsm.save_results(new_path)
+    print(f'Migrated to SQLite: {new_path}')
+    return lfsm
+
 
 #Various_Bits_CollAlarm
 ###########################################################################################
@@ -581,9 +845,10 @@ class FSMOperator:
         if self.exists:
             os.remove(self.pfn)
 
-    def save_results(self, filename):
+    def save_results(self, filename, fmt='sqlite'):
         if len(self.starts) > 0:
             self.unstore()
+            self.results['runs_completed'] = list(set(self.runs_completed))
             self.results['info'] = dict(
                 save_date = pd.to_datetime('today').normalize(),
                 p_from = self._p_from,
@@ -593,25 +858,164 @@ class FSMOperator:
                 starts = len(self.starts)
             )
             self.results['info'].update(self._e.description)
-            with open(filename, 'wb') as handle:
-                pickle.dump(self.results, handle, protocol=5)
-                logging.info(f"Results successfully saved to {filename}")
+            if fmt == 'pickle':
+                with open(filename, 'wb') as handle:
+                    pickle.dump(self.results, handle, protocol=5)
+                    logging.info(f"Results successfully saved (pickle) to {filename}")
+            else:
+                # If an existing file is a legacy pickle, back it up before overwriting
+                if os.path.exists(filename):
+                    with open(filename, 'rb') as _f:
+                        _magic = _f.read(16)
+                    if not _magic.startswith(b'SQLite format 3'):
+                        backup = filename + '.pkl_bak'
+                        os.rename(filename, backup)
+                        logging.info(f"Legacy pickle backed up to {backup}")
+                con = sqlite3.connect(filename)
+                try:
+                    _save_sqlite(con, self.results)
+                    con.commit()
+                finally:
+                    con.close()
+                logging.info(f"Results successfully saved (sqlite) to {filename}")
         else:
-            print('no results to save.')        
+            print('no results to save.')
+
+    @classmethod
+    def _load_sqlite(cls, mp, filename):
+        con = sqlite3.connect(filename)
+        try:
+            info = dict(pd.read_sql_query("SELECT key, value FROM info", con).values)
+        finally:
+            con.close()
+
+        e = Engine.from_sn(mp, info['serialNumber'])
+        lfsm = cls(e, p_from=info.get('p_from'), p_to=info.get('p_to'))
+
+        con = sqlite3.connect(filename)
+        try:
+            runs_completed = _load_sqlite_results(con, lfsm.results)
+        finally:
+            con.close()
+
+        lfsm.results['info'] = info
+        lfsm.runs_completed = runs_completed if isinstance(runs_completed, list) else json.loads(runs_completed)
+        return lfsm
 
     @classmethod
     def load_results(cls, mp, filename):
-        if os.path.exists(filename):
-            with open(filename, 'rb') as handle:
-                results = pickle.load(handle)
-                #pp(results['info'])
-                e = Engine.from_sn(mp, results['info']['serialNumber'])
-                lfsm = cls(e, p_from=results['info']['p_from'], p_to=results['info']['p_to'])
-                lfsm.results = results
-                lfsm.runs_completed = results['info'].get('runs_completed',[])
-                return lfsm
-        else:
+        if not os.path.exists(filename):
             raise FileNotFoundError(filename)
+        with open(filename, 'rb') as f:
+            magic = f.read(16)
+        if magic.startswith(b'SQLite format 3'):
+            return cls._load_sqlite(mp, filename)
+        # legacy pickle path — bypass __init__ to avoid network load_messages call
+        with open(filename, 'rb') as handle:
+            results = pickle.load(handle)
+        e = Engine.from_sn(mp, results['info']['serialNumber'])
+        lfsm = cls.__new__(cls)
+        lfsm._e = e
+        lfsm._p_from = results['info']['p_from']
+        lfsm._p_to   = results['info']['p_to']
+        lfsm.results = results
+        lfsm.runs_completed = results['info'].get('runs_completed', [])
+        lfsm.pfn = e._fname + '_statemachine.pkl'
+        lfsm.hdfn = e._fname + '_statemachine.hdf'
+        lfsm.tempfn = e._fname + '_temp.feather'
+        lfsm.message_queue = []
+        lfsm.extra_messages = []
+        lfsm.logrun = [1, 2]
+        lfsm.logstates = ['startstop']
+        lfsm.act_run = 0
+        lfsm.startstopHandler = startstopFSM(lfsm, e)
+        lfsm.serviceSelectorHandler = ServiceSelectorFSM()
+        lfsm.oilpumpHandler = OilPumpFSM()
+        # _messages / nsvec / first_message / last_message are loaded on demand
+        # (call lfsm.load_messages(...) before re-running the FSM)
+        return lfsm
+
+    @classmethod
+    def update_run4(cls, mp, filename):
+        """Load an existing SQLite .dfsm, run run4 on starts that need it,
+        write only the run4 KPI columns back in-place. Returns the FSMOperator.
+        Raises ValueError if the file is not SQLite format.
+        """
+        with open(filename, 'rb') as f:
+            magic = f.read(16)
+        if not magic.startswith(b'SQLite format 3'):
+            raise ValueError(f"{filename} is not a SQLite .dfsm file. Migrate it first with migrate_dfsm().")
+
+        lfsm = cls.load_results(mp, filename)
+        lfsm.run4(silent=False)
+
+        con = sqlite3.connect(filename)
+        try:
+            for start in lfsm.results['starts']:
+                updates = {k: _coerce_val(start[k]) for k in _RUN4_COLS if k in start}
+                if not updates:
+                    continue
+                set_clause = ', '.join(f'"{k}"=?' for k in updates)
+                con.execute(
+                    f'UPDATE starts SET {set_clause} WHERE no=?',
+                    list(updates.values()) + [start['no']]
+                )
+            rc = json.dumps(list(set(lfsm.runs_completed)))
+            con.execute("INSERT OR REPLACE INTO misc(key,value) VALUES('runs_completed',?)", (rc,))
+            con.execute("UPDATE info SET value=? WHERE key='runs_completed'", (rc,))
+            con.commit()
+        finally:
+            con.close()
+        return lfsm
+
+    @classmethod
+    def update_run2_bearing(cls, mp, filename):
+        """Load an existing SQLite .dfsm, run Bearing_Temp_Collector on starts where
+        BearMain_TempMax is NULL, write only the bearing KPI columns back in-place.
+        Returns the FSMOperator. Raises ValueError if not SQLite format.
+        """
+        with open(filename, 'rb') as f:
+            magic = f.read(16)
+        if not magic.startswith(b'SQLite format 3'):
+            raise ValueError(f"{filename} is not a SQLite .dfsm file. Migrate it first with migrate_dfsm().")
+
+        lfsm = cls.load_results(mp, filename)
+        bearing_col = Bearing_Temp_Collector(lfsm.results, lfsm._e)
+
+        con = sqlite3.connect(filename)
+        try:
+            existing_cols = {row[1] for row in con.execute("PRAGMA table_info(starts)")}
+            for col in _RUN2_BEARING_COLS:
+                if col not in existing_cols:
+                    con.execute(f'ALTER TABLE starts ADD COLUMN "{col}" REAL')
+            con.commit()
+
+            pbar = tqdm(total=len(lfsm.results['starts']), ncols=80, mininterval=2, unit=' starts', desc="BearUpdate", file=sys.stdout)
+            for startversuch in lfsm.results['starts']:
+                sno = startversuch['no']
+                bear_val = startversuch.get('BearMain_TempMax', float('nan'))
+                if bear_val == bear_val:  # already collected (not NaN) — skip
+                    pbar.update()
+                    continue
+                try:
+                    vset, tfrom, tto = bearing_col.register(startversuch, vset=[], tfrom=None, tto=None)
+                    if tfrom is not None and tto is not None:
+                        data = load_data(lfsm, cycletime=1, tts_from=tfrom, tts_to=tto, silent=True, p_data=vset, p_forceReload=False, p_suffix='_run2', debug=False)
+                        lfsm.results = bearing_col.collect(startversuch, lfsm.results, data)
+                        updates = {k: _coerce_val(lfsm.results['starts'][sno][k]) for k in _RUN2_BEARING_COLS if k in lfsm.results['starts'][sno]}
+                        if updates:
+                            set_clause = ', '.join(f'"{k}"=?' for k in updates)
+                            con.execute(f'UPDATE starts SET {set_clause} WHERE no=?', list(updates.values()) + [sno])
+                except Exception as err:
+                    logging.error(f"update_run2_bearing: start {sno}: {err}\n{traceback.format_exc()}")
+                pbar.update()
+            pbar.close()
+            con.execute("INSERT OR REPLACE INTO misc(key,value) VALUES('run2_content',?)",
+                        (json.dumps(lfsm.results['run2_content'], default=str),))
+            con.commit()
+        finally:
+            con.close()
+        return lfsm
 
     def append_results(self, mfsm):
         #check is it is the same engine
@@ -692,6 +1096,22 @@ class FSMOperator:
         return os.path.exists(self.pfn) 
 
     ## message handling
+    def _ensure_messages(self):
+        """Load messages lazily — called by run0/run1 when loading from legacy pickle skipped __init__."""
+        if not hasattr(self, '_messages') or self._messages is None:
+            self.load_messages(self._e, self._p_from, self._p_to)
+            self.nsvec = {
+                self.startstopHandler.name: self.startstopHandler.initialize_statevector(self.first_message),
+                self.serviceSelectorHandler.name: self.serviceSelectorHandler.initialize_statevector(self.first_message),
+                self.oilpumpHandler.name: self.oilpumpHandler.initialize_statevector(self.first_message),
+                'logstates': self.logstates,
+                'in_operation': 'off',
+                'service_selector': self.serviceSelectorHandler.initial_state,
+                'oil_pump': self.oilpumpHandler._initial_state,
+                'msg': 'none',
+                'startno': 0
+            }
+
     def load_messages(self,e, p_from=None, p_to=None, skip_days=None, untilnow=False):
         #self._messages = e.get_messages(p_from, p_to) #using stored messages.
         self._messages = e.get_messages2(p_from, p_to, untilnow) 
@@ -844,11 +1264,12 @@ class FSMOperator:
 
 
     def run0(self, enforce=False, silent=False ,debug=False):
-        """Statemachine Operator Run0 - collect e.g. calculated future events in self.extra_messages 
+        """Statemachine Operator Run0 - collect e.g. calculated future events in self.extra_messages
         Args:
             enforce (bool, optional): if True runs statemachine even if results are already available. Defaults to False.
             silent (bool, optional): do not show progress bar if True. Defaults to False.
-        """        
+        """
+        self._ensure_messages()
 
         if len(self.results['starts']) == 0 or enforce:
             self.init_results()            
@@ -965,25 +1386,33 @@ class FSMOperator:
         #ratedload = self._e['Power_PowerNominal']
         self.target_load_collector = Target_load_Collector(self.results, self._e, period_factor=3, helplinefactor=0.8)
         self.exhaust_temp_collector = Exhaust_temp_Collector(self.results, self._e)
-        self.tecjet_collector = Tecjet_Collector(self.results, self._e)
+        if str(self._e['Engine Series']) in ('4', '6'):
+            self.tecjet_collector = Tecjet_Collector(self.results, self._e)
+        else:
+            self.tecjet_collector = None
+            self.results['run2_content'].setdefault('tecjet', ['no'])
         self.sync_current_collector = Sync_Current_Collector(self.results, self._e)
         self.oil_start_collector = Oil_Start_Collector(self.results, self._e)
-        
+        self.bearing_temp_collector = Bearing_Temp_Collector(self.results, self._e)
 
     def run2_collectors_register(self, startversuch):
         vset, tfrom, tto = self.target_load_collector.register(startversuch, vset=[], tfrom=None, tto=None) #vset,tfrom,tto will be populated by the Collectors
         vset, tfrom, tto = self.exhaust_temp_collector.register(startversuch, vset, tfrom, tto)
-        vset, tfrom, tto = self.tecjet_collector.register(startversuch, vset, tfrom, tto)
+        if self.tecjet_collector is not None:
+            vset, tfrom, tto = self.tecjet_collector.register(startversuch, vset, tfrom, tto)
         vset, tfrom, tto = self.sync_current_collector.register(startversuch, vset, tfrom, tto)
         vset, tfrom, tto = self.oil_start_collector.register(startversuch, vset, tfrom, tto)
-        return vset, tfrom, tto 
+        vset, tfrom, tto = self.bearing_temp_collector.register(startversuch, vset, tfrom, tto)
+        return vset, tfrom, tto
 
     def run2_collectors_collect(self, startversuch, results, data):
         results = self.target_load_collector.collect(startversuch, results, data)
         results = self.exhaust_temp_collector.collect(startversuch, results, data)
-        results = self.tecjet_collector.collect(startversuch, results, data)
+        if self.tecjet_collector is not None:
+            results = self.tecjet_collector.collect(startversuch, results, data)
         results = self.sync_current_collector.collect(startversuch, results, data)
         results = self.oil_start_collector.collect(startversuch, results, data)
+        results = self.bearing_temp_collector.collect(startversuch, results, data)
         return results
 
     def run2(self, silent=False, debug=False, p_refresh=False):

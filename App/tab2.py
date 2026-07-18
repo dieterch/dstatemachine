@@ -11,6 +11,7 @@ from IPython.display import display
 import dmyplant2 as dmp2
 #from dmyplant2 import cred, MyPlant, Engine, FSMOperator, get_size
 from App import tab1
+import App.common as cm
 from App.common import loading_bar, V, mp, tabs_out, tabs_html
 
 #########################################
@@ -117,10 +118,24 @@ class Tab():
 
         self.b_appendfsm = widgets.Button(
             description='Append FSM\'s',
-            disabled=False, 
+            disabled=False,
             button_style='primary',
             layout=widgets.Layout(display='none'))
-        self.b_appendfsm.on_click(self.fsm_append) 
+        self.b_appendfsm.on_click(self.fsm_append)
+
+        self.b_run4only = widgets.Button(
+            description='Add Run4',
+            disabled=False,
+            button_style='warning',
+            layout=widgets.Layout(display='none'))
+        self.b_run4only.on_click(self.fsm_add_run4)
+
+        self.b_bearing_update = widgets.Button(
+            description='Add Bearing Temps',
+            disabled=False,
+            button_style='warning',
+            layout=widgets.Layout(display='none'))
+        self.b_bearing_update.on_click(self.fsm_add_bearing)
 
     @property
     def tab(self):
@@ -145,7 +160,9 @@ class Tab():
                     self.b_runfsm2,
                     self.b_runfsm4,
                     self.b_savefsm,
-                    self.b_appendfsm
+                    self.b_appendfsm,
+                    self.b_run4only,
+                    self.b_bearing_update
                 ])
             ]),
             self.tab2_out
@@ -183,15 +200,25 @@ class Tab():
             else: # engine was loaded from file
                 if V.e is not None:
                     self.tab2_selected_engine.value = V.selected
-                    #self.b_loadmessages.description = 'append new messages'
                     self.b_loadmessages.layout.display = 'none'
                     self.b_appendfsm.layout.display = 'block'
                     self.b_runfsm.layout.display = 'none'
                     self.b_savefsm.layout.display = 'none'
-                    #self.single_runs_chkbox.display = 'none'
-                    #self.run2_chkbox.display = 'none',
-                    #self.run4_chkbox.display = 'none',
-                    #self.refresh_chkbox.display = 'none',
+                    if (V.fsm is not None and
+                            all(r in V.fsm.runs_completed for r in [0, 1, 2]) and
+                            4 not in V.fsm.runs_completed):
+                        self.b_run4only.layout.display = 'block'
+                    else:
+                        self.b_run4only.layout.display = 'none'
+                    filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm' if V.fsm is not None else ''
+                    is_sqlite = (os.path.exists(filename) and
+                                 open(filename, 'rb').read(16).startswith(b'SQLite format 3'))
+                    if (V.fsm is not None and
+                            all(r in V.fsm.runs_completed for r in [0, 1, 2]) and
+                            is_sqlite):
+                        self.b_bearing_update.layout.display = 'block'
+                    else:
+                        self.b_bearing_update.layout.display = 'none'
                     self.check_buttons()
                 
         with self.tab2_out:        
@@ -243,17 +270,19 @@ class Tab():
             self.tab2_out.clear_output()
             if V.fsm is not None:
                 print()
-                V.fsm.run0(enforce=True, silent=False, debug=False)
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
-                V.fsm.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
-                if self.run2_chkbox.value:
-                    V.fsm.run2(silent = False, p_refresh=self.refresh_chkbox.value)
-                    #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
-                if self.run4_chkbox.value:
-                    V.fsm.run4(silent = False, p_refresh=self.refresh_chkbox.value)
-                    #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
-                V.rdf = V.fsm.starts
+                try:
+                    V.fsm.run0(enforce=True, silent=False, debug=False)
+                    V.fsm.run1(silent=False, successtime=300, debug=False)
+                    if self.run2_chkbox.value:
+                        V.fsm.run2(silent=False, p_refresh=self.refresh_chkbox.value)
+                    if self.run4_chkbox.value:
+                        V.fsm.run4(silent=False, p_refresh=self.refresh_chkbox.value)
+                    V.rdf = V.fsm.starts
+                except Exception as err:
+                    print(f'Error during FSM run: {err}')
+                    cm.refresh_load_state(error=str(err))
+                else:
+                    cm.refresh_load_state()
                 self.check_buttons()
 
     def print_result(self):
@@ -290,52 +319,71 @@ class Tab():
                         display(pd.DataFrame(V.fsm.results['run2_failed'])[dfilter].style.hide())
 
     def fsm_run0(self,b):
-        #motor = V.fleet.iloc[int(V.selected_number)]
         with self.tab2_out:
             self.tab2_out.clear_output()
             if V.fsm is not None:
                 print()
-                V.fsm.run0(enforce=True, silent=False, debug=False)
+                try:
+                    V.fsm.run0(enforce=True, silent=False, debug=False)
+                except Exception as err:
+                    print(f'run0 error: {err}')
+                    cm.refresh_load_state(error=str(err))
+                else:
+                    cm.refresh_load_state()
                 self.check_buttons()
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
 
     def fsm_run1(self,b):
         with self.tab2_out:
-            #tab2_out.clear_output()
             if V.fsm is not None:
-                V.fsm.run1(silent=False, successtime=300, debug=False) # run Finite State Machine
+                try:
+                    V.fsm.run1(silent=False, successtime=300, debug=False)
+                    V.rdf = V.fsm.starts
+                except Exception as err:
+                    print(f'run1 error: {err}')
+                    cm.refresh_load_state(error=str(err))
+                else:
+                    cm.refresh_load_state()
                 self.check_buttons()
-                V.rdf = V.fsm.starts
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
 
-                
     def fsm_run2(self,b):
-        #motor = V.fleet.iloc[int(V.selected_number))]
         with self.tab2_out:
-            #tab2_out.clear_output()
             if V.fsm is not None:
-                V.fsm.run2(silent = False, debug=True, p_refresh=self.refresh_chkbox.value)
+                try:
+                    V.fsm.run2(silent=False, debug=True, p_refresh=self.refresh_chkbox.value)
+                    V.rdf = V.fsm.starts
+                except Exception as err:
+                    print(f'run2 error: {err}')
+                    cm.refresh_load_state(error=str(err))
+                else:
+                    cm.refresh_load_state()
                 self.check_buttons()
-                V.rdf = V.fsm.starts
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
 
     def fsm_run4(self,b):
-        #motor = V.fleet.iloc[int(V.selected_number))]
         with self.tab2_out:
-            #tab2_out.clear_output()
             if V.fsm is not None:
-                V.fsm.run4(silent = False, debug=True, p_refresh=self.refresh_chkbox.value)
+                try:
+                    V.fsm.run4(silent=False, debug=True, p_refresh=self.refresh_chkbox.value)
+                    V.rdf = V.fsm.starts
+                except Exception as err:
+                    print(f'run4 error: {err}')
+                    cm.refresh_load_state(error=str(err))
+                else:
+                    cm.refresh_load_state()
                 self.check_buttons()
-                V.rdf = V.fsm.starts
-                #print(f"fsm Operator Memory Consumption: {get_size(V.fsm.__dict__)/(1024*1024):8.1f} MB")
 
     def fsm_save(self,b):
         if V.fsm is not None:
-            #filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}_{V.fsm.last_message.strftime("%Y%m%d")}.dfsm'
             filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm'
             with tabs_out:
-                print(filename)
-                V.fsm.save_results(filename)
+                tabs_out.clear_output()
+                try:
+                    print(f'Saving {filename} …')
+                    V.fsm.save_results(filename)
+                    print(f'Saved.')
+                    cm.refresh_load_state()
+                except Exception as err:
+                    print(f'Save error: {err}')
+                    cm.refresh_load_state(error=str(err))
         # with self.tab2_out:
         #     if V.fsm is not None:
         #         V.fsm.store()
@@ -357,6 +405,35 @@ class Tab():
                 V.rdf = V.fsm.starts
                 tabs_out.clear_output()
                 self.check_buttons()
+
+    def fsm_add_run4(self, b):
+        if V.fsm is not None:
+            filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm'
+            with self.tab2_out:
+                self.tab2_out.clear_output()
+                try:
+                    print(f'tab2 - ⌛ adding run4 to {filename} ...')
+                    V.fsm = dmp2.FSMOperator.update_run4(mp, filename)
+                    V.rdf = V.fsm.starts
+                    self.b_run4only.layout.display = 'none'
+                    self.check_buttons()
+                    print(f'tab2 - run4 added and saved to {filename}')
+                except ValueError as err:
+                    print(f'tab2 - Error: {err}')
+
+    def fsm_add_bearing(self, b):
+        if V.fsm is not None:
+            filename = f'./data/{V.fsm._e["serialNumber"]}_{V.fsm._e["Validation Engine"]}.dfsm'
+            with self.tab2_out:
+                self.tab2_out.clear_output()
+                try:
+                    print(f'tab2 - ⌛ adding bearing temps to {filename} ...')
+                    V.fsm = dmp2.FSMOperator.update_run2_bearing(mp, filename)
+                    V.rdf = V.fsm.starts
+                    self.check_buttons()
+                    print(f'tab2 - bearing temps added and saved to {filename}')
+                except ValueError as err:
+                    print(f'tab2 - Error: {err}')
 
     def check_buttons(self):
         #for b in [ self.b_loadmessages, self.b_runfsm, self.b_resultsfsm, self.b_runfsm0, self.b_runfsm1, self.b_runfsm2, self.b_savefsm]:
@@ -386,8 +463,19 @@ class Tab():
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1,2])):
             self.b_runfsm2.disabled = True            
         if ((V.fsm is not None) and all(e in V.fsm.runs_completed for e in [0,1,2,4])):
-            self.b_runfsm4.disabled = True            
+            self.b_runfsm4.disabled = True
             self.b_savefsm.disabled = False
+        if (V.fsm is not None and
+                all(r in V.fsm.runs_completed for r in [0, 1, 2]) and
+                4 not in V.fsm.runs_completed):
+            self.b_run4only.disabled = False
+        else:
+            self.b_run4only.disabled = True
+        if (V.fsm is not None and
+                all(r in V.fsm.runs_completed for r in [0, 1, 2])):
+            self.b_bearing_update.disabled = False
+        else:
+            self.b_bearing_update.disabled = True
 
             
             

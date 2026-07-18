@@ -30,7 +30,8 @@ from .dFSMPlot import (
     FSM_add_Warnings,
 )
 from .dFSM import (
-    FSMOperator, 
-    startstopFSM
+    FSMOperator,
+    startstopFSM,
+    migrate_dfsm,
 )
 from .dFSMFigures import figures

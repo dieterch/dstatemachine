@@ -44,4 +44,10 @@ def figures(e):
     {'col':e.dataItemsCyl('Monic_VoltCyl*'),'ylim': [0, 40], 'unit':'kV'},
     {'col':e.dataItemsCyl('Ignition_ITPCyl*'),'ylim': [10, 50], 'unit':'°KW'},
     ],
+    'bearing' : [
+    {'col':['Power_PowerAct'], 'ylim':(0,5000), 'color':'red', 'unit':'kW'},
+    {'col':e.dataItemsCyl('Bear_Main_Temp*'),'ylim': [0, 120], 'color':'func_cyl', 'unit':'°C'},
+    {'col':e.dataItemsCyl('Bear_Conrod_Temp*'),'ylim': [0, 120], 'color':'func_cyl', 'unit':'°C'},
+    {'col':['Hyd_TempOil'],'ylim': [0, 100], 'color':'dodgerblue', 'unit':'°C'},
+    ],
 }
